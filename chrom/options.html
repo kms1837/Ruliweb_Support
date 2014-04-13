@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			*{font-size: 10pt; font-family: "맑은 고딕";}
+			a{display: block; }
+
+
+			#info {
+				text-align: center;
+				border-top: 1px solid #ccc;
+				padding: 10px;
+				width: 400px;
+				margin: 10px auto;
+			}
+			
+			#top_menu {
+				position: absolute;
+				background-color: #FFF;
+				border: 2px solid #ccc;
+				padding: 10px;
+				width: 270px;
+				border-radius: 10px;
+				top: -10px;
+			}
+
+			#log{display: inline; color: #005CFF;}
+			#aggrohuman{width:195px; height:22px;}
+			.badUserOption {margin: 0 auto; width: 600px; height: 320px;}
+			.badUserList   {float:right; width: 330px; height: 300px; border: 5px solid #C90000; overflow:auto; }
+			.badUserCell   {padding: 8px; border-bottom: 1px solid #ccc;}
+			.badUserCell p {display:inline;}
+			.badUserCell .badUserName{font-size: 18pt; margin-left: 5px;}
+			.badUserCell .date{font-size: 10pt;}
+			.badUserCell button{ float:right;}
+
+			.container {
+				width: 38%; 
+				margin: 60px auto; 
+				background-color: #fff; 
+				border-radius: 15px; 
+				padding: 1px 0 45px;
+				box-shadow: 0px 0px 13px rgba(124, 124, 124, 0.41);
+				background: linear-gradient(0deg, rgba(248, 247, 247, 0.28) 0%, rgba(255, 255, 255, 1) 5%, rgba(255, 255, 255, 1) 100%);
+			}
+
+			.block{display: inline-block; margin: 6px auto; background-color: #C90000; width: 200px; padding: 20px; border-radius: 20px;}
+
+			.title {font-family: "맑은 고딕"; font-size: 35pt; text-align: center;}
+			#user_info a{display: inline;}
+		</style>
+	</head>
+	<body>
+		<div id="top_menu"><a href="http://mypi.ruliweb.daum.net/mypi.htm?id=kms1837">링크공주 마이피 가기</a></div>
+		<!--<div id="user_info"><a>쪽지 : </a><a id="noteCount">0</a><a>개</a></div>-->
+		<br>
+		<div class="container">
+			<p class="title">옵션</p>
+
+			<div class="badUserOption">
+
+				<div class="block">
+					<p>추가할 어그로 유저 이름:</p>
+					<input type="text" id="aggrohuman"></input>
+					<button id="addBadUser">추가</button>
+				</div>
+
+				<div class="badUserList">
+					<!--<div class="badUserCell">
+						<p class="date">2014/04/11</p>
+						<p class="badUserName">링크공주</p>
+						<button>삭제</button>
+					</div> 더미데이터-->
+				</div>
+
+				<div class="block">
+					<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked>어글러 차단 하지않음</input></a>
+					<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1>어글러 글 가리기</input></a>
+					<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2>이름에 어글러 표시</input></a>
+					<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3>어글러 줄 색칠</input></a>
+				</div>
+				<button id="save">저장</button>
+				<button id="reset">초기화</button>
+				<p id="log">^ㅅ^</p>
+			</div>
+
+			<p id="info">루리웹 게시판 서포트<br>ver 0.3<br>(2014/04/15)<br><br>제작:링크공주(kms1837) | 아이디어:Mooncake(winter****)님 <br><br>초기배포 버전입니다 아직 불안정할수도 있으므로 문제가 생기시면 바로 kms1837@gmail.com이나 루리웹 쪽지 부탁드립니다.<br>(필요하신 기능들도 쪽지주세요 검토후 개발하도록 하겠습니다.)<br><br><a href="http://mypi.ruliweb.daum.net/mypi.htm?id=kms1837&num=6623">업데이트 미리보기</a></p>
+		</div>
+	</body>
+	<script src="jquery-2.1.0.js"></script>
+	<script src="options.js"></script>
+</html>
