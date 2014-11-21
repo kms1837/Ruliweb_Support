@@ -1,4 +1,5 @@
 
+
 $(document).ready(function()
 {
 	/*
@@ -9,9 +10,9 @@ $(document).ready(function()
 
 	var pageURL 		= location.href﻿;
 	var pageUrlElement  = pageURL.split('/');
-	var pagestatuse			= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
+	var pageStatuse		= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
 
-	if(pagestatuse=='list' || pagestatuse == 'read'){
+	if(pageStatuse=='list' || pageStatuse == 'read'){
 		//console.log("정상실행");
 		chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
 			var blockType 		= response.data.blockType;
