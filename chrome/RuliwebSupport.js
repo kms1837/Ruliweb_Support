@@ -15,28 +15,114 @@ function runChecking()
 {
 	var pageURL 		= location.href﻿;
 	var pageUrlElement  = pageURL.split('/');
-	var rootPageStatuse = pageUrlElement[3];//pageURL.split('.')[0].substr(7);
-	var pageStatuse		= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
+	var rootPageStatuse = pageURL.split('.')[0].substr(7);
+	var pageStatuse 	= pageUrlElement[3];
+	var pageStatuseType	= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
 
 	chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
 		var blockType 		= response.data.blockType;
 		var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		console.log(pageUrlElement);
 		console.log(rootPageStatuse);
-
-		if(rootPageStatuse == "gaia") {
-			if(blockType != 0 && aggroHumanList!=''){
+		console.log(pageStatuse);
+		console.log(pageStatuseType);
+		
+		if(blockType != 0 && aggroHumanList!='') {
+			if(pageStatuse == "gaia") {
 				BoardTableCheck(blockType, aggroHumanList);
-				if(pageStatuse == 'read') BoardCommentCheck(blockType, aggroHumanList);	
+				if(pageStatuseType == 'read') BoardCommentCheck(blockType, aggroHumanList);	
+			}else if(pageStatuse == "news"){
+				BoardCommentCheck(blockType, aggroHumanList);		
+			}else if(rootPageStatuse == "mypi"){
+				 console.log("마이피여");
+				if(pageStatuseType == "mypi")	mypiCheck(blockType, aggroHumanList);
+				else					  		mypiMainCheck(blockType, aggroHumanList);
 			}
-		}else if(rootPageStatuse == "news"){
-			BoardCommentCheck(blockType, aggroHumanList);
-			
-		}else if(rootPageStatuse == "mypi"){
-			//TO-DO : 마이피 차단
 		}
 	});
 }
+
+function mypiMainCheck(blockType, aggroHumanList)
+{
+	console.log('마이피 메인을 체크합니다.');
+	var mypiMainDocument = $('.m_recently').find('tr');
+	var mainTdUserName;
+	var mainTdUserId;
+	var mainTdElement;
+	
+	var checkCount = 0;
+	
+	for(var i=0; i<mypiMainDocument.length;i ++) {
+		mainTdElement 	= $(mypiMainDocument[i]).find('td'); 
+		mainTdUserName 	= mainTdElement[1];
+		mainTdUserId 	= mainTdElement.find('a')[0].href.split('&')[1].substr(3);
+		
+		for(var y=0; y<aggroHumanList.length; y++) {
+			if(mainTdUserName.outerText == aggroHumanList[y].name || mainTdUserId == 'asd') {
+				checkCount++;
+				switch(blockType){
+					case '1': //글 제거
+						mainTdElement[0].style.display = 'none';
+						mainTdElement[1].style.display = 'none';
+						break;
+					case '2': //글 가리기
+						mainTdElement[0].style.fontSize = '0px';
+						mainTdElement[1].style.fontSize = '0px';
+						break;
+					case '3':
+						mainTdUserName.innerHTML += '(어글러)';
+						break;
+					case '4':
+						mypiMainDocument[i].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+						break;
+				}
+			}
+		}
+	}
+}//마이피 메인
+
+function mypiCheck(blockType, aggroHumanList)
+{
+	console.log("마이피를 체크합니다.");
+	var commentDocument = $('.mypiReply').find('div');
+	var commentUserClass;
+	var commentUserName;
+	var commentUserId;
+	var checkCount = 0;
+	
+	for(var i=0; i<commentDocument.length; i=i+2) {
+		commentUserClass = $(commentDocument[i]).find('.cm01');
+		commentUserName  = commentUserClass.find('b')[0];
+		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
+		
+		for(var y=0; y<aggroHumanList.length; y++) {
+			if(commentUserName.outerText == aggroHumanList[y].name || commentUserId == 'asd'){
+				checkCount++;
+				switch(blockType){
+					case '1': //글 제거
+						commentDocument[i].style.display = 'none';
+						commentDocument[i+1].style.display = 'none';
+						break;
+					case '2': //글 가리기
+						commentDocument[i].style.fontSize = '0px';
+						commentDocument[i+1].style.fontSize = '0px';
+						break;
+					case '3':
+						commentUserName.innerHTML += '(어글러)';
+						break;
+					case '4':
+						commentDocument[i].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+						commentDocument[i+1].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+						break;
+				}
+			}
+		}
+		
+		console.log(commentUserName);
+		console.log(commentUserId);
+	}
+	//console.log(commentDocument);
+}//마이피 체크
 
 function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanList
 {
@@ -81,11 +167,6 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 	if(checkCount > 0) displayCheckCount(commentTable, checkCount);
 
 }//function BoardCommentCheck - 댓글 어그로 체크
-
-function mypiBoardTableCheck()
-{
-
-}//function mypiBoardTableCheck - 마이피 게시판 어그로 체크
 
 function BoardTableCheck(blockType, aggroHumanList)
 { 
