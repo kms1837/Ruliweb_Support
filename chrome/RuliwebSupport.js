@@ -15,21 +15,23 @@ function runChecking()
 {
 	var pageURL 		= location.href﻿;
 	var pageUrlElement  = pageURL.split('/');
-	var rootPageStatuse = pageURL.split('.')[0].substr(7);;
+	var rootPageStatuse = pageUrlElement[3];//pageURL.split('.')[0].substr(7);
 	var pageStatuse		= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
 
 	chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
 		var blockType 		= response.data.blockType;
 		var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-		
-		if(rootPageStatuse == "ruliweb" || rootPageStatuse == "bbs2") {
-			if(pageStatuse =='list' || pageStatuse == 'read'){
-				//console.log("정상실행");
-				if(blockType != 0 && aggroHumanList!=''){
-					BoardTableCheck(blockType, aggroHumanList);
-					if(pageStatuse == 'read') BoardCommentCheck(blockType, aggroHumanList);	
-				}
+		console.log(pageUrlElement);
+		console.log(rootPageStatuse);
+
+		if(rootPageStatuse == "gaia") {
+			if(blockType != 0 && aggroHumanList!=''){
+				BoardTableCheck(blockType, aggroHumanList);
+				if(pageStatuse == 'read') BoardCommentCheck(blockType, aggroHumanList);	
 			}
+		}else if(rootPageStatuse == "news"){
+			BoardCommentCheck(blockType, aggroHumanList);
+			
 		}else if(rootPageStatuse == "mypi"){
 			//TO-DO : 마이피 차단
 		}
@@ -42,6 +44,8 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 	var commentTable 	= $(commentDocument).find('#commentTable')[0];
 	commentTable = $(commentTable).find('tbody')[0];
 	var commentTableCell = $(commentTable).find('tr');
+	
+	$('#commentFrame').bind("load", runChecking);
 	
 	var checkCount = 0;
 	
@@ -59,7 +63,7 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 							commentTableCell[i].style.display = 'none';
 							break;
 						case '2': //글 가리기
-							commentTableCell[i].style.fontSize = '0px';
+							hideTd(commentTableCell[i].getElementsByTagName('td'));
 							break;
 						case '3':
 							selectCellName.innerHTML += '(어글러)';
@@ -86,24 +90,22 @@ function mypiBoardTableCheck()
 function BoardTableCheck(blockType, aggroHumanList)
 { 
 	console.log("동작");
-	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
-	var getdiv = getCenterTag.getElementsByTagName('div'); // div를 모두 가져옴
-
 	var searchTag;
-	searchTag = getClass(getdiv, 'gaia').getElementsByTagName('table'); //gain의 모든 table를 가져옴
+	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
+	var getTable = getCenterTag.getElementsByTagName('table');
+	var boardTable = getClass(getTable, 'tbl tbl_list_comm');
 	
-	var boardTable = getClass(searchTag, 'tbl tbl_list_comm');
-	searchTag = getClass(searchTag, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
+	searchTag = getClass(getTable, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
 	searchTag = searchTag[0].getElementsByTagName('tr');
 	
 	var checkCount = 0;
 	
-	if(searchTag[0].className != 'none'){
-		for(var i=0;i<searchTag.length;i++){
+	if(searchTag[0].className != 'none') {
+		for(var i=0;i<searchTag.length;i++) {
 			var temptd 			= searchTag[i].getElementsByTagName('td');
 			var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
 
-			for(var y=0; y<aggroHumanList.length; y++){
+			for(var y=0; y<aggroHumanList.length; y++) {
 				if(getWriterName[0].outerText==aggroHumanList[y].name){
 					checkCount++;
 					
@@ -112,12 +114,12 @@ function BoardTableCheck(blockType, aggroHumanList)
 							searchTag[i].style.display = 'none';
 							break;
 						case '2': // 글 가리기
-							searchTag[i].style.fontsize = '0px';
+							hideTd(searchTag[i].getElementsByTagName('td'));
 							break;
 						case '3':
 							getWriterName[0].innerHTML += '(어글러)';
 							break;
-						case '3':
+						case '4':
 							changeTdColor(searchTag[i].getElementsByTagName('td'));
 							break;
 					}
@@ -125,9 +127,14 @@ function BoardTableCheck(blockType, aggroHumanList)
 			}//for - 어글러 목록
 		}//for - 어글러 추출및 블럭
 		
-		if(checkCount > 0) displayCheckCount(boardTable, checkCount);
-		
+		if(checkCount > 0) displayCheckCount(boardTable, checkCount);	
 	}//if - 게시물이 없을시
+	
+}//function BoadtTableCheck - 게시판 어그로 체크
+
+function displayCheckCount(inputTable, inputCount)
+{
+	//issue - 답글작성 불가
 	
 	/*
 		<div id="checkResult"><p>...명 차단완료</p></div>
@@ -140,15 +147,10 @@ function BoardTableCheck(blockType, aggroHumanList)
 		margin-top: 34px;
 		text-align: right;
 	*/
-
-}//function BoadtTableCheck - 게시판 어그로 체크
-
-function displayCheckCount(inputTable, inputCount)
-{
 	inputTable.innerHTML = '<div id="checkResult"' +
-									'style="position: absolute; right: 0; padding: 7px; background-color: #fff; width: 180px;' +
-									'text-align: right; border: 3px solid rgba(0, 152, 207, 0.53);"' +
-									'><p>' + inputCount + '개 차단완료</p></div>' + inputTable.innerHTML;
+							'style="position: absolute; right: 0; padding: 7px; background-color: #fff; width: 180px;' +
+							'text-align: right; border: 3px solid rgba(0, 152, 207, 0.53);"' +
+							'><p>' + inputCount + '개 차단완료</p></div>' + inputTable.innerHTML;
 }
 
 function getClass(teg, name)
@@ -156,6 +158,11 @@ function getClass(teg, name)
 	for(var i=0;i<teg.length;i++)if(teg[i].className == name) return teg[i];
 	return false;
 }// 클래스 탐색
+
+function hideTd(td)
+{
+	for(var i=0;i<td.length;i++) td[i].style.fontSize = '0px';
+}
 
 function changeTdColor(td)
 {
