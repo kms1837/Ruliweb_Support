@@ -1,5 +1,3 @@
-
-
 $(document).ready(function()
 {
 	/*
@@ -8,8 +6,31 @@ $(document).ready(function()
      });
 	*/
 	runChecking();
-	
 });
+
+window.onload = function()
+{
+/*
+	var searchTag;
+	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
+	var getTable	 = getCenterTag.getElementsByTagName('table');
+	var boardTable	 = getClass(getTable, 'tbl tbl_list_comm');
+
+	searchTag = getClass(getTable, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
+	searchTag = searchTag[0].getElementsByTagName('tr');
+	var temptd 			= searchTag[0].getElementsByTagName('td');
+	var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
+	
+	for(var i=0;i<searchTag.length;i++) {
+		var temptd 			= searchTag[i].getElementsByTagName('td');
+		var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
+		$(getWriterName[0]).trigger('click');
+		//console.log(getWriterName[0]);
+		//.attributes.onclick;
+	}
+*/
+
+}
 
 function runChecking()
 {
@@ -22,21 +43,19 @@ function runChecking()
 	chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
 		var blockType 		= response.data.blockType;
 		var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-		console.log(pageUrlElement);
-		console.log(rootPageStatuse);
-		console.log(pageStatuse);
-		console.log(pageStatuseType);
 		
 		if(blockType != 0 && aggroHumanList!='') {
-			if(pageStatuse == "gaia") {
+			if(pageStatuse == 'gaia') {
 				BoardTableCheck(blockType, aggroHumanList);
 				if(pageStatuseType == 'read') BoardCommentCheck(blockType, aggroHumanList);	
-			}else if(pageStatuse == "news"){
+				
+			}else if(pageStatuse == 'news'){
 				BoardCommentCheck(blockType, aggroHumanList);		
-			}else if(rootPageStatuse == "mypi"){
-				 console.log("마이피여");
-				if(pageStatuseType == "mypi")	mypiCheck(blockType, aggroHumanList);
+				
+			}else if(rootPageStatuse == 'mypi'){
+				if(pageStatuseType == 'mypi')	mypiCheck(blockType, aggroHumanList);
 				else					  		mypiMainCheck(blockType, aggroHumanList);
+				
 			}
 		}
 	});
@@ -44,7 +63,6 @@ function runChecking()
 
 function mypiMainCheck(blockType, aggroHumanList)
 {
-	console.log('마이피 메인을 체크합니다.');
 	var mypiMainDocument = $('.m_recently').find('tr');
 	var mainTdUserName;
 	var mainTdUserId;
@@ -62,8 +80,7 @@ function mypiMainCheck(blockType, aggroHumanList)
 				checkCount++;
 				switch(blockType){
 					case '1': //글 제거
-						mainTdElement[0].style.display = 'none';
-						mainTdElement[1].style.display = 'none';
+						mypiMainDocument[i].style.display = 'none';
 						break;
 					case '2': //글 가리기
 						mainTdElement[0].style.fontSize = '0px';
@@ -83,7 +100,6 @@ function mypiMainCheck(blockType, aggroHumanList)
 
 function mypiCheck(blockType, aggroHumanList)
 {
-	console.log("마이피를 체크합니다.");
 	var commentDocument = $('.mypiReply').find('div');
 	var commentUserClass;
 	var commentUserName;
@@ -117,11 +133,7 @@ function mypiCheck(blockType, aggroHumanList)
 				}
 			}
 		}
-		
-		console.log(commentUserName);
-		console.log(commentUserId);
 	}
-	//console.log(commentDocument);
 }//마이피 체크
 
 function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanList
@@ -134,8 +146,6 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 	$('#commentFrame').bind("load", runChecking);
 	
 	var checkCount = 0;
-	
-	console.log("2동작");
 	
 	for(var i=0; i<commentTableCell.length-1; i++) {
 		if(commentTableCell[i].className != 'reply hide') {
@@ -170,7 +180,6 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 
 function BoardTableCheck(blockType, aggroHumanList)
 { 
-	console.log("동작");
 	var searchTag;
 	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
 	var getTable = getCenterTag.getElementsByTagName('table');
@@ -185,7 +194,15 @@ function BoardTableCheck(blockType, aggroHumanList)
 		for(var i=0;i<searchTag.length;i++) {
 			var temptd 			= searchTag[i].getElementsByTagName('td');
 			var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
-
+			
+			//$(getWriterName)[0].trigger('click');
+			//[0]
+			//console.log(getWriterName[0].attributes.onclick.ownerElement);
+			//console.log();
+			//getWriterName[0].attributes.onclick.ownerElement.onclick();
+			//console.log(getWriterName);
+			//console.log(getWriterName[0].onclick);
+			
 			for(var y=0; y<aggroHumanList.length; y++) {
 				if(getWriterName[0].outerText==aggroHumanList[y].name){
 					checkCount++;
@@ -228,10 +245,13 @@ function displayCheckCount(inputTable, inputCount)
 		margin-top: 34px;
 		text-align: right;
 	*/
+	
+	/*
 	inputTable.innerHTML = '<div id="checkResult"' +
-							'style="position: absolute; right: 0; padding: 7px; background-color: #fff; width: 180px;' +
+							'style="font-size:12px; position: absolute; right: 0; padding: 7px; background-color: #fff; width: 95px;' +
 							'text-align: right; border: 3px solid rgba(0, 152, 207, 0.53);"' +
 							'><p>' + inputCount + '개 차단완료</p></div>' + inputTable.innerHTML;
+	*/
 }
 
 function getClass(teg, name)
