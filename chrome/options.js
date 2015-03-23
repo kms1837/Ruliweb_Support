@@ -1,7 +1,8 @@
 function save_options() {
-  var aggrohuman = document.getElementById('aggrohuman');
-  var noteCount  = document.getElementById('noteCount');
+  var aggrohuman 	 = document.getElementById('aggrohuman');
+  var noteCount  	 = document.getElementById('noteCount');
   var blockTypeCheck = document.getElementsByName('blockTypeRadio');
+  var blockColor 	 = document.getElementById('blockColor');
   var blockTypeValue;
 
   for(var i=0; i<blockTypeCheck.length; i++){
@@ -11,14 +12,17 @@ function save_options() {
   //localStorage["aggrohuman"] = aggrohuman.value;
   localStorage["blockType"]  = blockTypeValue;
   localStorage["noteCount"]  = parseInt(noteCount);
+  localStorage["blockColor"] = blockColor.value;
 
   logPrint('#005CFF', '옵션 저장완료');
+  console.log(blockColor);
 }//function restore_options - 옵션 저장
 
 function restore_options() {
   var aggrohuman = localStorage['aggrohuman']; //어그로 목록
   var blockType  = localStorage['blockType'];  //어그로 차단 타입(0-미작동, 1-글제거, 2-이름표시, 3-색칠)
   var noteCount  = localStorage['noteCount'];  //머였더라 ㄷㄷ;
+  var blockColor = localStorage['blockColor'];
 
   $('#log')[0].innerHTML = '';
 
@@ -38,6 +42,11 @@ function restore_options() {
   if(blockType) {
     var radiobox = document.getElementsByName('blockTypeRadio');
     radiobox[blockType].checked = true;
+  }
+  
+  if(blockColor) {
+	  var blockColorBox		= document.getElementById('blockColor');
+	  blockColorBox.value	= blockColor;
   }
   /*
   if(noteCount) {

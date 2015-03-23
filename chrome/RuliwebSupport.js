@@ -46,23 +46,27 @@ function runChecking()
 		
 		if(blockType != 0 && aggroHumanList!='') {
 			if(pageStatuse == 'gaia') {
-				BoardTableCheck(blockType, aggroHumanList);
-				if(pageStatuseType == 'read') BoardCommentCheck(blockType, aggroHumanList);	
+				BoardTableCheck(response);
+				if(pageStatuseType == 'read') BoardCommentCheck(response);	
 				
 			}else if(pageStatuse == 'news'){
-				BoardCommentCheck(blockType, aggroHumanList);		
+				BoardCommentCheck(response);
 				
 			}else if(rootPageStatuse == 'mypi'){
-				if(pageStatuseType == 'mypi')	mypiCheck(blockType, aggroHumanList);
-				else					  		mypiMainCheck(blockType, aggroHumanList);
+				if(pageStatuseType == 'mypi')	mypiCheck(response);
+				else					  		mypiMainCheck(response);
 				
 			}
 		}
 	});
 }
 
-function mypiMainCheck(blockType, aggroHumanList)
+function mypiMainCheck(response)
 {
+	var blockType 		= response.data.blockType;
+	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var blockColor		= response.data.blockColor;
+	
 	var mypiMainDocument = $('.m_recently').find('tr');
 	var mainTdUserName;
 	var mainTdUserId;
@@ -90,7 +94,7 @@ function mypiMainCheck(blockType, aggroHumanList)
 						mainTdUserName.innerHTML += '(어글러)';
 						break;
 					case '4':
-						mypiMainDocument[i].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+						mypiMainDocument[i].style.backgroundColor = blockColor;
 						break;
 				}
 			}
@@ -98,8 +102,12 @@ function mypiMainCheck(blockType, aggroHumanList)
 	}
 }//마이피 메인
 
-function mypiCheck(blockType, aggroHumanList)
+function mypiCheck(response)
 {
+	var blockType 		= response.data.blockType;
+	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var blockColor		= response.data.blockColor;
+	
 	var commentDocument = $('.mypiReply').find('div');
 	var commentUserClass;
 	var commentUserName;
@@ -127,8 +135,8 @@ function mypiCheck(blockType, aggroHumanList)
 						commentUserName.innerHTML += '(어글러)';
 						break;
 					case '4':
-						commentDocument[i].style.backgroundColor = 'rgba(255, 224, 0, 1)';
-						commentDocument[i+1].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+						commentDocument[i].style.backgroundColor 	= blockColor;
+						commentDocument[i+1].style.backgroundColor  = blockColor;
 						break;
 				}
 			}
@@ -136,8 +144,12 @@ function mypiCheck(blockType, aggroHumanList)
 	}
 }//마이피 체크
 
-function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanList
+function BoardCommentCheck(response) //blockType, aggroHumanList
 {
+	var blockType 		= response.data.blockType;
+	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var blockColor		= response.data.blockColor;
+	
 	var commentDocument = $('#commentFrame')[0].contentDocument;
 	var commentTable 	= $(commentDocument).find('#commentTable')[0];
 	commentTable = $(commentTable).find('tbody')[0];
@@ -165,7 +177,7 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 							selectCellName.innerHTML += '(어글러)';
 							break;
 						case '4':
-							changeTdColor(commentTableCell[i].getElementsByTagName('td'));
+							changeTdColor(commentTableCell[i].getElementsByTagName('td'), blockColor);
 							break;
 					}
 				}
@@ -178,8 +190,13 @@ function BoardCommentCheck(blockType, aggroHumanList) //blockType, aggroHumanLis
 
 }//function BoardCommentCheck - 댓글 어그로 체크
 
-function BoardTableCheck(blockType, aggroHumanList)
+function BoardTableCheck(response)
 { 
+	console.log("동작중");
+	var blockType 		= response.data.blockType;
+	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var blockColor		= response.data.blockColor;
+	
 	var searchTag;
 	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
 	var getTable = getCenterTag.getElementsByTagName('table');
@@ -218,7 +235,7 @@ function BoardTableCheck(blockType, aggroHumanList)
 							getWriterName[0].innerHTML += '(어글러)';
 							break;
 						case '4':
-							changeTdColor(searchTag[i].getElementsByTagName('td'));
+							changeTdColor(searchTag[i].getElementsByTagName('td'), blockColor);
 							break;
 					}
 				}
@@ -265,8 +282,8 @@ function hideTd(td)
 	for(var i=0;i<td.length;i++) td[i].style.fontSize = '0px';
 }
 
-function changeTdColor(td)
+function changeTdColor(td, colorValue)
 {
-	for(var i=0;i<td.length;i++) td[i].style.backgroundColor = 'rgba(255, 224, 0, 1)';
+	for(var i=0;i<td.length;i++) td[i].style.backgroundColor = colorValue;
 }//td색 변경 (리스트의 한줄부분임)
 
