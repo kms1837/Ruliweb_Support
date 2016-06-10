@@ -199,8 +199,8 @@ function BoardTableCheck(response)
 	
 	var searchTag;
 	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
-	var getTable = getCenterTag.getElementsByTagName('table');
-	var boardTable = getClass(getTable, 'tbl tbl_list_comm');
+	var getTable 	 = getCenterTag.getElementsByTagName('table');
+	var boardTable	 = getClass(getTable, 'tbl tbl_list_comm');
 	
 	searchTag = getClass(getTable, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
 	searchTag = searchTag[0].getElementsByTagName('tr');

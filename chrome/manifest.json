@@ -3,10 +3,10 @@
 
   "name"		: "Ruliweb Board Support",
   "description" : "당신의 루리웹 생활을 윤택하게 해드립니다.",
-  "version"		: "0.50",
+  "version"		: "0.5",
 
   "icons" : {
-    "128" :"128.png"
+    "128" :"resource/128.png"
   },
 
   "permissions": [
@@ -15,19 +15,19 @@
 
   "content_scripts" : [{
     "matches" : ["http://*.ruliweb.daum.net/*"],
-    "js"      : ["jquery-2.1.0.js", "RuliwebSupport.js"],
+    "js"      : ["js/jquery-2.1.4.js", "js/RuliwebSupport.js"],
     "CSS"     : ["RCSS.css"]
   }],
 
   "background": {
-    "scripts"	 : ["main.js"],
+    "scripts"	 : ["js/main.js"],
     "persistent" : true
   },
 
-  "options_page" : "options.html",
+  "options_page" : "html/options.html",
 
   "browser_action" : {
-    "default_icon"	: "128.png",
-    "default_popup"	: "popup.html"
+    "default_icon"	: "resource/128.png",
+    "default_popup"	: "html/popup.html"
   }
 }

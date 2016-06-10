@@ -1,0 +1,87 @@
+*{font-size: 10pt; font-family: "맑은 고딕";}
+
+
+#info {
+	text-align: center;
+	/* border-top: 1px solid #ccc; */
+	padding: 10px;
+	width: 600px;
+	margin: 250px auto;
+}
+
+#info h1 { font-size: 25px; margin: 0; color: #2F8AFD;}
+#info h2 { margin :0; color: #777777;}
+
+#top_menu {
+	position: fixed;
+	background-color: #737373;
+	border: 2px solid #5A5858;
+	padding: 10px;
+	border-radius: 5px;
+	top: -5px;
+	z-index: 5;
+}
+
+#top_menu ul 		 { list-style: none; margin: 0; padding: 0; }
+#top_menu li 		 { float: left; border-right: 1px solid #ccc;}
+#top_menu ul a 		 { padding: 10px; color:white; text-decoration: none;}
+#top_menu ul a:hover { color:black; background-color: #fff; }
+#top_menu li:last-of-type { border:none; }
+#left_menu 	  { float: left; }
+#left_menu ul { list-style: none; margin-left: -108px;}
+#left_menu li {
+	padding: 10px; 
+	margin-bottom: 10px;
+	border-radius: 5px;
+	border: 5px solid #C90000;
+	text-align: center; 	
+	background-color: #ccc;
+}
+#left_menu #selectedMenuItem { position: relative; margin-left: -30px; border-right:none; background-color: #fff; z-index:3;}
+#log{color: #005CFF; text-align: center; margin: 10px auto;}
+#aggrohuman{width:195px; height:22px;}
+.block a{ display: block; }
+.badUserOption { margin: 0 auto; width: 600px; height: 320px; padding-left: 32px; }
+.badUserList, .choiceSetting { display:inline-block; width: 300px; height: 320px; border: 5px solid #C90000; overflow:overlay; margin:0; padding: 0;}
+.userSetting   { display: inline-block; width: 250px; }
+.badUserCell, .selectedUser { float:left; padding: 8px; border-bottom: 1px solid #ccc; width: 285px;}
+.badUserCell p, .selectedUser p { margin:0;}
+.badUserName{width: 135px; overflow: auto; float: left;}
+.badUserCell .badUserName, .selectedUser .badUserName{font-size: 18pt; margin-left: 10px;}
+.badUserCell .date, .selectedUser .date{font-size: 10pt;}
+.badUserCell button, .selectedUser button{float:right; margin-left: 9px;}
+.cellState { float: left; text-align: center; }
+.addUserMenu {display: block; margin: 50px 0; text-align: center;}
+.addUserMenu #aggrohuman{ width: 300px; padding: 10px; font-size: 20px; }
+
+.choiceSetting a{ display: block; margin: 5px 0; }
+
+.container {
+	width: 660px; 
+	margin: 60px auto; 
+	background-color: #fff; 
+/* 	box-shadow: 0px 0px 13px rgba(124, 124, 124, 0.41); */
+}
+
+#content {
+	position: relative;
+	background-color: #fff;
+	padding: 1px 0 45px;
+	border: 8px solid #C90000;
+	background: linear-gradient(0deg, rgba(248, 247, 247, 0.28) 0%, rgba(255, 255, 255, 1) 5%, rgba(255, 255, 255, 1) 100%);
+	min-height: 790px;
+	z-index: 2;
+}
+
+.block{ margin: 10px auto; background-color: #C90000; width: 200px; padding: 15px; border-radius: 20px;}
+
+.title {font-family: "맑은 고딕"; font-size: 35pt; text-align: center;}
+
+#user_info a{display: inline;}
+
+#blockColor { width: 17px; height: 20px; padding: 0px 2px; background-color: white; margin-left: 5px;}
+
+.choiceBadUserOption{ padding-left: 10px; }
+.choiceUserName { text-align: center; font-size: 20px; }
+.selectedUser{background-color: #ccc;}
+
