@@ -34,7 +34,7 @@ window.onload = function()
 
 function runChecking()
 {
-	var pageURL 		= location.href﻿;
+	var pageURL 		= location.href;
 	var pageUrlElement  = pageURL.split('/');
 	var rootPageStatuse = pageURL.split('.')[0].substr(7);
 	var pageStatuse 	= pageUrlElement[3];
@@ -211,14 +211,6 @@ function BoardTableCheck(response)
 		for(var i=0;i<searchTag.length;i++) {
 			var temptd 			= searchTag[i].getElementsByTagName('td');
 			var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
-			
-			//$(getWriterName)[0].trigger('click');
-			//[0]
-			//console.log(getWriterName[0].attributes.onclick.ownerElement);
-			//console.log();
-			//getWriterName[0].attributes.onclick.ownerElement.onclick();
-			//console.log(getWriterName);
-			//console.log(getWriterName[0].onclick);
 			
 			for(var y=0; y<aggroHumanList.length; y++) {
 				if(getWriterName[0].outerText==aggroHumanList[y].name){

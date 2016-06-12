@@ -12,7 +12,6 @@ window.onload = function(){
 				return function(){changeMenu(settingNumber);}}(i)
 			, false
 		);
-
 	}
 	
 	changeMenu(1);
@@ -22,7 +21,6 @@ function userOptionsAllChange()
 {
 	var allSwitch = confirm("정말 일괄로 적용하겠습니까?");
 	if(allSwitch){
-		//var aggrohuman 	= document.getElementById('aggrohuman');
 		var aggrohuman  	= JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var noteCount  	 	= document.getElementById('noteCount');
 		var blockTypeCheck 	= document.getElementsByName('blockTypeRadio');
@@ -30,15 +28,14 @@ function userOptionsAllChange()
 		var blockTypeValue;
 
 		for(var i=0; i<blockTypeCheck.length; i++) {
-			if(blockTypeCheck[i].checked) blockTypeValue = blockTypeCheck[i].value;
+			if(blockTypeCheck[i].checked === true) blockTypeValue = blockTypeCheck[i].value;
 		}
 		
 		for(var i=0; i<aggrohuman.length; i++) {
-			console.log(aggrohuman[i]);
-			aggrohuman[i].settingType = blockTypeCheck;
+			aggrohuman[i].settingType = blockTypeValue;
 		}
 		
-		//localStorage["aggrohuman"] = aggrohuman.value;
+		localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":aggrohuman});
 		localStorage["blockType"]  = blockTypeValue;
 		localStorage["noteCount"]  = parseInt(noteCount);
 		localStorage["blockColor"] = blockColor.value;
@@ -51,17 +48,10 @@ function userChoice(cellObj, userNumber)
 {
 	var aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 	var radiobox	= document.getElementsByName('blockTypeRadio');
-	var prevSeletedUser = $('.selectedUser');
-	
-	if(typeof prevSeletedUser[0] != "undefined") { 
-		prevSeletedUser[0].className = "badUserCell";
-	}
-	
-	$(cellObj)[0].className = "selectedUser";
-	
+	$('.select').removeClass();
+	$(cellObj).addClass('select');
 	$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
-	
-    radiobox[aggrohuman[userNumber].settingType].checked = true;
+  radiobox[aggrohuman[userNumber].settingType].checked = true;
 }
 
 function changeMenu(menuNumber)
@@ -83,14 +73,15 @@ function changeMenu(menuNumber)
 			
 			switch(menuNumber){
 				case 1:
-					document.querySelector('#addBadUser').addEventListener('click', addBadUser);
+					$(document).on('click', '#addBadUser', addBadUser);
+					//document.querySelector().addEventListener('click', addBadUser);
 					document.querySelector('#save').addEventListener('click', userOptionsAllChange);
 					document.querySelector('#reset').addEventListener('click', optionReset);
 					break;
 				case 2:
 					var userCellList = $("ul.badUserList li");
 					for(var i=0; i<userCellList.length; i++){
-						userCellList[i].addEventListener('click',  function(cellObj, userNumber) {
+						userCellList[i].addEventListener('click', function(cellObj, userNumber) {
 							return function() { userChoice(cellObj, userNumber) };
 						}(userCellList[i], i));
 					}
@@ -110,35 +101,22 @@ function restore_options()
 	
 	//$('#log')[0].innerHTML = '';
 	
-	if (aggrohuman != 'undefined') {
+	if (aggrohuman != undefined) {
 		var badUserList = $('.badUserList');
 		var date        = getDate();
 		var aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-	
-		//badUserList[0].innerHTML = '';
+
 		for(var i=0; i<aggrohuman.length; i++){
 			badUserList[0].innerHTML += addCell(aggrohuman[i].addDate, aggrohuman[i].name, aggrohuman[i].settingType, i);
 		}
 	
 		$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
 	}
-	
-	/*
-	if(blockType != 'undefined') {
-		var radiobox = document.getElementsByName('blockTypeRadio');
-		radiobox[blockType].checked = true;
-	}*/
-	
-	if(blockColor != 'undefined') {
+
+	if(blockColor != undefined) {
 	  	var blockColorBox	= document.getElementById('blockColor');
 	  	blockColorBox.value	= blockColor;
 	}
-	/*
-	if(noteCount) {
-	var noteCountText  = document.getElementById('noteCount');
-	noteCountText.innerHtml = noteCount;
-	}
-	*/
 }//function restore_options - 페이지 로드
 
 function optionReset()
@@ -149,7 +127,7 @@ function optionReset()
     var radiobox       = document.getElementsByName('blockTypeRadio');
     var badUserList    = $('.badUserList');
 
-    localStorage['aggrohuman'] = '';
+    delete localStorage['aggrohuman'];
     localStorage['blockType']  = 0;
     localStorage['noteCount']  = null;
 
@@ -211,7 +189,7 @@ function addCell(date, name, settingType, cellNumber)
 {
 	var settingTypeStr;
 	
-	switch(settingType) {
+	switch(parseInt(settingType)) {
 		case 0:
 			settingTypeStr = "설정없음";
 			break;
@@ -225,8 +203,8 @@ function addCell(date, name, settingType, cellNumber)
 			settingTypeStr = "줄 색칠";
 			break;
 	}
-  return '<li class="badUserCell">'   +
-  		 '<div class="cellState">' +
+  return '<li>'   +
+  			 '<div class="cellState">' +
          '<p class="date">' + date + '</p>' +
          '<p class="userState">' + settingTypeStr + '</p>' +
          '</div>' +
@@ -248,7 +226,7 @@ function deleteCell(data)
     if(i!=deleteCellNumber){
       var aggroUserName = aggrohumanList[i].name;
       var date          = aggrohumanList[i].addDate;
-      var settingType	= aggrohumanList[i].settingType;
+      var settingType		= aggrohumanList[i].settingType;
       tempArray.push(aggrohumanList[i]);
       badUserList[0].innerHTML  += addCell(date, aggroUserName, settingType, tempArray.length-1);
     }
