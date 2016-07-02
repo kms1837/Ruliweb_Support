@@ -11,13 +11,16 @@
 	
 	<div class="choiceSetting">
 		<p class="choiceUserName">선택해주세요</p>
-		<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked> 설정하지 않음</input></a>
-		<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1> 글 제거</input></a>
-		<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2> 글 가리기(beta)</input></a>
-		<!-- <a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 메모 표시</input></a> -->
-		<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=4> 줄 색칠
-			<input type="color" id="blockColor" value="#FFFFFF"/>
-		</input></a>
+		<div class="blockGroup hidden">
+			<input id="userID" type="text"></input>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked> 설정하지 않음</input></a>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1> 글 제거</input></a>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2> 글 가리기(beta)</input></a>
+			<!-- <a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 메모 표시</input></a> -->
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 줄 색칠
+				<input type="color" id="blockColor" value="#FFFFFF"/>
+			</input></a>	
+		</div>
 	</div>
 	
 	<div id="log">Log ^ㅅ^</div>

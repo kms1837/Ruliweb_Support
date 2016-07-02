@@ -1,7 +1,46 @@
 var nowMenuNumber; //현재 선택된 메뉴
-var nowChoiceUser; //현재 선택된 유저
 
-window.onload = function(){
+$(function() {
+	$(document).on('click', '#addBadUser', addBadUser);
+	$(document).on('click', '.choiceSetting input[type="radio"]', function(data) {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+		
+		aggrohuman[userid].settingType = data.target.value;
+		save_json(aggrohuman);
+		
+		var setType = settingToStrConvert(parseInt(data.target.value));
+		
+		$('.select .userState').text(setType);
+		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
+	});
+	
+	$(document).on('keyup', '.choiceSetting #userID', function(data) {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+		var inID = data.target.value;
+		data.target.value = inID.replace(/[^0-9]/, "");
+		
+		aggrohuman[userid].ruliwebID = data.target.value;
+		
+		save_json(aggrohuman);
+	});
+	
+	$(document).on('change', '.choiceSetting #userID', function() {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+		
+		$('.select .userID').text(aggrohuman[userid].ruliwebID);
+		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
+	});
+	
+});
+
+function save_json(jsonData) {
+	localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":jsonData});
+}
+
+window.onload = function() {
 	var menuList = $("#left_menu li");
 	nowMenuNumber = 0;
 	
@@ -20,11 +59,12 @@ window.onload = function(){
 function userOptionsAllChange()
 {
 	var allSwitch = confirm("정말 일괄로 적용하겠습니까?");
+	
 	if(allSwitch){
-		var aggrohuman  	= JSON.parse(localStorage['aggrohuman']).userCellInfo;
-		var noteCount  	 	= document.getElementById('noteCount');
+		var aggrohuman  		= JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var noteCount  	 		= document.getElementById('noteCount');
 		var blockTypeCheck 	= document.getElementsByName('blockTypeRadio');
-		var blockColor		= document.getElementById('blockColor');
+		var blockColor			= document.getElementById('blockColor');
 		var blockTypeValue;
 
 		for(var i=0; i<blockTypeCheck.length; i++) {
@@ -37,10 +77,12 @@ function userOptionsAllChange()
 		
 		localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":aggrohuman});
 		localStorage["blockType"]  = blockTypeValue;
-		localStorage["noteCount"]  = parseInt(noteCount);
 		localStorage["blockColor"] = blockColor.value;
 	}
 	
+	$('.badUserList').html('');
+	
+	restore_options();
 	logPrint('#005CFF', '일괄처리 완료');
 }//function restore_options - 옵션 저장
 
@@ -48,10 +90,19 @@ function userChoice(cellObj, userNumber)
 {
 	var aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 	var radiobox	= document.getElementsByName('blockTypeRadio');
+	
+	var blockgroup = $('.blockGroup');
+	blockgroup.removeClass();
+	blockgroup.addClass('blockGroup');
+	
+	$('#userID')[0].value = '';
+	
 	$('.select').removeClass();
 	$(cellObj).addClass('select');
 	$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
-  radiobox[aggrohuman[userNumber].settingType].checked = true;
+	$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
+	var settingType = aggrohuman[userNumber].settingType;
+  radiobox[settingType].checked = true;
 }
 
 function changeMenu(menuNumber)
@@ -73,7 +124,6 @@ function changeMenu(menuNumber)
 			
 			switch(menuNumber){
 				case 1:
-					$(document).on('click', '#addBadUser', addBadUser);
 					//document.querySelector().addEventListener('click', addBadUser);
 					document.querySelector('#save').addEventListener('click', userOptionsAllChange);
 					document.querySelector('#reset').addEventListener('click', optionReset);
@@ -96,7 +146,6 @@ function restore_options()
 {
 	var aggrohuman = localStorage['aggrohuman']; //어그로 목록
 	var blockType  = localStorage['blockType'];  //어그로 차단 타입(0-미작동, 1-글제거, 2-이름표시, 3-색칠)
-	var noteCount  = localStorage['noteCount'];  //머였더라 ㄷㄷ;
 	var blockColor = localStorage['blockColor'];
 	
 	//$('#log')[0].innerHTML = '';
@@ -107,7 +156,7 @@ function restore_options()
 		var aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 
 		for(var i=0; i<aggrohuman.length; i++){
-			badUserList[0].innerHTML += addCell(aggrohuman[i].addDate, aggrohuman[i].name, aggrohuman[i].settingType, i);
+			badUserList[0].innerHTML += addCell(i, aggrohuman[i].addDate, aggrohuman[i].name, aggrohuman[i].ruliwebID, aggrohuman[i].settingType, i);
 		}
 	
 		$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
@@ -143,15 +192,17 @@ function addBadUser()
   var aggroUserNameTextBox = document.getElementById('aggrohuman');
   var aggroUserName        = aggroUserNameTextBox.value;
   var badUserList          = $('.badUserList');
-
-  if(aggroUserName != ''){
+  
+  if(aggroUserName != '') {
     if(localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null){
-      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, settingType: 0, settingColor: '#fff'}]});
-      badUserList[0].innerHTML  += addCell(getDate(), aggroUserName, 0, 0);
+      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', settingType: 0, settingColor: '#fff'}]});
+      badUserList[0].innerHTML  += addCell(0, getDate(), aggroUserName, '', 0, 0);
       logPrint('#005CFF', '어그로 유저 추가');
-    }else{
+      // 최초 추가
+      
+    } else {
+    	var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
       var addSwitch      = true;
-      var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
       var aggrohumanList = aggrohumanJson.userCellInfo;
 
       for(var i=0; i<aggrohumanList.length; i++){
@@ -162,9 +213,9 @@ function addBadUser()
       }//for - 중복체크
 
       if(addSwitch){
-        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, settingType: 0, settingColor: '#fff'});
+        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', settingType: 0, settingColor: '#fff'});
         localStorage['aggrohuman'] = JSON.stringify(aggrohumanJson);
-        badUserList[0].innerHTML  += addCell(getDate(), aggroUserName, 0, aggrohumanList.length-1);
+        badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1, getDate(), aggroUserName, '', 0, aggrohumanList.length-1);
         logPrint('#005CFF', '어그로 유저 추가');
       }else{
         logPrint('red', '리스트에 이미 존재함');
@@ -172,7 +223,7 @@ function addBadUser()
     }
     $('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
     aggroUserNameTextBox.value = '';
-  }else{
+  } else {
     logPrint('red', '이름이 비어있음');
   }
 
@@ -185,11 +236,10 @@ function logPrint(color, text)
   log.style.color = color;
 }//function logPrint - 페이지 로그 출력
 
-function addCell(date, name, settingType, cellNumber)
-{
+function settingToStrConvert(settingType) {
 	var settingTypeStr;
 	
-	switch(parseInt(settingType)) {
+	switch(settingType) {
 		case 0:
 			settingTypeStr = "설정없음";
 			break;
@@ -203,12 +253,23 @@ function addCell(date, name, settingType, cellNumber)
 			settingTypeStr = "줄 색칠";
 			break;
 	}
-  return '<li>'   +
+	
+	return settingTypeStr;
+}
+
+function addCell(id, date, name, ruliwebID, settingType, cellNumber)
+{
+	var settingTypeStr = settingToStrConvert(parseInt(settingType));
+	
+  return '<li userid=' + id + '>'   +
   			 '<div class="cellState">' +
          '<p class="date">' + date + '</p>' +
          '<p class="userState">' + settingTypeStr + '</p>' +
          '</div>' +
-         '<p class="badUserName">'     + name + '</p>' +
+         '<div class="badUserName">' +
+         '<p class="userName">' + name + '</p>' +
+         '<p class="userID">' + ruliwebID + '</p>' +
+         '</div>' +
          '<button class="deleteCellBtn" value="'+ cellNumber +'">삭제</button>' +
          '</li>';
 }//function addCell - 리스트 셀 형식
@@ -227,8 +288,9 @@ function deleteCell(data)
       var aggroUserName = aggrohumanList[i].name;
       var date          = aggrohumanList[i].addDate;
       var settingType		= aggrohumanList[i].settingType;
+      var ruliwebID			= aggrohumanList[i].ruliwebID;
       tempArray.push(aggrohumanList[i]);
-      badUserList[0].innerHTML  += addCell(date, aggroUserName, settingType, tempArray.length-1);
+      badUserList[0].innerHTML  += addCell(i, date, aggroUserName, ruliwebID, settingType, tempArray.length-1);
     }
   }
 

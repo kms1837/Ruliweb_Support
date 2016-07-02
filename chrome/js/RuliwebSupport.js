@@ -1,36 +1,7 @@
 $(document).ready(function()
 {
-	/*
-	chrome.alarms.onAlarm.addListener(function(alarm) {
-        appendToLog('예비!!');
-     });
-	*/
 	runChecking();
 });
-
-window.onload = function()
-{
-/*
-	var searchTag;
-	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
-	var getTable	 = getCenterTag.getElementsByTagName('table');
-	var boardTable	 = getClass(getTable, 'tbl tbl_list_comm');
-
-	searchTag = getClass(getTable, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
-	searchTag = searchTag[0].getElementsByTagName('tr');
-	var temptd 			= searchTag[0].getElementsByTagName('td');
-	var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
-	
-	for(var i=0;i<searchTag.length;i++) {
-		var temptd 			= searchTag[i].getElementsByTagName('td');
-		var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
-		$(getWriterName[0]).trigger('click');
-		//console.log(getWriterName[0]);
-		//.attributes.onclick;
-	}
-*/
-
-}
 
 function runChecking()
 {

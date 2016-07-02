@@ -15,8 +15,8 @@
 #top_menu {
 	position: fixed;
 	background-color: #737373;
-	border: 2px solid #5A5858;
-	padding: 10px;
+	border: 5px solid #5A5858;
+	padding: 10px 0;
 	border-radius: 5px;
 	top: -5px;
 	z-index: 5;
@@ -42,11 +42,14 @@
 #aggrohuman{width:195px; height:22px;}
 .block a{ display: block; }
 .badUserOption { margin: 0 auto; width: 600px; height: 320px; padding-left: 32px; }
-.badUserList, .choiceSetting { display:inline-block; width: 300px; height: 320px; border: 5px solid #C90000; overflow:overlay; margin:0; padding: 0;}
+.badUserList, .choiceSetting { display:inline-block; width: 300px; height: 320px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .userSetting   { display: inline-block; width: 250px; }
-.badUserList li, .selectedUser { float:left; padding: 8px; border-bottom: 1px solid #ccc; width: 285px;}
+.badUserList li, .selectedUser { float:left; padding: 8px; border-bottom: 1px solid #ccc;}
 .badUserList li p, .selectedUser p { margin:0;}
 .badUserName{width: 135px; overflow: auto; float: left;}
+.badUserName .userName {font-size: 18px;}
+.badUserName .userID {font-size: 9px;}
+.badUserName .userName, .badUserName .userID {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .badUserList li .badUserName, .selectedUser .badUserName{font-size: 18pt; margin-left: 10px;}
 .badUserList li .date, .selectedUser .date{font-size: 10pt;}
 .badUserList li button, .selectedUser button{float:right; margin-left: 9px;}
@@ -74,6 +77,8 @@
 	z-index: 2;
 }
 
+.option_btns {text-align: center;}
+
 .block{ margin: 10px auto; background-color: #C90000; width: 200px; padding: 15px; border-radius: 20px;}
 
 .title {font-family: "맑은 고딕"; font-size: 35pt; text-align: center;}
@@ -85,4 +90,11 @@
 .choiceBadUserOption{ padding-left: 10px; }
 .choiceUserName { text-align: center; font-size: 20px; }
 .selectedUser{background-color: #ccc;}
+
+.blockGroup.hidden {
+    display: none;
+}
+
+.blockGroup { margin: 0 auto; width: 150px;}
+.blockGroup #userID {text-align: center; width:100%;}
 
