@@ -1,3 +1,9 @@
+
+/*var testdata = '{"userCellInfo":[{"addDate":"2016/07/02","name":"smile","ruliwebID":"","settingType":"3","settingColor":"#fff"},{"addDate":"2016/07/02","name":"루리","ruliwebID":"","settingType":0,"settingColor":"#fff"}]}';
+var response = testdata;
+테스트 데이터
+*/
+
 $(document).ready(function()
 {
 	runChecking();
@@ -5,28 +11,27 @@ $(document).ready(function()
 
 function runChecking()
 {
-	var pageURL 		= location.href;
+	var pageURL 		= window.location.href;
 	var pageUrlElement  = pageURL.split('/');
 	var rootPageStatuse = pageURL.split('.')[0].substr(7);
 	var pageStatuse 	= pageUrlElement[3];
-	var pageStatuseType	= pageUrlElement[pageUrlElement.length-1].substr(0, 4);
+	var pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 
 	chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
 		var blockType 		= response.data.blockType;
-		var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+		var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		
-		if(blockType != 0 && aggroHumanList!='') {
-			if(pageStatuse == 'gaia') {
-				BoardTableCheck(response);
-				if(pageStatuseType == 'read') BoardCommentCheck(response);	
-				
-			}else if(pageStatuse == 'news'){
+		if(blockType != 0 && checkUserList!='') {
+			if(pageStatuse == 'news'){
 				BoardCommentCheck(response);
 				
 			}else if(rootPageStatuse == 'mypi'){
 				if(pageStatuseType == 'mypi')	mypiCheck(response);
 				else					  		mypiMainCheck(response);
 				
+			} else {
+				BoardTableCheck(response);
+				if(pageStatuseType == 'read') BoardCommentCheck(response);
 			}
 		}
 	});
@@ -34,9 +39,7 @@ function runChecking()
 
 function mypiMainCheck(response)
 {
-	var blockType 		= response.data.blockType;
-	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-	var blockColor		= response.data.blockColor;
+	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 	
 	var mypiMainDocument = $('.m_recently').find('tr');
 	var mainTdUserName;
@@ -50,8 +53,8 @@ function mypiMainCheck(response)
 		mainTdUserName 	= mainTdElement[1];
 		mainTdUserId 	= mainTdElement.find('a')[0].href.split('&')[1].substr(3);
 		
-		for(var y=0; y<aggroHumanList.length; y++) {
-			if(mainTdUserName.outerText == aggroHumanList[y].name || mainTdUserId == 'asd') {
+		for(var y=0; y<checkUserList.length; y++) {
+			if(mainTdUserName.outerText == checkUserList[y].name || mainTdUserId == 'asd') {
 				checkCount++;
 				switch(blockType){
 					case '1': //글 제거
@@ -75,9 +78,7 @@ function mypiMainCheck(response)
 
 function mypiCheck(response)
 {
-	var blockType 		= response.data.blockType;
-	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-	var blockColor		= response.data.blockColor;
+	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 	
 	var commentDocument = $('.mypiReply').find('div');
 	var commentUserClass;
@@ -90,8 +91,8 @@ function mypiCheck(response)
 		commentUserName  = commentUserClass.find('b')[0];
 		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
 		
-		for(var y=0; y<aggroHumanList.length; y++) {
-			if(commentUserName.outerText == aggroHumanList[y].name || commentUserId == 'asd'){
+		for(var y=0; y<checkUserList.length; y++) {
+			if(commentUserName.outerText == checkUserList[y].name || commentUserId == 'asd'){
 				checkCount++;
 				switch(blockType){
 					case '1': //글 제거
@@ -115,99 +116,66 @@ function mypiCheck(response)
 	}
 }//마이피 체크
 
-function BoardCommentCheck(response) //blockType, aggroHumanList
+function BoardCommentCheck(response) //blockType, checkUserList
 {
-	var blockType 		= response.data.blockType;
-	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-	var blockColor		= response.data.blockColor;
+	var checkUserList   = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
 	
-	var commentDocument = $('#commentFrame')[0].contentDocument;
-	var commentTable 	= $(commentDocument).find('#commentTable')[0];
-	commentTable = $(commentTable).find('tbody')[0];
-	var commentTableCell = $(commentTable).find('tr');
-	
-	$('#commentFrame').bind("load", runChecking);
-	
-	var checkCount = 0;
-	
-	for(var i=0; i<commentTableCell.length-1; i++) {
-		if(commentTableCell[i].className != 'reply hide') {
-			var selectCellName  = $(commentTableCell[i]).find('.nick_name')[0];
-			selectCellName 		= $(selectCellName).find('.tit_name')[0];
-			for(var y=0; y<aggroHumanList.length; y++) {
-				if(selectCellName.outerText == aggroHumanList[y].name) {
-					checkCount++;
-					switch(blockType){
-						case '1': //글 제거
-							commentTableCell[i].style.display = 'none';
-							break;
-						case '2': //글 가리기
-							hideTd(commentTableCell[i].getElementsByTagName('td'));
-							break;
-						case '3':
-							selectCellName.innerHTML += '(어글러)';
-							break;
-						case '4':
-							changeTdColor(commentTableCell[i].getElementsByTagName('td'), blockColor);
-							break;
-					}
+	$(commentTable).each(function(index, object){
+		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
+		var writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
+		var subject = object;
+		
+		writerID = writerID.substr(1, writerID.length-2);
+		
+		$(checkUserList).each(function(index, object){
+			if(writerName === object.name || writerID === object.ruliwebID) {
+				switch(parseInt(object.settingType)){
+					case 1: // 글 제거
+						$(subject).css('display', 'none');
+						break;
+					case 2: // 글 가리기
+						hideTd($(subject).find('td'));
+						break;
+					case 3:
+						changeTdColor($(subject).find('td'), object.settingColor);
+						break;
+					case 4:
+						$(object).find('.writer a').text('어그로');
+						break;
 				}
-			}//for - 어글러 목록
-		}//if - 'reply hide' 웬지모르게 껴있어서 처리
-	}//for - 댓글 테이블 셀
-	//commentTableCell.length에서 -1은 tempRow라는게 마지막에 붙어서 빼줌
-	
-	if(checkCount > 0) displayCheckCount(commentTable, checkCount);
-
+			}
+		});
+	});
 }//function BoardCommentCheck - 댓글 어그로 체크
 
 function BoardTableCheck(response)
 { 
-	console.log("동작중");
-	var blockType 		= response.data.blockType;
-	var aggroHumanList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-	var blockColor		= response.data.blockColor;
+	var checkUserList = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var boardTable = $('.board_list_table tbody tr');
 	
-	var searchTag;
-	var getCenterTag = document.getElementById('mCenter'); // 센터 문서 객체 가져옴
-	var getTable 	 = getCenterTag.getElementsByTagName('table');
-	var boardTable	 = getClass(getTable, 'tbl tbl_list_comm');
-	
-	searchTag = getClass(getTable, 'tbl tbl_list_comm').getElementsByTagName('tbody'); //tbl tbl_list_comm 테이블에서 tbody를 가져옴
-	searchTag = searchTag[0].getElementsByTagName('tr');
-	
-	var checkCount = 0;
-	
-	if(searchTag[0].className != 'none') {
-		for(var i=0;i<searchTag.length;i++) {
-			var temptd 			= searchTag[i].getElementsByTagName('td');
-			var getWriterName 	= getClass(temptd, 'writer').getElementsByTagName('a');
-			
-			for(var y=0; y<aggroHumanList.length; y++) {
-				if(getWriterName[0].outerText==aggroHumanList[y].name){
-					checkCount++;
-					
-					switch(blockType){
-						case '1': // 글 제거
-							searchTag[i].style.display = 'none';
-							break;
-						case '2': // 글 가리기
-							hideTd(searchTag[i].getElementsByTagName('td'));
-							break;
-						case '3':
-							getWriterName[0].innerHTML += '(어글러)';
-							break;
-						case '4':
-							changeTdColor(searchTag[i].getElementsByTagName('td'), blockColor);
-							break;
-					}
+	$(boardTable).each(function(index, object){
+		var writerName = $(object).find('.writer a').text();
+		var subject = object;
+		$(checkUserList).each(function(index, object){
+			if(writerName === object.name) {
+				switch(parseInt(object.settingType)){
+					case 1: // 글 제거
+						$(subject).css('display', 'none');
+						break;
+					case 2: // 글 가리기
+						hideTd($(subject).find('td'));
+						break;
+					case 3:
+						changeTdColor($(subject).find('td'), object.settingColor);
+						break;
+					case 4:
+						$(object).find('.writer a').text('어그로');
+						break;
 				}
-			}//for - 어글러 목록
-		}//for - 어글러 추출및 블럭
-		
-		if(checkCount > 0) displayCheckCount(boardTable, checkCount);	
-	}//if - 게시물이 없을시
-	
+			}
+		});
+	});
 }//function BoadtTableCheck - 게시판 어그로 체크
 
 function displayCheckCount(inputTable, inputCount)
