@@ -37,50 +37,58 @@ function runChecking()
 	});
 }
 
+function userNodeCheck(subject, object, userInfo)
+{
+	if(userInfo.writerName === object.name || userInfo.writerID === object.ruliwebID) {
+		switch(parseInt(object.settingType)){
+			case 1: // 글 제거
+				$(subject).css('display', 'none');
+				break;
+			case 2: // 글 가리기
+				hideTd($(subject).find('td'));
+				break;
+			case 3:
+				changeTdColor($(subject).find('td'), object.settingColor);
+				break;
+			case 4:
+				$(object).find('.writer a').text('어그로');
+				break;
+		}
+		return true;
+	}
+	
+	return false;
+}
+
 function mypiMainCheck(response)
 {
 	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 	
-	var mypiMainDocument = $('.m_recently').find('tr');
-	var mainTdUserName;
-	var mainTdUserId;
-	var mainTdElement;
-	
-	var checkCount = 0;
-	
-	for(var i=0; i<mypiMainDocument.length;i ++) {
-		mainTdElement 	= $(mypiMainDocument[i]).find('td'); 
-		mainTdUserName 	= mainTdElement[1];
-		mainTdUserId 	= mainTdElement.find('a')[0].href.split('&')[1].substr(3);
+	var mypiMainTable = $('.m_recently tbody tr');
+	$(mypiMainTable).each(function(index, object) {
+		var subject = object;
+		var userTd  = $(object).find('td');
+		var writerName  = userTd.eq(1).text();
+		var writerID	= $(object).find('a')[0].href;
 		
-		for(var y=0; y<checkUserList.length; y++) {
-			if(mainTdUserName.outerText == checkUserList[y].name || mainTdUserId == 'asd') {
-				checkCount++;
-				switch(blockType){
-					case '1': //글 제거
-						mypiMainDocument[i].style.display = 'none';
-						break;
-					case '2': //글 가리기
-						mainTdElement[0].style.fontSize = '0px';
-						mainTdElement[1].style.fontSize = '0px';
-						break;
-					case '3':
-						mainTdUserName.innerHTML += '(어글러)';
-						break;
-					case '4':
-						mypiMainDocument[i].style.backgroundColor = blockColor;
-						break;
-				}
+		writerID = convertID(writerID, '&');
+		
+		$(checkUserList).each(function(index, object){
+			var userInfo = {
+				writerName  : writerName,
+				writerID	: writerID
 			}
-		}
-	}
+			var flag = userNodeCheck(subject, object, userInfo);
+			if(flag) return;
+		});
+	});
 }//마이피 메인
 
 function mypiCheck(response)
 {
 	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 	
-	var commentDocument = $('.mypiReply').find('div');
+	var commentDocument = $('#mCenter tbody .mypiReply').find('div');
 	var commentUserClass;
 	var commentUserName;
 	var commentUserId;
@@ -92,9 +100,10 @@ function mypiCheck(response)
 		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
 		
 		for(var y=0; y<checkUserList.length; y++) {
-			if(commentUserName.outerText == checkUserList[y].name || commentUserId == 'asd'){
+			var checkUser = checkUserList[y];
+			if(commentUserName.outerText == checkUser.name || commentUserId == checkUser.ruliwebID) {
 				checkCount++;
-				switch(blockType){
+				switch(parseInt(checkUser.settingType)){
 					case '1': //글 제거
 						commentDocument[i].style.display = 'none';
 						commentDocument[i+1].style.display = 'none';
@@ -104,14 +113,15 @@ function mypiCheck(response)
 						commentDocument[i+1].style.fontSize = '0px';
 						break;
 					case '3':
-						commentUserName.innerHTML += '(어글러)';
+						commentDocument[i].style.backgroundColor 	= checkUser.settingColor;
+						commentDocument[i+1].style.backgroundColor  = checkUser.settingColor;
 						break;
 					case '4':
-						commentDocument[i].style.backgroundColor 	= blockColor;
-						commentDocument[i+1].style.backgroundColor  = blockColor;
+						commentUserName.innerHTML += '(어글러)';
 						break;
 				}
 			}
+			return;
 		}
 	}
 }//마이피 체크
@@ -121,7 +131,7 @@ function BoardCommentCheck(response) //blockType, checkUserList
 	var checkUserList   = JSON.parse(response.data.aggrohuman).userCellInfo;
 	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
 	
-	$(commentTable).each(function(index, object){
+	$(commentTable).each(function(index, object) {
 		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
 		var writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
 		var subject = object;
@@ -129,22 +139,12 @@ function BoardCommentCheck(response) //blockType, checkUserList
 		writerID = writerID.substr(1, writerID.length-2);
 		
 		$(checkUserList).each(function(index, object){
-			if(writerName === object.name || writerID === object.ruliwebID) {
-				switch(parseInt(object.settingType)){
-					case 1: // 글 제거
-						$(subject).css('display', 'none');
-						break;
-					case 2: // 글 가리기
-						hideTd($(subject).find('td'));
-						break;
-					case 3:
-						changeTdColor($(subject).find('td'), object.settingColor);
-						break;
-					case 4:
-						$(object).find('.writer a').text('어그로');
-						break;
-				}
+			var userInfo = {
+				writerName  : writerName,
+				writerID	: writerID
 			}
+			var flag = userNodeCheck(subject, object, userInfo);
+			if(flag) return;
 		});
 	});
 }//function BoardCommentCheck - 댓글 어그로 체크
@@ -153,30 +153,45 @@ function BoardTableCheck(response)
 { 
 	var checkUserList = JSON.parse(response.data.aggrohuman).userCellInfo;
 	var boardTable = $('.board_list_table tbody tr');
+	tableAddID(boardTable);
 	
-	$(boardTable).each(function(index, object){
-		var writerName = $(object).find('.writer a').text();
-		var subject = object;
+	$(boardTable).each(function(index, object) {
+		var writerName  = $(object).find('.writer a').text();
+		var writerID	= $(object).attr('itemID');
+		var subject 	= object;
 		$(checkUserList).each(function(index, object){
-			if(writerName === object.name) {
-				switch(parseInt(object.settingType)){
-					case 1: // 글 제거
-						$(subject).css('display', 'none');
-						break;
-					case 2: // 글 가리기
-						hideTd($(subject).find('td'));
-						break;
-					case 3:
-						changeTdColor($(subject).find('td'), object.settingColor);
-						break;
-					case 4:
-						$(object).find('.writer a').text('어그로');
-						break;
-				}
+			var userInfo = {
+				writerName  : writerName,
+				writerID	: writerID
 			}
+			var flag = userNodeCheck(subject, object, userInfo);
+			if(flag) return;
 		});
 	});
 }//function BoadtTableCheck - 게시판 어그로 체크
+
+function tableAddID(table)
+{
+	var boardTable = table;
+	
+	$(boardTable).each(function(index, object) {
+		$(object).find('.writer.text_over a').trigger('click');
+		var mypiLink = $(object).find('#context_menu li').eq(2).find('a')[0];
+		if(typeof mypiLink != 'undefined'){
+			var writerID = mypiLink.href;
+			writerID = convertID(writerID, '?');
+			$(object).attr('itemID', writerID);
+		}
+	});
+}
+
+function convertID(mypiLink, cutchar)
+{
+	var returnData = mypiLink;
+	returnData = returnData.split(cutchar)[1];
+	returnData = returnData.substr(4, returnData.length);
+	return returnData;
+}//마이피 링크에서 ID 추출
 
 function displayCheckCount(inputTable, inputCount)
 {
