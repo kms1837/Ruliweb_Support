@@ -34,6 +34,23 @@ $(function() {
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
 	});
 	
+	$(document).on('keyup', '.choiceSetting #userMemo', function(data) {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+		var inID = data.target.value;
+		
+		aggrohuman[userid].user_memo = data.target.value;
+		
+		save_json(aggrohuman);
+	});
+	
+	$(document).on('change', '.choiceSetting #userMemo', function() {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+		
+		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
+	});
+	
 });
 
 function save_json(jsonData) {
