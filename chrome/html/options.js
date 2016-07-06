@@ -118,6 +118,7 @@ function userChoice(cellObj, userNumber)
 	$(cellObj).addClass('select');
 	$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
 	$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
+	$('#userMemo')[0].value = aggrohuman[userNumber].user_memo;
 	var settingType = aggrohuman[userNumber].settingType;
   radiobox[settingType].checked = true;
 }
