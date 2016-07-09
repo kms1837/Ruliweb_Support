@@ -14,6 +14,16 @@ $(function() {
 		$('.select .userState').text(setType);
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 	});
+
+	$(document).on('change', '.choiceSetting input[type="color"]', function(data) {
+		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		var userid = $('.select').attr('userid');
+
+		aggrohuman[userid].settingColor = data.target.value;
+		save_json(aggrohuman);
+
+		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
+	});
 	
 	$(document).on('keyup', '.choiceSetting #userID', function(data) {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
@@ -90,11 +100,10 @@ function userOptionsAllChange()
 		
 		for(var i=0; i<aggrohuman.length; i++) {
 			aggrohuman[i].settingType = blockTypeValue;
+			aggrohuman[i].settingColor = blockColor.value;
 		}
 		
 		localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":aggrohuman});
-		localStorage["blockType"]  = blockTypeValue;
-		localStorage["blockColor"] = blockColor.value;
 	}
 	
 	$('.badUserList').html('');
@@ -118,6 +127,7 @@ function userChoice(cellObj, userNumber)
 	$(cellObj).addClass('select');
 	$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
 	$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
+	$('#blockColor')[0].value = aggrohuman[userNumber].settingColor;
 	$('#userMemo')[0].value = aggrohuman[userNumber].user_memo;
 	var settingType = aggrohuman[userNumber].settingType;
   radiobox[settingType].checked = true;
@@ -219,9 +229,9 @@ function addBadUser()
       // 최초 추가
       
     } else {
-    	var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
-      var addSwitch      = true;
-      var aggrohumanList = aggrohumanJson.userCellInfo;
+   		var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
+     	var addSwitch      = true;
+     	var aggrohumanList = aggrohumanJson.userCellInfo;
 
       for(var i=0; i<aggrohumanList.length; i++){
         if(aggrohumanList[i].name==aggroUserName){
