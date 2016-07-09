@@ -3,18 +3,18 @@
 
   "name"		: "Ruliweb Board Support",
   "description" : "당신의 루리웹 생활을 윤택하게 해드립니다.",
-  "version"		: "0.5",
+  "version"		: "0.6",
 
   "icons" : {
     "128" :"resource/128.png"
   },
 
   "permissions": [
-    "tabs", "activeTab", "alarms" 
+    "tabs", "activeTab", "alarms", "contextMenus" 
   ],
 
   "content_scripts" : [{
-    "matches" : ["http://*.ruliweb.daum.net/*"],
+    "matches" : ["http://*.ruliweb.com/*"],
     "js"      : ["js/jquery-2.1.4.js", "js/RuliwebSupport.js"],
     "CSS"     : ["RCSS.css"]
   }],
