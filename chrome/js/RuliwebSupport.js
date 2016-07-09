@@ -6,6 +6,17 @@ var response = testdata;
 
 $(document).ready(function()
 {
+	var searchUrbanDict = function(word){
+		
+	};
+	
+	chrome.contextMenus.create({
+		title: "Search in UrbanDictionary",
+		contexts:["selection"],  // ContextType
+		onclick: searchUrbanDict // A callback function
+	});
+	// https://developer.chrome.com/extensions/contextMenus
+	
 	runChecking();
 });
 

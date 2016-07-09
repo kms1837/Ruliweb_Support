@@ -213,7 +213,7 @@ function addBadUser()
   
   if(aggroUserName != '') {
     if(localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null){
-      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', settingType: 0, settingColor: '#fff'}]});
+      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#fff'}]});
       badUserList[0].innerHTML  += addCell(0, getDate(), aggroUserName, '', 0, 0);
       logPrint('#005CFF', '어그로 유저 추가');
       // 최초 추가
@@ -231,7 +231,7 @@ function addBadUser()
       }//for - 중복체크
 
       if(addSwitch){
-        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', settingType: 0, settingColor: '#fff'});
+        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#fff'});
         localStorage['aggrohuman'] = JSON.stringify(aggrohumanJson);
         badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1, getDate(), aggroUserName, '', 0, aggrohumanList.length-1);
         logPrint('#005CFF', '어그로 유저 추가');
