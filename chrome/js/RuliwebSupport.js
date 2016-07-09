@@ -6,17 +6,6 @@ var response = testdata;
 
 $(document).ready(function()
 {
-	var searchUrbanDict = function(word){
-		
-	};
-	
-	chrome.contextMenus.create({
-		title: "Search in UrbanDictionary",
-		contexts:["selection"],  // ContextType
-		onclick: searchUrbanDict // A callback function
-	});
-	// https://developer.chrome.com/extensions/contextMenus
-	
 	runChecking();
 });
 
@@ -32,9 +21,19 @@ function runChecking()
 		var blockType 		= response.data.blockType;
 		var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		
+		$.observer = new MutationObserver(function(mutations) {
+			var tartgetName = $(mutations[0].target).attr('class');
+			if(tartgetName === 'comment_view normal row') {
+	    		BoardCommentCheck(response);
+			}
+		});
+
+		var observerConfig = { childList: true};
+					
 		if(blockType != 0 && checkUserList!='') {
-			if(pageStatuse == 'news'){
+			if(pageStatuse == 'news') {
 				BoardCommentCheck(response);
+				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 				
 			}else if(rootPageStatuse == 'mypi'){
 				if(pageStatuseType == 'mypi')	mypiCheck(response);
@@ -42,7 +41,10 @@ function runChecking()
 				
 			} else {
 				BoardTableCheck(response);
-				if(pageStatuseType == 'read') BoardCommentCheck(response);
+				if(pageStatuseType == 'read') {
+					BoardCommentCheck(response);
+					$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
+				}
 			}
 		}
 	});
