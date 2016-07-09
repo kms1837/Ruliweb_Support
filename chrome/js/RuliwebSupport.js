@@ -186,13 +186,12 @@ function BoardTableCheck(response)
 function tableAddID(table)
 {
 	var boardTable = table;
-	
+
 	$(boardTable).each(function(index, object) {
-		$(object).find('.writer.text_over a').trigger('click');
-		var mypiLink = $(object).find('#context_menu li').eq(2).find('a')[0];
-		if(typeof mypiLink != 'undefined'){
-			var writerID = mypiLink.href;
-			writerID = convertID(writerID, '?');
+		var writerID = $(object).find('.writer.text_over a').attr('onclick');
+		if(typeof writerID === "string") {
+			writerID = writerID.split(',')[2];
+			writerID = writerID.split("'")[1];
 			$(object).attr('itemID', writerID);
 		}
 	});
