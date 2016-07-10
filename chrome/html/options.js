@@ -61,6 +61,11 @@ $(function() {
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 	});
 	
+	$(document).on('click', '.choiceBadUserOption ul.badUserList li', function(data) {
+		var userid = $(data.currentTarget).attr('userid');
+		userChoice(data.currentTarget, userid);
+	});
+	
 });
 
 function save_json(jsonData) {
@@ -152,19 +157,9 @@ function changeMenu(menuNumber)
 			
 			switch(menuNumber){
 				case 1:
-					//document.querySelector().addEventListener('click', addBadUser);
 					document.querySelector('#save').addEventListener('click', userOptionsAllChange);
 					document.querySelector('#reset').addEventListener('click', optionReset);
 					break;
-				case 2:
-					var userCellList = $("ul.badUserList li");
-					for(var i=0; i<userCellList.length; i++){
-						userCellList[i].addEventListener('click', function(cellObj, userNumber) {
-							return function() { userChoice(cellObj, userNumber) };
-						}(userCellList[i], i));
-					}
-					break;
-					
 			}//페이지 셋팅
 		});
 	}
@@ -223,7 +218,7 @@ function addBadUser()
   
   if(aggroUserName != '') {
     if(localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null){
-      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#fff'}]});
+      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#ffffff'}]});
       badUserList[0].innerHTML  += addCell(0, getDate(), aggroUserName, '', 0, 0);
       logPrint('#005CFF', '어그로 유저 추가');
       // 최초 추가
@@ -241,7 +236,7 @@ function addBadUser()
       }//for - 중복체크
 
       if(addSwitch){
-        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#fff'});
+        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#ffffff'});
         localStorage['aggrohuman'] = JSON.stringify(aggrohumanJson);
         badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1, getDate(), aggroUserName, '', 0, aggrohumanList.length-1);
         logPrint('#005CFF', '어그로 유저 추가');
