@@ -39,20 +39,20 @@
 }
 #left_menu #selectedMenuItem { position: relative; margin-left: -30px; border-right:none; background-color: #fff; z-index:3;}
 #log{color: #005CFF; text-align: center; margin: 10px auto;}
-#aggrohuman{width:195px; height:22px;}
+#aggrohuman{width:195px; height:22px; margin:5px 0;}
 .block a{ display: block; }
-.badUserOption { margin: 0 auto; width: 600px; height: 320px; padding-left: 32px; }
-.badUserList, .choiceSetting { display:inline-block; width: 300px; height: 320px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
+.badUserOption { margin: 0 auto; width: 600px; padding-left: 32px; }
+.badUserList, .choiceSetting { display:inline-block; width: 300px; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .userSetting   { display: inline-block; width: 250px; }
 .badUserList li, .selectedUser { float:left; padding: 8px; border-bottom: 1px solid #ccc;}
 .badUserList li p, .selectedUser p { margin:0;}
-.badUserName{width: 135px; overflow: auto; float: left;}
+.badUserName{width: 120px; overflow: auto; float: left;}
 .badUserName .userName {font-size: 18px;}
 .badUserName .userID {font-size: 9px;}
 .badUserName .userName, .badUserName .userID {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .badUserList li .badUserName, .selectedUser .badUserName{font-size: 18pt; margin-left: 10px;}
 .badUserList li .date, .selectedUser .date{font-size: 10pt;}
-.badUserList li button, .selectedUser button{float:right; margin-left: 9px;}
+.badUserList li button, .selectedUser button{float:right; margin-left: 9px; margin-top: -25px;}
 .badUserList .select {background-color: #FF7203;}
 .cellState { float: left; text-align: center; }
 .addUserMenu {display: block; margin: 50px 0; text-align: center;}
@@ -99,3 +99,28 @@
 .blockGroup #userID {text-align: center; width:100%;}
 .blockGroup #userMemo { width:100%; height: 100px; }
 
+.big button {
+	
+}
+
+button {
+    border: 2px solid #c3c3c3;
+    background: white;
+    padding: 5px;
+    min-width: 60px;
+    box-shadow: 2px 3px 0px 1.5px #c3c3c3;
+    border-radius: 3px;
+    color: #757575;
+}
+
+button:hover {
+	transition: all 0.5s;
+    box-shadow: inset 2px 2px 0px 1px #c3c3c3;
+    border: 2px solid #1fa2ff;
+}
+
+.big {
+    min-width: 100px;
+    min-height: 35px;
+    font-size: 14px;
+}

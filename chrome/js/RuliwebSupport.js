@@ -17,7 +17,7 @@ function runChecking()
 	var pageStatuse 	= pageUrlElement[3];
 	var pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 
-	chrome.extension.sendRequest({method: "getLocalStorage"}, function(response){
+	chrome.extension.sendRequest({method: "getLocalStorage", key: ''}, function(response){
 		var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		
 		$.observer = new MutationObserver(function(mutations) {
