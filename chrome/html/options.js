@@ -200,8 +200,6 @@ function optionReset()
     var badUserList    = $('.badUserList');
 
     delete localStorage['aggrohuman'];
-    localStorage['blockType']  = 0;
-    localStorage['noteCount']  = null;
 
     badUserList[0].innerHTML = '';
     radiobox[0].checked      = true;
@@ -337,5 +335,3 @@ function getDate()
 
   return ''+year+'/'+month+'/'+day;
 }//function getDate - 날짜값을 얻어옴
-
-//document.addEventListener('DOMContentLoaded', restore_options);

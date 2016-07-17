@@ -17,8 +17,7 @@ function runChecking()
 	var pageStatuse 	= pageUrlElement[3];
 	var pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 
-	chrome.extension.sendRequest({method: "getLocalStorage", key: "blockType"}, function(response){
-		var blockType 		= response.data.blockType;
+	chrome.extension.sendRequest({method: "getLocalStorage"}, function(response){
 		var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		
 		$.observer = new MutationObserver(function(mutations) {
@@ -30,7 +29,7 @@ function runChecking()
 
 		var observerConfig = { childList: true};
 					
-		if(blockType != 0 && checkUserList!='') {
+		if(checkUserList!='') {
 			if(pageStatuse == 'news') {
 				BoardCommentCheck(response);
 				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
