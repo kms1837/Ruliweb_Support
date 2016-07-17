@@ -52,6 +52,7 @@ function runChecking()
 
 function userNodeCheck(subject, user, userInfo)
 {
+	userInfo.writerName = trim(userInfo.writerName);
 	if(userInfo.writerName === user.name || userInfo.writerID === user.ruliwebID) {
 		switch(parseInt(user.settingType)){
 			case 1: // 글 제거
@@ -230,6 +231,11 @@ function displayCheckCount(inputTable, inputCount)
 							'text-align: right; border: 3px solid rgba(0, 152, 207, 0.53);"' +
 							'><p>' + inputCount + '개 차단완료</p></div>' + inputTable.innerHTML;
 	*/
+}
+
+function trim(str) 
+{
+	return str.replace(/(^\s*) | (\s*$)/gi, '');
 }
 
 function getClass(teg, name)
