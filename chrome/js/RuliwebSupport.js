@@ -14,33 +14,34 @@ function runChecking()
 	var pageURL 		= window.location.href;
 	var pageUrlElement  = pageURL.split('/');
 	var rootPageStatuse = pageURL.split('.')[0].substr(7);
+	var endPointStatuse	= pageUrlElement[pageUrlElement.length-1];
 	var pageStatuse 	= pageUrlElement[3];
 	var pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 
-	chrome.extension.sendRequest({method: "getLocalStorage", key: ''}, function(response){
+	chrome.extension.sendRequest({method: "getLocalStorage", key: ''}, function(response) {
 		var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
 		
 		$.observer = new MutationObserver(function(mutations) {
 			var tartgetName = $(mutations[0].target).attr('class');
-			if(tartgetName === 'comment_view normal row') {
+			if (tartgetName === 'comment_view normal row') {
 	    		BoardCommentCheck(response);
 			}
 		});
 
 		var observerConfig = { childList: true};
 					
-		if(checkUserList!='') {
-			if(pageStatuse == 'news') {
+		if (checkUserList!='') {
+			if (pageStatuse === 'news' || endPointStatuse === 'review') {
 				BoardCommentCheck(response);
 				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 				
-			}else if(rootPageStatuse == 'mypi'){
+			} else if (rootPageStatuse === 'mypi') {
 				if(pageStatuse != '')	mypiCheck(response);
 				else					mypiMainCheck(response);
 				
 			} else {
 				BoardTableCheck(response);
-				if(pageStatuseType == 'read') {
+				if (pageStatuseType === 'read') {
 					BoardCommentCheck(response);
 					$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 				}
@@ -171,6 +172,9 @@ function BoardTableCheck(response)
 		var writerName  = $(object).find('.writer a').text();
 		var writerID	= $(object).attr('itemID');
 		var subject 	= object;
+		
+		writerName = writerName === '' ? $(object).find('.writer').text() : writerName;
+		
 		$(checkUserList).each(function(index, object){
 			var userInfo = {
 				writerName  : writerName,
@@ -230,7 +234,7 @@ function displayCheckCount(inputTable, inputCount)
 
 function getClass(teg, name)
 {
-	for(var i=0;i<teg.length;i++)if(teg[i].className == name) return teg[i];
+	for(var i=0;i<teg.length;i++) if(teg[i].className == name) return teg[i];
 	return false;
 }// 클래스 탐색
 

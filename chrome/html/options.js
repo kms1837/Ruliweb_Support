@@ -94,7 +94,6 @@ function userOptionsAllChange()
 	
 	if(allSwitch){
 		var aggrohuman  		= JSON.parse(localStorage['aggrohuman']).userCellInfo;
-		var noteCount  	 		= document.getElementById('noteCount');
 		var blockTypeCheck 	= document.getElementsByName('blockTypeRadio');
 		var blockColor			= document.getElementById('blockColor');
 		var blockTypeValue;
@@ -168,8 +167,6 @@ function changeMenu(menuNumber)
 function restore_options()
 {
 	var aggrohuman = localStorage['aggrohuman']; //어그로 목록
-	var blockType  = localStorage['blockType'];  //어그로 차단 타입(0-미작동, 1-글제거, 2-이름표시, 3-색칠)
-	var blockColor = localStorage['blockColor'];
 	
 	//$('#log')[0].innerHTML = '';
 	
@@ -183,11 +180,6 @@ function restore_options()
 		}
 	
 		$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
-	}
-
-	if(blockColor != undefined) {
-	  	var blockColorBox	= document.getElementById('blockColor');
-	  	blockColorBox.value	= blockColor;
 	}
 }//function restore_options - 페이지 로드
 
