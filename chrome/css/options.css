@@ -52,7 +52,7 @@
 .badUserName .userName, .badUserName .userID {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .badUserList li .badUserName, .selectedUser .badUserName{font-size: 18pt; margin-left: 10px;}
 .badUserList li .date, .selectedUser .date{font-size: 10pt;}
-.badUserList li button, .selectedUser button{float:right; margin-left: 9px; margin-top: -25px;}
+.badUserList li button, .selectedUser button{float:right; margin-left: 9px;}
 .badUserList .select {background-color: #FF7203;}
 .cellState { float: left; text-align: center; }
 .addUserMenu {display: block; margin: 50px 0; text-align: center;}
