@@ -44,7 +44,7 @@
 .badUserOption { margin: 0 auto; width: 600px; padding-left: 32px; }
 .badUserList, .choiceSetting { display:inline-block; width: 300px; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .userSetting   { display: inline-block; width: 250px; }
-.badUserList li, .selectedUser { float:left; padding: 8px; border-bottom: 1px solid #ccc;}
+.badUserList li, .selectedUser { float:left; padding: 7px; border-bottom: 1px solid #ccc;}
 .badUserList li p, .selectedUser p { margin:0;}
 .badUserName{width: 120px; overflow: auto; float: left;}
 .badUserName .userName {font-size: 18px;}
