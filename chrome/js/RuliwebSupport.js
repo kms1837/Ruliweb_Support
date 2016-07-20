@@ -163,6 +163,14 @@ function BoardCommentCheck(response) //blockType, checkUserList
 	});
 }//function BoardCommentCheck - 댓글 어그로 체크
 
+function contextMenu(response)
+{
+	var inUserName = $.trim($(response.target).text());
+	chrome.extension.sendMessage({userName: inUserName},
+		function(res) {
+	});
+}
+
 function BoardTableCheck(response)
 { 
 	var checkUserList = JSON.parse(response.data.aggrohuman).userCellInfo;
@@ -170,10 +178,11 @@ function BoardTableCheck(response)
 	tableAddID(boardTable);
 	
 	$(boardTable).each(function(index, object) {
+		var writerEle	= $(object).find('.writer');
 		var writerName  = $(object).find('.writer a').text();
 		var writerID	= $(object).attr('itemID');
 		var subject 	= object;
-		
+		$(writerEle).contextmenu(contextMenu);
 		writerName = writerName === '' ? $(object).find('.writer').text() : writerName;
 		
 		$(checkUserList).each(function(index, object){
