@@ -4,10 +4,29 @@ var response = testdata;
 테스트 데이터
 */
 
+var seleteUser;
+
 $(document).ready(function()
 {
-	runChecking();
+	init()
+	runChecking();	
 });
+
+function init() 
+{
+	$(document).mousedown(function(event) {
+		if (seleteUser != undefined) {
+			seleteUser.removeAttr('style');
+			seleteUser = undefined;
+		}
+		
+		if (event.button != 2 ) {
+			chrome.extension.sendMessage (
+				{type: "doc_click"}
+			);
+		}
+	});
+}
 
 function runChecking()
 {
@@ -166,7 +185,15 @@ function BoardCommentCheck(response) //blockType, checkUserList
 function contextMenu(response)
 {
 	var inUserName = $.trim($(response.target).text());
-	chrome.extension.sendMessage({userName: inUserName},
+	console.log(inUserName);
+	$(response.target).css('background-color', '#ccc');
+	$(response.target).css('color', '#fff');
+	seleteUser = $(response.target);
+	chrome.extension.sendMessage(
+		{
+			type: "adduser",
+			userName: inUserName
+		},
 		function(res) {
 	});
 }
@@ -178,13 +205,18 @@ function BoardTableCheck(response)
 	tableAddID(boardTable);
 	
 	$(boardTable).each(function(index, object) {
-		var writerEle	= $(object).find('.writer');
+		var writerEle 	= $(object).find('.writer');
 		var writerName  = $(object).find('.writer a').text();
 		var writerID	= $(object).attr('itemID');
 		var subject 	= object;
-		$(writerEle).contextmenu(contextMenu);
-		writerName = writerName === '' ? $(object).find('.writer').text() : writerName;
-		
+
+		if (writerName === '') {
+			writerName = $(object).find('.writer').text();
+			writerEle.contextmenu(contextMenu)
+		} else {
+			$(object).find('.writer a').contextmenu(contextMenu);
+		}
+
 		$(checkUserList).each(function(index, object){
 			var userInfo = {
 				writerName  : writerName,

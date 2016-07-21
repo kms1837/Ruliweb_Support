@@ -1,17 +1,31 @@
 var background = chrome.extension.getBackgroundPage();
 var userInfo;
+var contextFlag = false;
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if(request.userName != undefined) {
+		if(request.type === 'adduser') {
 			userInfo = request.userName;
-			chrome.contextMenus.create({
-				'id' : 'adduser',
-				'title': "유저추가",
+			var userForm = {
+				'title': '유저추가('+ userInfo +')',
+				'contexts':['page', 'selection', 'link', 'editable', 'image'],
 				onclick: addUser
-			});
+			};
+
+			if(contextFlag) {
+				chrome.contextMenus.update('adduser', userForm);
+			} else {
+				userForm['id'] = 'adduser';
+				chrome.contextMenus.create(userForm);
+			}
+
+			contextFlag = true;
 			//TODO
-			//chrome.contextMenus.remove('adduser');
+		} else {
+			if(contextFlag) {
+				chrome.contextMenus.remove('adduser');
+				contextFlag = false;
+			}
 		}
 });
 
@@ -35,13 +49,15 @@ function addUser (event) {
       		settingType: 0, 
       		settingColor: '#ffffff'}]
       	});
+      	alert('유저추가 완료');
   	} else {
 		var aggrohumanJson  = JSON.parse(localStorage['aggrohuman']);
 		var addSwitch 		= true;
 		var aggrohumanList  = aggrohumanJson.userCellInfo;
 
 		for (var i=0; i<aggrohumanList.length; i++) {
-			if (aggrohumanList[i].name === userInfo){
+			if (aggrohumanList[i].name === userInfo) {
+				alert('이미 유저가 존재합니다.');
 		  		addSwitch = false;
 		  		break;
 			}
@@ -57,11 +73,11 @@ function addUser (event) {
 				settingColor: '#ffffff'
 			});
 			localStorage['aggrohuman'] = JSON.stringify(aggrohumanJson);
+			alert('유저추가 완료');
 		}
   	}
+
 }
-
-
 
 function getDate()
 {
