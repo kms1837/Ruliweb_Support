@@ -171,6 +171,8 @@ function BoardCommentCheck(response) //blockType, checkUserList
 		
 		writerID = writerID.substr(1, writerID.length-2);
 		
+		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
+		
 		$(checkUserList).each(function(index, object){
 			var userInfo = {
 				writerName  : writerName,
@@ -185,10 +187,11 @@ function BoardCommentCheck(response) //blockType, checkUserList
 function contextMenu(response)
 {
 	var inUserName = $.trim($(response.target).text());
-	console.log(inUserName);
 	$(response.target).css('background-color', '#ccc');
 	$(response.target).css('color', '#fff');
+	
 	seleteUser = $(response.target);
+	
 	chrome.extension.sendMessage(
 		{
 			type: "adduser",
