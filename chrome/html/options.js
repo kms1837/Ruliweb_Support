@@ -69,7 +69,22 @@ $(function() {
 });
 
 function save_json(jsonData) {
-	localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":jsonData});
+	var perent = localStorage['aggrohuman'];
+	var userNameKeys = {};
+	var userIDKeys = {};
+	
+	$(jsonData).each(function(index, data) {
+		if(data.name) userNameKeys[data.name] = index;
+		if(data.ruliwebID) userIDKeys[data.ruliwebID] = index;
+	});
+	
+	localStorage['aggrohuman'] = JSON.stringify(
+		{
+			"userCellInfo": jsonData,
+			"userNameKeys": userNameKeys, 
+			"userIDKeys": userIDKeys
+		}
+	);
 }
 
 window.onload = function() {
@@ -103,11 +118,11 @@ function userOptionsAllChange()
 		}
 		
 		for(var i=0; i<aggrohuman.length; i++) {
-			aggrohuman[i].settingType = blockTypeValue;
+			aggrohuman[i].settingType  = blockTypeValue;
 			aggrohuman[i].settingColor = blockColor.value;
 		}
 		
-		localStorage['aggrohuman'] = JSON.stringify({"userCellInfo":aggrohuman});
+		save_json(aggrohuman);
 	}
 	
 	$('.badUserList').html('');
@@ -206,9 +221,18 @@ function addBadUser()
   var aggroUserName        = aggroUserNameTextBox.value;
   var badUserList          = $('.badUserList');
   
+  var defaultUserForm = {
+  	ruliwebID: '', 
+  	user_memo: '', 
+  	settingType: 0, 
+  	settingColor: '#ffffff'
+  };
+  
   if(aggroUserName != '') {
-    if(localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null){
-      localStorage['aggrohuman'] = JSON.stringify({"userCellInfo": [{addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#ffffff'}]});
+    if(localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
+    	defaultUserForm.addDate = getDate();
+    	defaultUserForm.name		= aggroUserName;
+      save_json([defaultUserForm]);
       badUserList[0].innerHTML  += addCell(0, getDate(), aggroUserName, '', 0, 0);
       logPrint('#005CFF', '어그로 유저 추가');
       // 최초 추가
@@ -226,8 +250,13 @@ function addBadUser()
       }//for - 중복체크
 
       if(addSwitch){
-        aggrohumanJson.userCellInfo.push({addDate: getDate(), name: aggroUserName, ruliwebID: '', user_memo: '', settingType: 0, settingColor: '#ffffff'});
-        localStorage['aggrohuman'] = JSON.stringify(aggrohumanJson);
+      	defaultUserForm.addDate = getDate();
+    		defaultUserForm.name		= aggroUserName;
+    		
+        aggrohumanJson.userCellInfo.push(defaultUserForm);
+        
+        save_json(aggrohumanJson.userCellInfo);
+        
         badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1, getDate(), aggroUserName, '', 0, aggrohumanList.length-1);
         logPrint('#005CFF', '어그로 유저 추가');
       }else{
@@ -310,7 +339,7 @@ function deleteCell(data)
   if(tempArray.length!=0)$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
 
   aggrohumanJson.userCellInfo = tempArray;
-  localStorage['aggrohuman']  = JSON.stringify(aggrohumanJson);
+  save_json(aggrohumanJson.userCellInfo);
 
   logPrint('#005CFF', '셀 삭제 완료');
 }

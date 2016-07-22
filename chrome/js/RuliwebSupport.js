@@ -69,10 +69,19 @@ function runChecking()
 	});
 }
 
-function userNodeCheck(subject, user, userInfo)
+function userNodeCheck(data, subject, userInfo)
 {
-	userInfo.writerName = $.trim(userInfo.writerName);
-	if(userInfo.writerName === user.name || userInfo.writerID === user.ruliwebID) {
+	var data = JSON.parse(data);
+	var userInfoList = data.userCellInfo;
+	
+	var writerName  = $.trim(userInfo.writerName);
+	var writerID	= userInfo.writerID;
+	var infoIndex	= data.userNameKeys[writerName] ?
+					  data.userNameKeys[writerName] :
+					  data.userIDKeys[writerID];
+	
+	if (infoIndex != undefined) {
+		var user = userInfoList[infoIndex];
 		switch(parseInt(user.settingType)){
 			case 1: // 글 제거
 				$(subject).css('display', 'none');
@@ -105,15 +114,12 @@ function mypiMainCheck(response)
 		var writerID	= $(object).find('a')[0].href;
 		
 		writerID = convertID(writerID, '&');
+		var userInfo = {
+			writerName  : writerName,
+			writerID	: writerID
+		}
 		
-		$(checkUserList).each(function(index, user){
-			var userInfo = {
-				writerName  : writerName,
-				writerID	: writerID
-			}
-			var flag = userNodeCheck(subject, user, userInfo);
-			if(flag) return;
-		});
+		userNodeCheck(response.data.aggrohuman, subject, userInfo);
 	});
 }//마이피 메인
 
@@ -161,7 +167,6 @@ function mypiCheck(response)
 
 function BoardCommentCheck(response) //blockType, checkUserList
 {
-	var checkUserList   = JSON.parse(response.data.aggrohuman).userCellInfo;
 	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
 	
 	$(commentTable).each(function(index, object) {
@@ -173,14 +178,12 @@ function BoardCommentCheck(response) //blockType, checkUserList
 		
 		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
 		
-		$(checkUserList).each(function(index, object){
-			var userInfo = {
-				writerName  : writerName,
-				writerID	: writerID
-			}
-			var flag = userNodeCheck(subject, object, userInfo);
-			if(flag) return;
-		});
+		var userInfo = {
+			writerName  : writerName,
+			writerID	: writerID
+		};
+		
+		userNodeCheck(response.data.aggrohuman, subject, userInfo);
 	});
 }//function BoardCommentCheck - 댓글 어그로 체크
 
@@ -203,7 +206,6 @@ function contextMenu(response)
 
 function BoardTableCheck(response)
 { 
-	var checkUserList = JSON.parse(response.data.aggrohuman).userCellInfo;
 	var boardTable = $('.board_list_table tbody tr');
 	tableAddID(boardTable);
 	
@@ -219,15 +221,13 @@ function BoardTableCheck(response)
 		} else {
 			$(object).find('.writer a').contextmenu(contextMenu);
 		}
-
-		$(checkUserList).each(function(index, object){
-			var userInfo = {
-				writerName  : writerName,
-				writerID	: writerID
-			}
-			var flag = userNodeCheck(subject, object, userInfo);
-			if(flag) return;
-		});
+		
+		var userInfo = {
+			writerName  : writerName,
+			writerID	: writerID
+		}
+		
+		userNodeCheck(response.data.aggrohuman, subject, userInfo);
 	});
 }//function BoadtTableCheck - 게시판 어그로 체크
 
