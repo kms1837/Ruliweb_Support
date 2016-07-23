@@ -12,7 +12,7 @@ ul {list-style: none;}
 
 .title {
     display: inline-block;
-    width: 80px;
+    width: 110px;
     padding-left: 10px;
     font-weight: bold;
     text-overflow: ellipsis;
@@ -45,6 +45,7 @@ ul {list-style: none;}
 
 #userCounter .logs .title {
 	border : none;
+	width : 70px;
 }
 
 #userCounter .logs {

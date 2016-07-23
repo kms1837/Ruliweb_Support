@@ -141,7 +141,7 @@ function mypiMainCheck(response)
 	});
 	
 	var countFrom = {
-		title : 'comment',
+		title : 'MypiMain',
 		count : count,
 		logs  : JSON.stringify(logs)
 	}
@@ -201,7 +201,7 @@ function mypiCheck(response)
 	}
 	
 	var countFrom = {
-		title : 'comment',
+		title : 'MypiComment',
 		count : count,
 		logs  : JSON.stringify(logs)
 	}
