@@ -17,6 +17,13 @@ function save_json(jsonData) {
 	localStorage['aggrohuman'] = JSON.stringify(dataFrom);
 }
 
+function logPrint(color, text)
+{
+	var log = $('#log')[0];
+	log.innerHTML   = text;
+	log.style.color = color;
+}//function logPrint - 페이지 로그 출력
+
 function getDate()
 {
   var date  = new Date();
