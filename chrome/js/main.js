@@ -4,15 +4,32 @@ var contextFlag = false;
 
 function messageProcess(request, sender, sendResponse)
 {
-	if (request.type === 'adduser') {
-		userInfo = request.userName;
+	switch (request.type) {
+		case 'context': 
+			context(request);
+			break;
+		case 'count': 
+			count(request);
+			break;
+		default:
+			break;
+	}
+}
+
+function count(inForm) {
+	
+}
+
+function context(inForm) {
+	if (inForm.key === 'adduser') {
+		userInfo = inForm.userName;
 		var userForm = {
 			'title': '유저추가('+ userInfo +')',
 			'contexts':['page', 'selection', 'link', 'editable', 'image'],
 			onclick: addUser
 		};
 
-		if(contextFlag) {
+		if (contextFlag) {
 			chrome.contextMenus.update('adduser', userForm);
 		} else {
 			userForm['id'] = 'adduser';
@@ -20,6 +37,7 @@ function messageProcess(request, sender, sendResponse)
 		}
 
 		contextFlag = true;
+		
 	} else {
 		if(contextFlag) {
 			chrome.contextMenus.remove('adduser');
@@ -30,10 +48,8 @@ function messageProcess(request, sender, sendResponse)
 
 function requestProcess(request, sender, sendResponse)
 {
-	if (request.method == "getLocalStorage"){
-		if(request.key == "noteCount") sendResponse({data: localStorage['noteCount']});
-		else sendResponse({data: localStorage});
-		//[request.key]
+	if (request.method == "getLocalStorage") {
+		sendResponse({data: localStorage});
 	} else {
 		sendResponse({});
 	}
@@ -76,40 +92,14 @@ function addUser (event) {
 			alert('유저추가 완료');
 		}
   	}
-
 }
 
-function save_json(jsonData) {
-	var perent = localStorage['aggrohuman'];
-	var userNameKeys = {};
-	var userIDKeys = {};
-	
-	$(jsonData).each(function(index, data) {
-		if(data.name) userNameKeys[data.name] = index;
-		if(data.ruliwebID) userIDKeys[data.ruliwebID] = index;
-	});
-	
-	localStorage['aggrohuman'] = JSON.stringify(
-		{
-			"userCellInfo": jsonData,
-			"userNameKeys": userNameKeys, 
-			"userIDKeys": userIDKeys
-		}
-	);
-}
-
-function getDate()
+function logPrint(color, text)
 {
-  var date  = new Date();
-  var year  = date.getFullYear();
-  var month = date.getMonth()+1;
-  var day   = date.getDate();
-
-  if(month <10 ) month = '0' + month;
-  if(day   <10 ) day   = '0' + day;
-
-  return ''+year+'/'+month+'/'+day;
-}//function getDate - 날짜값을 얻어옴
+	var log = $('#log')[0];
+	log.innerHTML   = text;
+	log.style.color = color;
+}//function logPrint - 페이지 로그 출력
 
 chrome.runtime.onMessage.addListener(messageProcess);
 chrome.extension.onRequest.addListener(requestProcess);

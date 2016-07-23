@@ -65,27 +65,7 @@ $(function() {
 		var userid = $(data.currentTarget).attr('userid');
 		userChoice(data.currentTarget, userid);
 	});
-	
 });
-
-function save_json(jsonData) {
-	var perent = localStorage['aggrohuman'];
-	var userNameKeys = {};
-	var userIDKeys = {};
-	
-	$(jsonData).each(function(index, data) {
-		if(data.name) userNameKeys[data.name] = index;
-		if(data.ruliwebID) userIDKeys[data.ruliwebID] = index;
-	});
-	
-	localStorage['aggrohuman'] = JSON.stringify(
-		{
-			"userCellInfo": jsonData,
-			"userNameKeys": userNameKeys, 
-			"userIDKeys": userIDKeys
-		}
-	);
-}
 
 window.onload = function() {
 	var menuList = $("#left_menu li");
@@ -344,16 +324,3 @@ function deleteCell(data)
 	
 	logPrint('#005CFF', '셀 삭제 완료');
 }
-
-function getDate()
-{
-	var date  = new Date();
-	var year  = date.getFullYear();
-	var month = date.getMonth()+1;
-	var day   = date.getDate();
-	
-	if(month <10 ) month = '0' + month;
-	if(day   <10 ) day   = '0' + day;
-	
-	return ''+year+'/'+month+'/'+day;
-}//function getDate - 날짜값을 얻어옴

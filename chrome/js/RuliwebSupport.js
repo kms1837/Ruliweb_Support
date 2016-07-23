@@ -21,9 +21,11 @@ function init()
 		}
 		
 		if (event.button != 2 ) {
-			chrome.extension.sendMessage (
-				{type: "doc_click"}
-			);
+			var messageFrom = {
+				type: "context",
+				key: "doc_click"
+			}
+			chrome.extension.sendMessage(messageFrom);
 		}
 	});
 }
@@ -105,6 +107,7 @@ function userNodeCheck(data, subject, userInfo)
 function mypiMainCheck(response)
 {
 	var mypiMainTable = $('.m_recently tbody tr');
+	var count = 0;
 	
 	$(mypiMainTable).each(function(index, object) {
 		var subject = object;
@@ -119,14 +122,24 @@ function mypiMainCheck(response)
 			writerID	: writerID
 		}
 		
-		userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		
+		count = countFlag ? count++ : count;
 	});
+	
+	var countFrom = {
+		key : 'mypiMain',
+		count : count
+	}
+	
+	displayCheckCount(countFrom);
 }//마이피 메인
 
 function mypiCheck(response)
 {
 	var data  = JSON.parse(response.data.aggrohuman);
 	var userInfoList = data.userCellInfo;
+	var count = 0;
 	
 	var commentDocument = $('#mCenter tbody .mypiReply').find('div');
 	var commentUserClass;
@@ -161,14 +174,22 @@ function mypiCheck(response)
 					commentUserName.innerHTML += '(어글러)';
 					break;
 			}
+			count++;
 		}
-		return;
 	}
+	
+	var countFrom = {
+		key : 'mypi',
+		count : count
+	}
+	
+	displayCheckCount(countFrom);
 }//마이피 체크
 
 function BoardCommentCheck(response) //blockType, checkUserList
 {
 	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
+	var count = 0;
 	
 	$(commentTable).each(function(index, object) {
 		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
@@ -184,30 +205,24 @@ function BoardCommentCheck(response) //blockType, checkUserList
 			writerID	: writerID
 		};
 		
-		userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		
+		count = countFlag ? count++ : count;
 	});
+	
+	var countFrom = {
+		key : 'comment',
+		count : count
+	}
+	
+	displayCheckCount(countFrom);
 }//function BoardCommentCheck - 댓글 어그로 체크
-
-function contextMenu(response)
-{
-	var inUserName = $.trim($(response.target).text());
-	$(response.target).css('background-color', '#ccc');
-	$(response.target).css('color', '#fff');
-	
-	seleteUser = $(response.target);
-	
-	chrome.extension.sendMessage(
-		{
-			type: "adduser",
-			userName: inUserName
-		},
-		function(res) {
-	});
-}
 
 function BoardTableCheck(response)
 { 
 	var boardTable = $('.board_list_table tbody tr');
+	var count = 0;
+	
 	tableAddID(boardTable);
 	
 	$(boardTable).each(function(index, object) {
@@ -228,9 +243,35 @@ function BoardTableCheck(response)
 			writerID	: writerID
 		}
 		
-		userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		
+		count = countFlag ? count++ : count;
 	});
+	
+	var countFrom = {
+		key : 'board',
+		count : count
+	}
+	
+	displayCheckCount(countFrom);
 }//function BoadtTableCheck - 게시판 어그로 체크
+
+function contextMenu(response)
+{
+	var inUserName = $.trim($(response.target).text());
+	$(response.target).css('background-color', '#ccc');
+	$(response.target).css('color', '#fff');
+	
+	seleteUser = $(response.target);
+	
+	var messageFrom = {
+		type: "context",
+		key: "adduser",
+		userName: inUserName
+	}
+			
+	chrome.extension.sendMessage(messageFrom);
+}
 
 function tableAddID(table)
 {
@@ -254,8 +295,16 @@ function convertID(mypiLink, cutchar)
 	return returnData;
 }//마이피 링크에서 ID 추출
 
-function displayCheckCount(inputTable, inputCount)
+function displayCheckCount(inputCountFrom)
 {
+	var messageFrom = {
+		type	: "count",
+		key 	: inputCountFrom.key,
+		count	: inputCountFrom.count
+	}
+	
+	chrome.extension.sendMessage(messageFrom);
+	
 	//issue - 답글작성 불가
 	
 	/*
