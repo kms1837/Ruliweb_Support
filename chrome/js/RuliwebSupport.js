@@ -14,6 +14,8 @@ $(document).ready(function()
 
 function init() 
 {
+	chrome.extension.sendMessage({type: "load"});
+
 	$(document).mousedown(function(event) {
 		if (seleteUser != undefined) {
 			seleteUser.removeAttr('style');
@@ -124,7 +126,7 @@ function mypiMainCheck(response)
 		
 		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
 		
-		count = countFlag ? count++ : count;
+		count = countFlag ? count+1 : count;
 	});
 	
 	var countFrom = {
@@ -190,6 +192,7 @@ function BoardCommentCheck(response) //blockType, checkUserList
 {
 	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
 	var count = 0;
+	var logs = {};
 	
 	$(commentTable).each(function(index, object) {
 		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
@@ -207,12 +210,23 @@ function BoardCommentCheck(response) //blockType, checkUserList
 		
 		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
 		
-		count = countFlag ? count++ : count;
+		if(countFlag) {
+			var defaultInfo = {
+				name 	: writerName,
+				id 		: writerID,
+				count 	: 0
+			}
+			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
+			logs[writerName].count = parseInt(logs[writerName].count) + 1;
+		}
+
+		count = countFlag ? count+1 : count;
 	});
 	
 	var countFrom = {
-		key : 'comment',
-		count : count
+		title : 'comment',
+		count : count,
+		logs  : JSON.stringify(logs)
 	}
 	
 	displayCheckCount(countFrom);
@@ -222,6 +236,7 @@ function BoardTableCheck(response)
 { 
 	var boardTable = $('.board_list_table tbody tr');
 	var count = 0;
+	var logs = {};
 	
 	tableAddID(boardTable);
 	
@@ -244,13 +259,24 @@ function BoardTableCheck(response)
 		}
 		
 		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
-		
-		count = countFlag ? count++ : count;
+
+		if(countFlag) {
+			var defaultInfo = {
+				name 	: writerName,
+				id 		: writerID,
+				count 	: 0
+			}
+			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
+			logs[writerName].count = parseInt(logs[writerName].count) + 1;
+		}
+
+		count = countFlag ? count+1 : count;
 	});
 	
 	var countFrom = {
-		key : 'board',
-		count : count
+		title : 'board',
+		count : count,
+		logs  : JSON.stringify(logs)
 	}
 	
 	displayCheckCount(countFrom);
@@ -297,13 +323,9 @@ function convertID(mypiLink, cutchar)
 
 function displayCheckCount(inputCountFrom)
 {
-	var messageFrom = {
-		type	: "count",
-		key 	: inputCountFrom.key,
-		count	: inputCountFrom.count
-	}
+	inputCountFrom['type'] = 'count';
 	
-	chrome.extension.sendMessage(messageFrom);
+	chrome.extension.sendMessage(inputCountFrom);
 	
 	//issue - 답글작성 불가
 	

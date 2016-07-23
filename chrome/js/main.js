@@ -1,15 +1,27 @@
 var background = chrome.extension.getBackgroundPage();
 var userInfo;
+var counts = [];
 var contextFlag = false;
+
+function init() {
+	counts = [];
+	contextFlag = false;
+}
 
 function messageProcess(request, sender, sendResponse)
 {
 	switch (request.type) {
+		case 'load':
+			init();
+			break;
 		case 'context': 
 			context(request);
 			break;
 		case 'count': 
 			count(request);
+			break;
+		case 'getCount': 
+			sendResponse(counts);
 			break;
 		default:
 			break;
@@ -17,7 +29,7 @@ function messageProcess(request, sender, sendResponse)
 }
 
 function count(inForm) {
-	
+	counts.push(inForm);
 }
 
 function context(inForm) {
@@ -65,7 +77,7 @@ function addUser (event) {
 	
     if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
       	defaultUserForm.addDate = getDate();
-    	defaultUserForm.name	= aggroUserName;
+    	defaultUserForm.name	= userInfo;
     	save_json([defaultUserForm]);
     	
       	alert('유저추가 완료');
@@ -84,7 +96,7 @@ function addUser (event) {
 
 		if (addSwitch) {
 			defaultUserForm.addDate = getDate();
-			defaultUserForm.name = aggroUserName;
+			defaultUserForm.name = userInfo;
 	    		
 	        aggrohumanJson.userCellInfo.push(defaultUserForm);
 	        
@@ -93,13 +105,6 @@ function addUser (event) {
 		}
   	}
 }
-
-function logPrint(color, text)
-{
-	var log = $('#log')[0];
-	log.innerHTML   = text;
-	log.style.color = color;
-}//function logPrint - 페이지 로그 출력
 
 chrome.runtime.onMessage.addListener(messageProcess);
 chrome.extension.onRequest.addListener(requestProcess);
