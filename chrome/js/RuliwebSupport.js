@@ -110,6 +110,7 @@ function mypiMainCheck(response)
 {
 	var mypiMainTable = $('.m_recently tbody tr');
 	var count = 0;
+	var logs = {};
 	
 	$(mypiMainTable).each(function(index, object) {
 		var subject = object;
@@ -126,12 +127,23 @@ function mypiMainCheck(response)
 		
 		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
 		
+		if(countFlag) {
+			var defaultInfo = {
+				name 	: writerName,
+				id 		: writerID,
+				count 	: 0
+			}
+			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
+			logs[writerName].count = parseInt(logs[writerName].count) + 1;
+		}
+		
 		count = countFlag ? count+1 : count;
 	});
 	
 	var countFrom = {
-		key : 'mypiMain',
-		count : count
+		title : 'comment',
+		count : count,
+		logs  : JSON.stringify(logs)
 	}
 	
 	displayCheckCount(countFrom);
@@ -142,6 +154,7 @@ function mypiCheck(response)
 	var data  = JSON.parse(response.data.aggrohuman);
 	var userInfoList = data.userCellInfo;
 	var count = 0;
+	var logs = {};
 	
 	var commentDocument = $('#mCenter tbody .mypiReply').find('div');
 	var commentUserClass;
@@ -176,13 +189,21 @@ function mypiCheck(response)
 					commentUserName.innerHTML += '(어글러)';
 					break;
 			}
+			var defaultInfo = {
+				name 	: writerName,
+				id 		: writerID,
+				count 	: 0
+			}
+			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
+			logs[writerName].count = parseInt(logs[writerName].count) + 1;
 			count++;
 		}
 	}
 	
 	var countFrom = {
-		key : 'mypi',
-		count : count
+		title : 'comment',
+		count : count,
+		logs  : JSON.stringify(logs)
 	}
 	
 	displayCheckCount(countFrom);
