@@ -93,7 +93,7 @@ function userNodeCheck(data, subject, userInfo)
 				changeTdColor($(subject).find('td'), user.settingColor);
 				break;
 			case 4:
-				$(subject).find('.writer a').text('어그로');
+				$(subject).find('.writer a').text('어글러');
 				break;
 		}
 		return true;
@@ -104,9 +104,8 @@ function userNodeCheck(data, subject, userInfo)
 
 function mypiMainCheck(response)
 {
-	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
-	
 	var mypiMainTable = $('.m_recently tbody tr');
+	
 	$(mypiMainTable).each(function(index, object) {
 		var subject = object;
 		var userTd  = $(object).find('td');
@@ -114,6 +113,7 @@ function mypiMainCheck(response)
 		var writerID	= $(object).find('a')[0].href;
 		
 		writerID = convertID(writerID, '&');
+		
 		var userInfo = {
 			writerName  : writerName,
 			writerID	: writerID
@@ -125,43 +125,44 @@ function mypiMainCheck(response)
 
 function mypiCheck(response)
 {
-	var checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+	var data  = JSON.parse(response.data.aggrohuman);
+	var userInfoList = data.userCellInfo;
 	
 	var commentDocument = $('#mCenter tbody .mypiReply').find('div');
 	var commentUserClass;
 	var commentUserName;
 	var commentUserId;
-	var checkCount = 0;
 	
 	for(var i=0; i<commentDocument.length; i=i+2) {
 		commentUserClass = $(commentDocument[i]).find('.cm01');
 		commentUserName  = commentUserClass.find('b')[0];
 		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
 		
-		for(var y=0; y<checkUserList.length; y++) {
-			var checkUser = checkUserList[y];
-			if(commentUserName.outerText == checkUser.name || commentUserId == checkUser.ruliwebID) {
-				checkCount++;
-				switch(parseInt(checkUser.settingType)){
-					case '1': //글 제거
-						commentDocument[i].style.display = 'none';
-						commentDocument[i+1].style.display = 'none';
-						break;
-					case '2': //글 가리기
-						commentDocument[i].style.fontSize = '0px';
-						commentDocument[i+1].style.fontSize = '0px';
-						break;
-					case '3':
-						commentDocument[i].style.backgroundColor 	= checkUser.settingColor;
-						commentDocument[i+1].style.backgroundColor  = checkUser.settingColor;
-						break;
-					case '4':
-						commentUserName.innerHTML += '(어글러)';
-						break;
-				}
+		var infoIndex = data.userNameKeys[commentUserName] ?
+						data.userNameKeys[commentUserName] :
+						data.userIDKeys[commentUserId];
+		
+		if (infoIndex != undefined) {
+			var user = userInfoList[infoIndex];
+			switch(parseInt(user.settingType)) {
+				case '1': //글 제거
+					commentDocument[i].style.display = 'none';
+					commentDocument[i+1].style.display = 'none';
+					break;
+				case '2': //글 가리기
+					commentDocument[i].style.fontSize = '0px';
+					commentDocument[i+1].style.fontSize = '0px';
+					break;
+				case '3':
+					commentDocument[i].style.backgroundColor 	= user.settingColor;
+					commentDocument[i+1].style.backgroundColor  = user.settingColor;
+					break;
+				case '4':
+					commentUserName.innerHTML += '(어글러)';
+					break;
 			}
-			return;
 		}
+		return;
 	}
 }//마이피 체크
 
