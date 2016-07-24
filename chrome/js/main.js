@@ -61,7 +61,8 @@ function context(inForm) {
 function requestProcess(request, sender, sendResponse)
 {
 	if (request.method == "getLocalStorage") {
-		sendResponse({data: localStorage});
+		var sendData = localStorage.length > 0 ? localStorage : undefined;
+		sendResponse({data: sendData});
 	} else {
 		sendResponse({});
 	}

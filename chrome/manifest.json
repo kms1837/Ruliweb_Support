@@ -3,7 +3,7 @@
 
   "name"		: "Ruliweb Board Support",
   "description" : "당신의 루리웹 생활을 윤택하게 해드립니다.",
-  "version"		: "0.7",
+  "version"		: "0.701",
 
   "icons" : {
     "128" :"resource/128.png"
