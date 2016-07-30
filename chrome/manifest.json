@@ -10,7 +10,7 @@
   },
 
   "permissions": [
-    "tabs", "activeTab", "alarms", "contextMenus" 
+    "tabs", "activeTab", "alarms", "contextMenus", "downloads"
   ],
 
   "content_scripts" : [{

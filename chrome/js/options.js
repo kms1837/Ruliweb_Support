@@ -2,6 +2,7 @@ var nowMenuNumber; //현재 선택된 메뉴
 
 $(function() {
 	$(document).on('click', '#addBadUser', addBadUser);
+	$(document).on('change', '#importOption', importOption);
 	$(document).on('click', '.choiceSetting input[type="radio"]', function(data) {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
@@ -157,6 +158,9 @@ function changeMenu(menuNumber)
 					document.querySelector('#save').addEventListener('click', userOptionsAllChange);
 					document.querySelector('#reset').addEventListener('click', optionReset);
 					break;
+				case 3:
+					document.querySelector('#export_option').addEventListener('click', exportOption);
+					break;
 			}//페이지 셋팅
 		});
 	}
@@ -197,6 +201,30 @@ function optionReset()
 		logPrint('#005CFF', '옵션 초기화 완료');
 	}
 }//function optionReset - 옵션 초기화
+
+function importOption(event)
+{
+	var optionFile = event.target.files[0];
+	var reader = new FileReader();
+
+	reader.onload = (function(file) {
+		console.log(file.target.result);
+		var userData = JSON.parse(file.target.result);
+		console.log(userData);
+	});
+
+	reader.readAsText(optionFile);
+}
+
+function exportOption()
+{
+	var result = localStorage['aggrohuman'];
+	var url = 'data:application/json;base64,' + btoa(result);
+	chrome.downloads.download({
+		url : url,
+		filename : 'test.json'
+	});
+}
 
 function addBadUser()
 {

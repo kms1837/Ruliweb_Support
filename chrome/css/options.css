@@ -41,7 +41,9 @@ ul {list-style: none;}
 #log{color: #005CFF; text-align: center; margin: 10px auto;}
 #aggrohuman{width:195px; height:22px; margin:5px 0;}
 .block a{ display: block; }
-.badUserOption { margin: 0 auto; width: 600px; padding-left: 32px; }
+.badUserOption { padding-left: 32px; }
+.menuBox, .badUserOption { margin: 0 auto; width: 600px; }
+.center {text-align: center;}
 .badUserList, .choiceSetting { display:inline-block; width: 300px; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .userSetting   { display: inline-block; width: 250px; }
 .badUserList li, .selectedUser { float:left; padding: 7px; border-bottom: 1px solid #ccc;}
