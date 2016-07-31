@@ -1,7 +1,14 @@
 var nowMenuNumber; //현재 선택된 메뉴
 
 $(function() {
-	$(document).on('click', '#addBadUser', addBadUser);
+	$(document).on('click', '#addBadUser', function() {
+		var aggroUserNameTextBox = document.getElementById('aggrohuman');
+		var aggroUserName = aggroUserNameTextBox.value;
+		if(addUser(aggroUserName)) {
+			aggroUserNameTextBox.value = '';
+			$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
+		}
+	});
 	$(document).on('change', '#importOption', importOption);
 	$(document).on('click', '.choiceSetting input[type="radio"]', function(data) {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
@@ -208,9 +215,15 @@ function importOption(event)
 	var reader = new FileReader();
 
 	reader.onload = (function(file) {
-		console.log(file.target.result);
-		var userData = JSON.parse(file.target.result);
-		console.log(userData);
+		try {
+			var userData = JSON.parse(file.target.result);
+			$(userData).each(function(index, object) {
+				addUser(object.name, object);
+			});
+			logPrint('#005CFF', '유저 추가');
+		} catch(err) {
+			logPrint('red', '파일내용을 확인해 주세요');
+		}
 	});
 
 	reader.readAsText(optionFile);
@@ -218,19 +231,17 @@ function importOption(event)
 
 function exportOption()
 {
-	var result = localStorage['aggrohuman'];
-	var url = 'data:application/json;base64,' + btoa(result);
+	var result = JSON.parse(localStorage['aggrohuman']);
+	var url = 'data:application/json;base64,' + btoa(JSON.stringify(result.userCellInfo));
 	chrome.downloads.download({
 		url : url,
 		filename : 'test.json'
 	});
 }
 
-function addBadUser()
+function addUser(aggroUserName, form)
 {
-	var aggroUserNameTextBox = document.getElementById('aggrohuman');
-	var aggroUserName        = aggroUserNameTextBox.value;
-	var badUserList          = $('.badUserList');
+	var badUserList   = $('.badUserList');
 	
 	var defaultUserForm = {
 	  ruliwebID: '', 
@@ -241,42 +252,69 @@ function addBadUser()
   
 	if (aggroUserName != '') {
 	    if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
-	    	defaultUserForm.addDate = getDate();
-	    	defaultUserForm.name	= aggroUserName;
-	    	save_json([defaultUserForm]);
+
+	    	if (form === undefined) {
+	    		defaultUserForm.addDate = getDate();
+	    		defaultUserForm.name	= aggroUserName;
+	    		save_json([defaultUserForm]);
+	    	} else {
+	    		save_json([form]);
+	    	}
+	    	
 	    	badUserList[0].innerHTML  += addCell(0, getDate(), aggroUserName, '', 0, 0);
 	    	logPrint('#005CFF', '어그로 유저 추가');
 	    	// 최초 추가
+
+	    	return true;
+
 	    } else {
 	   		var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
 	     	var addSwitch      = true;
 	     	var aggrohumanList = aggrohumanJson.userCellInfo;
 	
-			for(var i=0; i<aggrohumanList.length; i++){
-				if(aggrohumanList[i].name==aggroUserName){
+			for (var i=0; i<aggrohumanList.length; i++){
+				if (aggrohumanList[i].name == aggroUserName){
 					addSwitch = false;
 					logPrint('red', '리스트에 이미 존재함');
-					break;
+
+					return false;
 				}
 			}//for - 중복체크
 	
 	    	if (addSwitch) {
-				defaultUserForm.addDate = getDate();
-				defaultUserForm.name = aggroUserName;
+	    		var addDate;
+	    		var settingType;
+	    		if (form === undefined) {
+	    			addDate = getDate();
+	    			settingType = 0;
+					defaultUserForm.addDate = addDate;
+					defaultUserForm.name = aggroUserName;
 					
-				aggrohumanJson.userCellInfo.push(defaultUserForm);
-				
+					aggrohumanJson.userCellInfo.push(defaultUserForm);
+				} else {
+					addDate = form.addDate;
+					settingType = form.settingType;
+					aggrohumanJson.userCellInfo.push(form);
+				}
+
 				save_json(aggrohumanJson.userCellInfo);
 				
-				badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1, getDate(), aggroUserName, '', 0, aggrohumanList.length-1);
+				badUserList[0].innerHTML  += addCell(aggrohumanJson.userCellInfo.length - 1,
+													addDate, 
+													aggroUserName, 
+													'',
+													settingType,
+													aggrohumanList.length-1);
 				logPrint('#005CFF', '어그로 유저 추가');
+
+				return true;
 			}
 		}
-    	$('.deleteCellBtn').click(deleteCell); //삭제 버튼 이벤트
-    	aggroUserNameTextBox.value = '';
 	} else {
 		logPrint('red', '이름이 비어있음');
 	}
+
+	return false;
 }
 
 function settingToStrConvert(settingType) {

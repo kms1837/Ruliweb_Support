@@ -39,7 +39,7 @@ ul {list-style: none;}
 }
 #left_menu #selectedMenuItem { position: relative; margin-left: -30px; border-right:none; background-color: #fff; z-index:3;}
 #log{color: #005CFF; text-align: center; margin: 10px auto;}
-#aggrohuman{width:195px; height:22px; margin:5px 0;}
+#aggrohuman{width:130px; height:22px; margin:5px 0;}
 .block a{ display: block; }
 .badUserOption { padding-left: 32px; }
 .menuBox, .badUserOption { margin: 0 auto; width: 600px; }
@@ -105,7 +105,7 @@ ul {list-style: none;}
 	
 }
 
-button {
+button, input[type="button"] {
     border: 2px solid #c3c3c3;
     background: white;
     padding: 5px;
@@ -115,10 +115,18 @@ button {
     color: #757575;
 }
 
-button:hover {
+button:hover, input[type="button"]:hover, input[type="button"]:hover {
 	transition: all 0.5s;
     box-shadow: inset 2px 2px 0px 1px #c3c3c3;
     border: 2px solid #1fa2ff;
+}
+
+input[type="file" i]::-webkit-file-upload-button {
+	margin:10px 0;
+}
+
+input[type="file" i]::-webkit-file-upload-text {
+	display:none;
 }
 
 .big {
