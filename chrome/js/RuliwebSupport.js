@@ -415,6 +415,9 @@ function hideTd(td)
 
 function changeTdColor(td, colorValue)
 {
-	for(var i=0;i<td.length;i++) td[i].style.backgroundColor = colorValue;
+
+	for(var i=0;i<td.length;i++) {
+		$(td[i]).attr('style', 'background-color :' + colorValue + ' !important;');
+	}
 }//td색 변경 (리스트의 한줄부분임)
 
