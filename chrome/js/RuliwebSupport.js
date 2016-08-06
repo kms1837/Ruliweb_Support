@@ -38,6 +38,7 @@ function runChecking()
 	var pageUrlElement  = pageURL.split('/');
 	var rootPageStatuse = pageURL.split('.')[0].substr(7);
 	var endPointStatuse	= pageUrlElement[pageUrlElement.length-1];
+	var removeEndStatus = endPointStatuse.split('?')[0].split('.')[0];
 	var pageStatuse 	= pageUrlElement[3];
 	var pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 
@@ -60,8 +61,12 @@ function runChecking()
 					$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 					
 				} else if (rootPageStatuse === 'mypi') {
-					if(pageStatuse != '')	mypiCheck(response);
-					else					mypiMainCheck(response);
+					if (removeEndStatus === 'mypi_cate') {
+						mypiCateCheck(response);
+					} else {
+						if (pageStatuse != '')	mypiCheck(response);
+						else					mypiMainCheck(response);
+					}
 					
 				} else {
 					BoardTableCheck(response);
@@ -106,6 +111,49 @@ function userNodeCheck(data, subject, userInfo)
 	}
 	
 	return false;
+}
+
+function mypiCateCheck(response)
+{
+	var mypiCateTable = $('#mypilist tbody tr');
+	var count = 0;
+	var logs = {};
+	
+	$(mypiCateTable).each(function(index, object) {
+		var subject = object;
+		var userTd  = $(object).find('td');
+		var writerName  = userTd.eq(1).text();
+		var writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
+		
+		writerID = writerID ? convertID(writerID.href.split('?')[1], '&') : ''
+		
+		var userInfo = {
+			writerName  : writerName,
+			writerID	: writerID
+		}
+		
+		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+		
+		if(countFlag) {
+			var defaultInfo = {
+				name 	: writerName,
+				id 		: writerID,
+				count 	: 0
+			}
+			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
+			logs[writerName].count = parseInt(logs[writerName].count) + 1;
+		}
+		
+		count = countFlag ? count+1 : count;
+	});
+	
+	var countFrom = {
+		title : 'MypiCate',
+		count : count,
+		logs  : JSON.stringify(logs)
+	}
+	
+	displayCheckCount(countFrom);
 }
 
 function mypiMainCheck(response)

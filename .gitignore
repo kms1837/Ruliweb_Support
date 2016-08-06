@@ -1,2 +1,4 @@
 test.txt
 *test*
+npm-debug.log
+/node_modules
