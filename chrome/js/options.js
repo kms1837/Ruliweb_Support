@@ -232,10 +232,10 @@ function importOption(event)
 function exportOption()
 {
 	var result = JSON.parse(localStorage['aggrohuman']);
-	var url = 'data:application/json;base64,' + btoa(JSON.stringify(result.userCellInfo));
+	var url = 'data:application/json;base64,' + btoa(unescape(encodeURIcomponent(JSON.stringify(result.userCellInfo))));
 	chrome.downloads.download({
 		url : url,
-		filename : 'test.json'
+		filename : 'user-list.json'
 	});
 }
 
