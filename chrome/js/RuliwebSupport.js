@@ -300,6 +300,7 @@ function BoardCommentCheck(response) //blockType, checkUserList
 		var writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
 		var subject = object;
 		
+		writerID = $.trim(writerID);
 		writerID = writerID.substr(1, writerID.length-2);
 		
 		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
