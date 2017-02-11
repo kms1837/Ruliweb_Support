@@ -1,0 +1,28 @@
+<p class="title">세부 옵션</p>
+
+<div class="addUserMenu">
+	<input type="text" id="aggrohuman"></input>
+	<button id="addBadUser" class="big">추가</button>
+</div>
+
+<div class="choiceBadUserOption" >
+	<ul class="badUserList">
+	</ul>
+	
+	<div class="choiceSetting">
+		<p class="choiceUserName">선택해주세요</p>
+		<div class="blockGroup hidden">
+			<input id="userID" placeholder="id를 입력해 주세요" type="text"></input>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked> 설정하지 않음</input></a>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1> 글 제거</input></a>
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2> 글 가리기(beta)</input></a>
+			<!-- <a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 메모 표시</input></a> -->
+			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 줄 색칠
+				<input type="color" id="blockColor" value="#FFFFFF"/>
+			</input></a>
+			<textarea placeholder="메모를 입력하는 곳입니다." id="userMemo"></textarea>
+		</div>
+	</div>
+	
+	<div id="log">Log ^ㅅ^</div>
+</div>
