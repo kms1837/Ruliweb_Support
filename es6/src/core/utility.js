@@ -1,12 +1,12 @@
 
 class Utility
 {
-    tableAddID(table)
+    static tableAddID(table)
     {
-    	var boardTable = table;
+    	let boardTable = table;
     
-    	$(boardTable).each(function(index, object) {
-    		var writerID = $(object).find('.writer.text_over a').attr('onclick');
+    	$(boardTable).each( (index, object) => {
+    		let writerID = $(object).find('.writer.text_over a').attr('onclick');
     		if(typeof writerID === "string") {
     			writerID = writerID.split(',')[2];
     			writerID = writerID.split("'")[1];
@@ -17,13 +17,13 @@ class Utility
     
     convertID(mypiLink, cutchar)
     {
-    	var returnData = mypiLink;
+    	let returnData = mypiLink;
     	returnData = returnData.split(cutchar)[1];
     	returnData = returnData.substr(4, returnData.length);
     	return returnData;
     }//마이피 링크에서 ID 추출
     
-    displayCheckCount(inputCountFrom)
+    static displayCheckCount(inputCountFrom)
     {
     	inputCountFrom['type'] = 'count';
     	
@@ -51,22 +51,26 @@ class Utility
     	*/
     }
     
-    getClass(teg, name)
+    static getClass(teg, name)
     {
-    	for(var i=0;i<teg.length;i++) if(teg[i].className == name) return teg[i];
+    	for(var i=0;i<teg.length;i++) {
+    	    if(teg[i].className == name)
+    	        return teg[i];
+    	}
     	return false;
     }// 클래스 탐색
     
-    hideTd(td)
+    static hideTd(td)
     {
-    	for(var i=0;i<td.length;i++) td[i].style.fontSize = '0px';
+    	for(var i=0;i<td.length;i++)
+    	    td[i].style.fontSize = '0px';
     }
     
-    changeTdColor(td, colorValue)
+    static changeTdColor(td, colorValue)
     {
     
     	for(var i=0;i<td.length;i++) {
-    		$(td[i]).attr('style', 'background-color :' + colorValue + ' !important;');
+    		$(td[i]).attr('style', `background-color: ${colorValue} !important;`);
     	}
     }//td색 변경 (리스트의 한줄부분임)
 }

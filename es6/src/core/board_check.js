@@ -1,19 +1,21 @@
 
+import Utility from './utility'
+
 class BoardCheck
 {
-    boardTableCheck(response)
+    static boardTableCheck(response)
     { 
-    	var boardTable = $('.board_list_table tbody tr');
-    	var count = 0;
-    	var logs = {};
+    	let boardTable = $('.board_list_table tbody tr');
+    	let count = 0;
+    	let logs = {};
     	
-    	tableAddID(boardTable);
+    	Utility.tableAddID(boardTable);
     	
-    	$(boardTable).each(function(index, object) {
-    		var writerEle 	= $(object).find('.writer');
-    		var writerName  = $(object).find('.writer a').text();
-    		var writerID	= $(object).attr('itemID');
-    		var subject 	= object;
+    	$(boardTable).each( (index, object) => {
+    		let writerEle 	= $(object).find('.writer');
+    		let writerName  = $(object).find('.writer a').text();
+    		let writerID	= $(object).attr('itemID');
+    		let subject 	= object;
     
     		if (writerName === '') {
     			writerName = $(object).find('.writer').text();
@@ -22,15 +24,15 @@ class BoardCheck
     			$(object).find('.writer a').contextmenu(contextMenu);
     		}
     		
-    		var userInfo = {
+    		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     
     		if(countFlag) {
-    			var defaultInfo = {
+    			let defaultInfo = {
     				name 	: writerName,
     				id 		: writerID,
     				count 	: 0
@@ -42,40 +44,40 @@ class BoardCheck
     		count = countFlag ? count+1 : count;
     	});
     	
-    	var countFrom = {
+    	let countFrom = {
     		title : 'board',
     		count : count,
     		logs  : JSON.stringify(logs)
     	}
     	
-    	displayCheckCount(countFrom);
+    	Utility.displayCheckCount(countFrom);
     }//function BoadtTableCheck - 게시판 어그로 체크
     
-    BoardCommentCheck(response) //blockType, checkUserList
+    static BoardCommentCheck(response) //blockType, checkUserList
     {
-    	var commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
-    	var commentBast		= $('.comment_view_wrapper .comment_view.best.row tbody tr');
-    	var count = 0;
-    	var logs = {};
+    	let commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
+    	let commentBast		= $('.comment_view_wrapper .comment_view.best.row tbody tr');
+    	let count = 0;
+    	let logs = {};
     
-    	$(commentBast).each(function(index, object) {
-     		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
-     		var writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
-     		var subject = object;
+    	$(commentBast).each( (index, object) => {
+     		let writerName  = $(object).find('.user_inner_wrapper .nick a').text();
+     		let writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
+     		let subject = object;
      		
      		writerID = writerID.substr(1, writerID.length-2);
      		
      		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
      		
-     		var userInfo = {
+     		let userInfo = {
      			writerName  : writerName,
      			writerID	: writerID
      		};
      		
-     		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+     		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
      	
      		if(countFlag) {
-     			var defaultInfo = {
+     			let defaultInfo = {
      				name 	: writerName,
      				id 		: writerID,
      				count 	: 0
@@ -87,28 +89,29 @@ class BoardCheck
      		count = countFlag ? count+1 : count;
      	});
     	
-    	$(commentTable).each(function(index, object) {
-    		var writerName  = $(object).find('.user_inner_wrapper .nick a').text();
-    		var writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
-    		var subject = object;
+    	$(commentTable).each( (index, object) => {
+    		let writerName  = $(object).find('.user_inner_wrapper .nick a').text();
+    		let writerID	= $(object).find('.user_inner_wrapper .member_srl').text();
+    		let subject = object;
     		
     		writerID = writerID.substr(1, writerID.length-2);
     		
     		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
     		
-    		var userInfo = {
+    		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		};
     		
-    		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if(countFlag) {
-    			var defaultInfo = {
+    			let defaultInfo = {
     				name 	: writerName,
     				id 		: writerID,
     				count 	: 0
     			}
+    			
     			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
     		}
@@ -116,13 +119,13 @@ class BoardCheck
     		count = countFlag ? count+1 : count;
     	});
     	
-    	var countFrom = {
+    	let countFrom = {
     		title : 'comment',
     		count : count,
     		logs  : JSON.stringify(logs)
     	}
     	
-    	displayCheckCount(countFrom);
+    	Utility.displayCheckCount(countFrom);
     }//function BoardCommentCheck - 댓글 어그로 체크
 }
 

@@ -1,7 +1,7 @@
 var nowMenuNumber; //현재 선택된 메뉴
 
 $(function() {
-	$(document).on('click', '#addBadUser', function() {
+	$(document).on('click', '#addBadUser', () => {
 		var aggroUserNameTextBox = document.getElementById('aggrohuman');
 		var aggroUserName = aggroUserNameTextBox.value;
 		if(addUser(aggroUserName)) {
@@ -10,7 +10,7 @@ $(function() {
 		}
 	});
 	$(document).on('change', '#importOption', importOption);
-	$(document).on('click', '.choiceSetting input[type="radio"]', function(data) {
+	$(document).on('click', '.choiceSetting input[type="radio"]', (data) => {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 		
@@ -23,7 +23,7 @@ $(function() {
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 	});
 
-	$(document).on('change', '.choiceSetting input[type="color"]', function(data) {
+	$(document).on('change', '.choiceSetting input[type="color"]', (data) => {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 
@@ -33,7 +33,7 @@ $(function() {
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 	});
 	
-	$(document).on('keyup', '.choiceSetting #userID', function(data) {
+	$(document).on('keyup', '.choiceSetting #userID', (data) =>{
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 		var inID = data.target.value;
@@ -44,7 +44,7 @@ $(function() {
 		save_json(aggrohuman);
 	});
 	
-	$(document).on('change', '.choiceSetting #userID', function() {
+	$(document).on('change', '.choiceSetting #userID', () => {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 		
@@ -52,7 +52,7 @@ $(function() {
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
 	});
 	
-	$(document).on('keyup', '.choiceSetting #userMemo', function(data) {
+	$(document).on('keyup', '.choiceSetting #userMemo', (data) => {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 		var inID = data.target.value;
@@ -62,14 +62,14 @@ $(function() {
 		save_json(aggrohuman);
 	});
 	
-	$(document).on('change', '.choiceSetting #userMemo', function() {
+	$(document).on('change', '.choiceSetting #userMemo', () => {
 		var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		var userid = $('.select').attr('userid');
 		
 		logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 	});
 	
-	$(document).on('click', '.choiceBadUserOption ul.badUserList li', function(data) {
+	$(document).on('click', '.choiceBadUserOption ul.badUserList li', (data) => {
 		var userid = $(data.currentTarget).attr('userid');
 		userChoice(data.currentTarget, userid);
 	});

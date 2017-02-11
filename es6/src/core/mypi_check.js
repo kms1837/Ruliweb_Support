@@ -1,31 +1,31 @@
 
-import utility
+import Utility from './utility'
 
 class MypiCheck
 {
     mypiMainCheck(response)
     {
-    	var mypiMainTable = $('.m_recently tbody tr');
-    	var count = 0;
-    	var logs = {};
+    	let mypiMainTable = $('.m_recently tbody tr');
+    	let count = 0;
+    	let logs = {};
     	
-    	$(mypiMainTable).each(function(index, object) {
-    		var subject = object;
-    		var userTd  = $(object).find('td');
-    		var writerName  = userTd.eq(1).text();
-    		var writerID	= $(object).find('a')[0].href;
+    	$(mypiMainTable).each( (index, object) => {
+    		let subject = object;
+    		let userTd  = $(object).find('td');
+    		let writerName  = userTd.eq(1).text();
+    		let writerID	= $(object).find('a')[0].href;
     		
-    		writerID = convertID(writerID, '&');
+    		writerID = Utility.convertID(writerID, '&');
     		
-    		var userInfo = {
+    		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
-    		if(countFlag) {
-    			var defaultInfo = {
+    		if (countFlag) {
+    			let defaultInfo = {
     				name 	: writerName,
     				id 		: writerID,
     				count 	: 0
@@ -34,41 +34,41 @@ class MypiCheck
     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
     		}
     		
-    		count = countFlag ? count+1 : count;
+    		count = countFlag ? count + 1 : count;
     	});
     	
-    	var countFrom = {
+    	let countFrom = {
     		title : 'MypiMain',
     		count : count,
     		logs  : JSON.stringify(logs)
     	}
     	
-    	displayCheckCount(countFrom);
+    	Utility.displayCheckCount(countFrom);
     }//마이피 메인
     
     mypiCheck(response)
     {
-    	var data  = JSON.parse(response.data.aggrohuman);
-    	var userInfoList = data.userCellInfo;
-    	var count = 0;
-    	var logs = {};
+    	let data  = JSON.parse(response.data.aggrohuman);
+    	let userInfoList = data.userCellInfo;
+    	let count = 0;
+    	let logs = {};
     	
-    	var commentDocument = $('#mCenter tbody .mypiReply').find('div');
-    	var commentUserClass;
-    	var commentUserName;
-    	var commentUserId;
+    	let commentDocument = $('#mCenter tbody .mypiReply').find('div');
+    	let commentUserClass;
+    	let commentUserName;
+    	let commentUserId;
     	
-    	for(var i=0; i<commentDocument.length; i=i+2) {
+    	for(let i=0; i<commentDocument.length; i=i+2) {
     		commentUserClass = $(commentDocument[i]).find('.cm01');
     		commentUserName  = commentUserClass.find('b')[0];
     		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
     		
-    		var infoIndex = data.userNameKeys[commentUserName] ?
+    		let infoIndex = data.userNameKeys[commentUserName] ?
     						data.userNameKeys[commentUserName] :
     						data.userIDKeys[commentUserId];
     		
     		if (infoIndex != undefined) {
-    			var user = userInfoList[infoIndex];
+    			let user = userInfoList[infoIndex];
     			switch(parseInt(user.settingType)) {
     				case '1': //글 제거
     					commentDocument[i].style.display = 'none';
@@ -86,7 +86,7 @@ class MypiCheck
     					commentUserName.innerHTML += '(어글러)';
     					break;
     			}
-    			var defaultInfo = {
+    			let defaultInfo = {
     				name 	: writerName,
     				id 		: writerID,
     				count 	: 0
@@ -97,38 +97,38 @@ class MypiCheck
     		}
     	}
     	
-    	var countFrom = {
+    	let countFrom = {
     		title : 'MypiComment',
     		count : count,
     		logs  : JSON.stringify(logs)
     	}
     	
-    	displayCheckCount(countFrom);
+    	Utility.displayCheckCount(countFrom);
     }//마이피 체크
     
     mypiCateCheck(response)
     {
-    	var mypiCateTable = $('#mypilist tbody tr');
-    	var count = 0;
-    	var logs = {};
+    	let mypiCateTable = $('#mypilist tbody tr');
+    	let count = 0;
+    	let logs = {};
     	
-    	$(mypiCateTable).each(function(index, object) {
-    		var subject = object;
-    		var userTd  = $(object).find('td');
-    		var writerName  = userTd.eq(1).text();
-    		var writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
+    	$(mypiCateTable).each( (index, object) => {
+    		let subject = object;
+    		let userTd  = $(object).find('td');
+    		let writerName  = userTd.eq(1).text();
+    		let writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
     		
-    		writerID = writerID ? convertID(writerID.href.split('?')[1], '&') : ''
+    		writerID = writerID ? Utility.convertID(writerID.href.split('?')[1], '&') : ''
     		
-    		var userInfo = {
+    		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		var countFlag = userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if(countFlag) {
-    			var defaultInfo = {
+    			let defaultInfo = {
     				name 	: writerName,
     				id 		: writerID,
     				count 	: 0
@@ -140,13 +140,13 @@ class MypiCheck
     		count = countFlag ? count+1 : count;
     	});
     	
-    	var countFrom = {
+    	let countFrom = {
     		title : 'MypiCate',
     		count : count,
     		logs  : JSON.stringify(logs)
     	}
     	
-    	displayCheckCount(countFrom);
+    	Utility.displayCheckCount(countFrom);
     }
 };
 
