@@ -15,12 +15,12 @@
 
   "content_scripts" : [{
     "matches" : ["http://*.ruliweb.com/*"],
-    "js"      : ["js/jquery-2.1.4.js", "js/RuliwebSupport.js"],
+    "js"      : ["js/jquery-2.1.4.js", "js/core.js"],
     "CSS"     : ["RCSS.css"]
   }],
 
   "background": {
-    "scripts"	 : ["js/jquery-2.1.4.js", "js/utility.js", "js/main.js"],
+    "scripts"	 : ["js/jquery-2.1.4.js", "js/background.js"],
     "persistent" : true
   },
 
