@@ -1,8 +1,11 @@
 
+/*
+    core의 기타함수를 모아놨습니다.
+*/
+
 class Utility
 {
-    static tableAddID(table)
-    {
+    static tableAddID(table) {
     	let boardTable = table;
     
     	$(boardTable).each( (index, object) => {
@@ -15,16 +18,14 @@ class Utility
     	});
     }
     
-    convertID(mypiLink, cutchar)
-    {
+    static convertID(mypiLink, cutchar) {
     	let returnData = mypiLink;
     	returnData = returnData.split(cutchar)[1];
     	returnData = returnData.substr(4, returnData.length);
     	return returnData;
     }//마이피 링크에서 ID 추출
     
-    static displayCheckCount(inputCountFrom)
-    {
+    static displayCheckCount(inputCountFrom) {
     	inputCountFrom['type'] = 'count';
     	
     	chrome.extension.sendMessage(inputCountFrom);
@@ -51,8 +52,7 @@ class Utility
     	*/
     }
     
-    static getClass(teg, name)
-    {
+    static getClass(teg, name) {
     	for(var i=0;i<teg.length;i++) {
     	    if(teg[i].className == name)
     	        return teg[i];
@@ -60,14 +60,12 @@ class Utility
     	return false;
     }// 클래스 탐색
     
-    static hideTd(td)
-    {
+    static hideTd(td) {
     	for(var i=0;i<td.length;i++)
     	    td[i].style.fontSize = '0px';
     }
     
-    static changeTdColor(td, colorValue)
-    {
+    static changeTdColor(td, colorValue) {
     
     	for(var i=0;i<td.length;i++) {
     		$(td[i]).attr('style', `background-color: ${colorValue} !important;`);
@@ -75,4 +73,4 @@ class Utility
     }//td색 변경 (리스트의 한줄부분임)
 }
 
-export default Utility
+export default Utility;

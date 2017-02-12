@@ -10,12 +10,13 @@ module.exports = {
     },
     
     entry: {
-        option: devPath + '/option/main.js',
-        core: devPath + '/core/main.js'
+        option: `${devPath}/option/main.js`,
+        background: `${devPath}/background/main.js`,
+        core: `${devPath}/core/main.js`
     },
     
     output : {
-        path: __dirname + '/release/' ,
+        path: `${__dirname}/../chrome/js/`,
         filename: '[name].js'
     },
     
