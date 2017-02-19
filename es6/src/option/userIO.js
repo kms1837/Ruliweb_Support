@@ -4,7 +4,7 @@ import Utility from '../common/utility';
 const defaultUserForm = {
   ruliwebID: '',
   name: '',
-  user_memo: '', 
+  userMemo: '', 
   settingType: 0, 
   settingColor: '#ffffff',
   addDate: ''
@@ -50,55 +50,31 @@ class UserIo
 		});
 	}
     
-    static addUser(aggroUserName, form=undefined, callback=()=>{})
+    static addUser(form=undefined, callback=()=>{})
 	{
-		if (aggroUserName != '') {
-		    if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
-		    	if (form === undefined) {
-		    	    let firstAddUserData = Object.assign({
-		    	        name: aggroUserName,
-		    	        addDate: Utility.getDate()
-		    	    }, defaultUserForm);
-		    		Utility.saveJson([firstAddUserData]);
-		    		callback(firstAddUserData);
-		    	} else {
-		    		Utility.saveJson([form]);
-		    		callback(form);
-		    	}
-		    	// 최초 추가
-		    } else {
-		   		let aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
-		     	let addSwitch      = true;
-		     	let aggrohumanList = aggrohumanJson.userCellInfo;
-		
-				for (let i=0; i<aggrohumanList.length; i++) {
-					if (aggrohumanList[i].name == aggroUserName) {
-						addSwitch = false;
-						Utility.logPrint('red', '리스트에 이미 존재함');
-						return;
-					}
-				}//for - 중복체크
-		
-		    	if (addSwitch) {
-		    		if (form === undefined) {
-		    		    let addUserData = Object.assign({
-		    	            name: aggroUserName,
-		    	            settingType: 0,
-		    	            addDate: Utility.getDate()
-		    	        }, defaultUserForm);
-		    	        
-						aggrohumanJson.userCellInfo.push(addUserData);
-						callback(addUserData);
-					} else {
-						aggrohumanJson.userCellInfo.push(form);
-						callback(form);
-					}
+	    if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
+	    	Utility.saveJson([form]);
+    		callback(form);
+	    	// 최초 추가
+	    	
+	    } else {
+	   		let aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
+	     	let addSwitch      = true;
+	     	let aggrohumanList = aggrohumanJson.userCellInfo;
 	
-					Utility.saveJson(aggrohumanJson.userCellInfo);
+			for (let i=0; i<aggrohumanList.length; i++) {
+				if (aggrohumanList[i].name == form.name) {
+					addSwitch = false;
+					Utility.logPrint('red', '리스트에 이미 존재함');
+					return;
 				}
+			}//for - 중복체크
+	
+	    	if (addSwitch) {
+				aggrohumanJson.userCellInfo.push(form);
+				callback(form);
+				Utility.saveJson(aggrohumanJson.userCellInfo);
 			}
-		} else {
-			Utility.logPrint('red', '이름이 비어있음');
 		}
 	}
 }

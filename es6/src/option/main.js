@@ -8,35 +8,45 @@ class Option
 		this.nowMenuNumber = 0; //현재 선택된 메뉴
 		this.eventBind();
 		
+		// object bind
 		this.eventBind = this.eventBind.bind(this);
 		this.changeMenu = this.changeMenu.bind(this);
+		this.deleteCell = this.deleteCell.bind(this);
+		this.userOptionsAllChange = this.userOptionsAllChange.bind(this);
 	}
 	
 	eventBind() {
-		console.log(JSON.parse(localStorage['aggrohuman']));
+		//console.log(JSON.parse(localStorage['aggrohuman']));
 		$(document).on('click', '#addBadUser', () => {
 			let aggroUserNameTextBox = document.getElementById('aggrohuman');
 			let aggroUserName = aggroUserNameTextBox.value;
+			let blockTypeCheck = document.getElementsByName('blockTypeRadio');
+			let blockColor = document.getElementById('blockColor');
+			let blockTypeValue;
+	
+			for (let i=0; i<blockTypeCheck.length; i++) {
+				if (blockTypeCheck[i].checked === true)
+					blockTypeValue = blockTypeCheck[i].value;
+			}
 			
-			UserIO.addUser(aggroUserName, undefined, userData => {
-				let userList = $('.badUserList');
-				//userList[0].innerHTML  += this.addCell(0, Utility.getDate(), aggroUserName, '', 0, 0);
-				userList[0].innerHTML  += this.addCell(userData);
-		    	Utility.logPrint('#005CFF', '어그로 유저 추가');
-		    	
-		    	/*
-				badUserList[0].innerHTML  += this.addCell(aggrohumanJson.userCellInfo.length - 1,
-														addDate, 
-														aggroUserName, 
-														'',
-														settingType,
-														aggrohumanList.length-1);
-				Utility.logPrint('#005CFF', '어그로 유저 추가');
-                */
-		    	
-				aggroUserNameTextBox.value = '';
-				$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
-			});
+			if (aggroUserName.length > 0) {
+				let addUserForm = Object.assign(UserIO.defaultUserForm, {
+	    	        name: aggroUserName,
+	    	        settingType: blockTypeValue,
+					settingColor: blockColor.value,
+	    	        addDate: Utility.getDate()
+	    	    });
+	    	    
+				UserIO.addUser(addUserForm, userData => {
+					this.addCell(userData);
+			    	Utility.logPrint('#005CFF', '어그로 유저 추가');
+			    	
+					aggroUserNameTextBox.value = '';
+					$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
+				});
+			} else {
+				Utility.logPrint('red', '이름이 비어있음');	
+			}
 		});
 		
 		$(document).on('change', '#importOption', UserIO.importOption);
@@ -124,7 +134,8 @@ class Option
 			let blockTypeValue;
 	
 			for (let i=0; i<blockTypeCheck.length; i++) {
-				if (blockTypeCheck[i].checked === true) blockTypeValue = blockTypeCheck[i].value;
+				if (blockTypeCheck[i].checked === true)
+					blockTypeValue = blockTypeCheck[i].value;
 			}
 			
 			for (let i=0; i<aggrohuman.length; i++) {
@@ -143,8 +154,8 @@ class Option
 	
 	userChoice(cellObj, userNumber)
 	{
-		let aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-		let radiobox	= document.getElementsByName('blockTypeRadio');
+		let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		let radiobox = document.getElementsByName('blockTypeRadio');
 		
 		let blockgroup = $('.blockGroup');
 		
@@ -158,7 +169,7 @@ class Option
 		$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
 		$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
 		$('#blockColor')[0].value = aggrohuman[userNumber].settingColor;
-		$('#userMemo')[0].value = aggrohuman[userNumber].user_memo;
+		$('#userMemo')[0].value = aggrohuman[userNumber].userMemo;
 		
 		let settingType = aggrohuman[userNumber].settingType;
 		
@@ -200,13 +211,11 @@ class Option
 		let aggrohuman = localStorage['aggrohuman']; //어그로 목록
 		
 		if (aggrohuman != undefined) {
-			let badUserList = $('.badUserList');
 			let date        = Utility.getDate();
 			let aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 	
-			for(let i=0; i<aggrohuman.length; i++){
-				badUserList[0].innerHTML += this.addCell(i, aggrohuman[i].addDate, aggrohuman[i].name, aggrohuman[i].ruliwebID, aggrohuman[i].settingType, i);
-			}
+			for(let i=0; i<aggrohuman.length; i++)
+				this.addCell(aggrohuman[i]);
 		
 			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 		}
@@ -230,12 +239,13 @@ class Option
 		}
 	}//function optionReset - 옵션 초기화
 	
-	addCell(celldata)
+	userCellForm(celldata)
 	{
-		// { id, date, name, ruliwebID, settingType, cellNumber }
+		//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
 		let settingTypeStr = Utility.settingToStrConvert(parseInt(celldata.settingType));
-		
-		return	`<li userid=${celldata.ruliwebID}>
+		// { id, date, name, ruliwebID, settingType, cellNumber }
+		let index = 0;
+		return	`<li userid=${index}>
 		  			<div class="cellState">
 			    		<p class="date">${celldata.addDate}</p>
 			    		<p class="userState">${settingTypeStr}</p>
@@ -246,30 +256,33 @@ class Option
 			    	</div>
 			    	<button class="deleteCellBtn">삭제</button>
 			      </li>`;
+	}
+	
+	addCell(celldata)
+	{
+		let userList = $('.badUserList');
+		userList[0].innerHTML += this.userCellForm(celldata);
 	}//function addCell - 리스트 셀 형식
 	
 	deleteCell(data)
 	{
 		let deleteCellNumber = data.currentTarget.value;
-		let aggrohumanJson   = JSON.parse(localStorage['aggrohuman']);
-		let aggrohumanList   = aggrohumanJson.userCellInfo;
-		let badUserList      = $('.badUserList');
+		let aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
+		let aggrohumanList = aggrohumanJson.userCellInfo;
+		let userList = $('.badUserList');
 		let tempArray = [];
 		
-		badUserList[0].innerHTML = '';
+		userList[0].innerHTML = '';
 		
 		for (let i=0; i<aggrohumanList.length; i++) {
 			if (i!=deleteCellNumber) {
-			  let aggroUserName = aggrohumanList[i].name;
-			  let date          = aggrohumanList[i].addDate;
-			  let settingType	= aggrohumanList[i].settingType;
-			  let ruliwebID		= aggrohumanList[i].ruliwebID;
 			  tempArray.push(aggrohumanList[i]);
-			  badUserList[0].innerHTML += this.addCell(i, date, aggroUserName, ruliwebID, settingType, tempArray.length-1);
+			  this.addCell(aggrohumanList[i]);
 			}
 		}
 		
-		if (tempArray.length!=0) $('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
+		if (tempArray.length!=0)
+			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 		
 		aggrohumanJson.userCellInfo = tempArray;
 		Utility.saveJson(aggrohumanJson.userCellInfo);
