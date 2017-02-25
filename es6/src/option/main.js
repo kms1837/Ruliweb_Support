@@ -10,6 +10,7 @@ class Option
 		
 		// object bind
 		this.eventBind = this.eventBind.bind(this);
+		this.detailOptionSceneBind = this.detailOptionSceneBind.bind(this);
 		this.changeMenu = this.changeMenu.bind(this);
 		this.deleteCell = this.deleteCell.bind(this);
 		this.userOptionsAllChange = this.userOptionsAllChange.bind(this);
@@ -45,23 +46,34 @@ class Option
 		});
 		
 		$(document).on('change', '#importOption', UserIO.importOption);
+	
+		$('#left_menu ul li').click( e => {
+			let clickMenuID = e.target.getAttribute('itemprop');
+			this.changeMenu(clickMenuID);
+		});
 		
-		$(document).on('click', '.choiceSetting input[type="radio"]', (data) => {
+		this.detailOptionSceneBind();
+
+		this.changeMenu(1);
+	}
+	
+	detailOptionSceneBind() {
+		$(document).on('click', '.choiceSetting input[type="radio"]', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 			
 			aggrohuman[userid].settingType = data.target.value;
 			Utility.saveJson(aggrohuman);
 			
-			let setType = this.settingToStrConvert(parseInt(data.target.value));
+			let setType = Utility.settingToStrConvert(parseInt(data.target.value));
 			
 			$('.select .userState').text(setType);
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 		});
-	
-		$(document).on('change', '.choiceSetting input[type="color"]', (data) => {
+		
+		$(document).on('change', '.choiceSetting input[type="color"]', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 	
 			aggrohuman[userid].settingColor = data.target.value;
 			Utility.saveJson(aggrohuman);
@@ -69,9 +81,9 @@ class Option
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 		});
 		
-		$(document).on('keyup', '.choiceSetting #userID', (data) =>{
+		$(document).on('keyup', '.choiceSetting #userID', data =>{
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 			let inID = data.target.value;
 			data.target.value = inID.replace(/[^0-9]/, "");
 			
@@ -82,7 +94,7 @@ class Option
 		
 		$(document).on('change', '.choiceSetting #userID', () => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 			
 			$('.select .userID').text(aggrohuman[userid].ruliwebID);
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
@@ -90,7 +102,7 @@ class Option
 		
 		$(document).on('keyup', '.choiceSetting #userMemo', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 			let inID = data.target.value;
 			
 			aggrohuman[userid].user_memo = data.target.value;
@@ -100,22 +112,15 @@ class Option
 		
 		$(document).on('change', '.choiceSetting #userMemo', () => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let userid = $('.select').attr('userid');
+			let userid = $('.select').attr('itemprop');
 			
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 		});
 		
 		$(document).on('click', '.choiceBadUserOption ul.badUserList li', data => {
-			let userid = $(data.currentTarget).attr('userid');
+			let userid = data.currentTarget.getAttribute('itemprop');
 			this.userChoice(data.currentTarget, userid);
 		});
-		
-		$('#left_menu ul li').click( e => {
-			let clickMenuID = e.target.getAttribute('itemprop');
-			this.changeMenu(clickMenuID);
-		});
-
-		this.changeMenu(1);
 	}
 	
 	userOptionsAllChange() {
