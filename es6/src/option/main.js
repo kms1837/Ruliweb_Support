@@ -16,19 +16,12 @@ class Option
 	}
 	
 	eventBind() {
-		//console.log(JSON.parse(localStorage['aggrohuman']));
 		$(document).on('click', '#addBadUser', () => {
 			let aggroUserNameTextBox = document.getElementById('aggrohuman');
 			let aggroUserName = aggroUserNameTextBox.value;
-			let blockTypeCheck = document.getElementsByName('blockTypeRadio');
 			let blockColor = document.getElementById('blockColor');
-			let blockTypeValue;
+			let blockTypeValue = $('#blockTypeSelect').val();
 	
-			for (let i=0; i<blockTypeCheck.length; i++) {
-				if (blockTypeCheck[i].checked === true)
-					blockTypeValue = blockTypeCheck[i].value;
-			}
-			
 			if (aggroUserName.length > 0) {
 				let addUserForm = Object.assign(UserIO.defaultUserForm, {
 	    	        name: aggroUserName,
@@ -38,11 +31,13 @@ class Option
 	    	    });
 	    	    
 				UserIO.addUser(addUserForm, userData => {
-					this.addCell(userData);
-			    	Utility.logPrint('#005CFF', '어그로 유저 추가');
-			    	
 					aggroUserNameTextBox.value = '';
+					
+					this.addCell(userData);
 					$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
+					this.restoreOptions();
+					
+					Utility.logPrint('#005CFF', '어그로 유저 추가');
 				});
 			} else {
 				Utility.logPrint('red', '이름이 비어있음');	
@@ -93,7 +88,7 @@ class Option
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
 		});
 		
-		$(document).on('keyup', '.choiceSetting #userMemo', (data) => {
+		$(document).on('keyup', '.choiceSetting #userMemo', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 			let userid = $('.select').attr('userid');
 			let inID = data.target.value;
@@ -110,12 +105,12 @@ class Option
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 		});
 		
-		$(document).on('click', '.choiceBadUserOption ul.badUserList li', (data) => {
+		$(document).on('click', '.choiceBadUserOption ul.badUserList li', data => {
 			let userid = $(data.currentTarget).attr('userid');
 			this.userChoice(data.currentTarget, userid);
 		});
 		
-		$('#left_menu ul li').click((e) => {
+		$('#left_menu ul li').click( e => {
 			let clickMenuID = e.target.getAttribute('itemprop');
 			this.changeMenu(clickMenuID);
 		});
@@ -123,20 +118,13 @@ class Option
 		this.changeMenu(1);
 	}
 	
-	userOptionsAllChange()
-	{
+	userOptionsAllChange() {
 		let allSwitch = confirm("정말 일괄로 적용하겠습니까?");
 		
 		if (allSwitch) {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-			let blockTypeCheck = document.getElementsByName('blockTypeRadio');
 			let blockColor = document.getElementById('blockColor');
-			let blockTypeValue;
-	
-			for (let i=0; i<blockTypeCheck.length; i++) {
-				if (blockTypeCheck[i].checked === true)
-					blockTypeValue = blockTypeCheck[i].value;
-			}
+			let blockTypeValue = $('#blockTypeSelect').val();
 			
 			for (let i=0; i<aggrohuman.length; i++) {
 				aggrohuman[i].settingType = blockTypeValue;
@@ -144,16 +132,15 @@ class Option
 			}
 			
 			Utility.saveJson(aggrohuman);
+			
+			$('.badUserList').html('');
+		
+			this.restoreOptions();
+			Utility.logPrint('#005CFF', '일괄처리 완료');
 		}
-		
-		$('.badUserList').html('');
-		
-		this.restoreOptions();
-		Utility.logPrint('#005CFF', '일괄처리 완료');
 	}//function restoreOptions - 옵션 저장
 	
-	userChoice(cellObj, userNumber)
-	{
+	userChoice(cellObj, userNumber) {
 		let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 		let radiobox = document.getElementsByName('blockTypeRadio');
 		
@@ -176,24 +163,17 @@ class Option
 		radiobox[settingType].checked = true;
 	}
 	
-	changeMenu(menuNumber)
-	{
+	changeMenu(menuNumber) {
 		if (menuNumber != this.nowMenuNumber) {
 			$('#content').load(`option_menu${menuNumber}.html`, () => {
-				let menuList = $("#left_menu li");
-				
-				for (let i=1; i<=menuList.length; i++) {
-					let selectorName = '#menu' + i;
-					
-					if (i != menuNumber) menuList[i-1].id = 'menu' + i;
-					else				 menuList[i-1].id = 'selectedMenuItem';
-				}
+				$("#left_menu #selectedMenuItem").removeAttr('id');
+				$("#left_menu li")[menuNumber-1].id = 'selectedMenuItem';
 				
 				this.nowMenuNumber = menuNumber;
 				
-				if (this.nowMenuNumber!=3) this.restoreOptions();
+				if (this.nowMenuNumber <= 2) this.restoreOptions();
 				
-				switch (menuNumber) {
+				switch (parseInt(menuNumber)) {
 					case 1:
 						document.querySelector('#save').addEventListener('click', this.userOptionsAllChange);
 						document.querySelector('#reset').addEventListener('click', this.optionReset);
@@ -206,9 +186,11 @@ class Option
 		}
 	}//function changeMenu - 옵션메뉴 변경
 	
-	restoreOptions()
-	{
+	restoreOptions() {
+		let userList = $('.badUserList');
 		let aggrohuman = localStorage['aggrohuman']; //어그로 목록
+		
+		userList[0].innerHTML = '';
 		
 		if (aggrohuman != undefined) {
 			let date        = Utility.getDate();
@@ -216,13 +198,40 @@ class Option
 	
 			for(let i=0; i<aggrohuman.length; i++)
 				this.addCell(aggrohuman[i]);
+				
+			$('.badUserList li').each( (index, li) => {
+				$(li).attr('itemprop', index);
+			});
 		
 			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 		}
 	}//function restoreOptions - 페이지 로드
 	
-	optionReset()
-	{
+	addCell(celldata) {
+		let userList = $('.badUserList');
+		userList[0].innerHTML += this.userCellForm(celldata);
+	}//function addCell - 리스트 셀 형식
+
+	userCellForm(celldata) {
+		//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
+		let settingTypeStr = Utility.settingToStrConvert(parseInt(celldata.settingType));
+		// { id, date, name, ruliwebID, settingType, cellNumber }
+		let index = 0;
+		
+		return	`<li>
+		  			<div class="cellState">
+			    		<p class="date">${celldata.addDate}</p>
+			    		<p class="userState">${settingTypeStr}</p>
+			    	</div>
+			    	<div class="badUserName">
+			    		<p class="userName">${celldata.name}</p>
+			    		<p class="userID">${celldata.ruliwebID}</p>
+			    	</div>
+			    	<button class="deleteCellBtn">삭제</button>
+			      </li>`;
+	}
+	
+	optionReset() {
 		let resetSwitch = confirm("정말 옵션을 초기화 하시겠습니까? (추가하신 모든 리스트가 사라집니다.)");
 		
 		if (resetSwitch) {
@@ -239,59 +248,22 @@ class Option
 		}
 	}//function optionReset - 옵션 초기화
 	
-	userCellForm(celldata)
-	{
-		//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
-		let settingTypeStr = Utility.settingToStrConvert(parseInt(celldata.settingType));
-		// { id, date, name, ruliwebID, settingType, cellNumber }
-		let index = 0;
-		return	`<li userid=${index}>
-		  			<div class="cellState">
-			    		<p class="date">${celldata.addDate}</p>
-			    		<p class="userState">${settingTypeStr}</p>
-			    	</div>
-			    	<div class="badUserName">
-			    		<p class="userName">${celldata.name}</p>
-			    		<p class="userID">${celldata.ruliwebID}</p>
-			    	</div>
-			    	<button class="deleteCellBtn">삭제</button>
-			      </li>`;
-	}
-	
-	addCell(celldata)
-	{
-		let userList = $('.badUserList');
-		userList[0].innerHTML += this.userCellForm(celldata);
-	}//function addCell - 리스트 셀 형식
-	
-	deleteCell(data)
-	{
-		let deleteCellNumber = data.currentTarget.value;
+	deleteCell(data) {
+		let deleteCellNumber = data.currentTarget.closest('li').getAttribute('itemprop');
 		let aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
 		let aggrohumanList = aggrohumanJson.userCellInfo;
-		let userList = $('.badUserList');
-		let tempArray = [];
 		
-		userList[0].innerHTML = '';
+		aggrohumanList.splice(deleteCellNumber, 1);
+		aggrohumanJson.userCellInfo = aggrohumanList;
 		
-		for (let i=0; i<aggrohumanList.length; i++) {
-			if (i!=deleteCellNumber) {
-			  tempArray.push(aggrohumanList[i]);
-			  this.addCell(aggrohumanList[i]);
-			}
-		}
-		
-		if (tempArray.length!=0)
-			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
-		
-		aggrohumanJson.userCellInfo = tempArray;
 		Utility.saveJson(aggrohumanJson.userCellInfo);
-		
 		Utility.logPrint('#005CFF', '셀 삭제 완료');
+		
+		this.restoreOptions();
 	}
 }
 
-window.onload = function() {
+window.onload = function () {
 	let option = new Option;
 	window.ruliwebSupportOption = option;
 }

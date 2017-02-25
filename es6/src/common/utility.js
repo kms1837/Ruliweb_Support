@@ -1,7 +1,7 @@
 
 class Utillity
 {
-    static saveJson(jsonData) {
+    static saveJson(jsonData, callback=()=>{}) {
     	let userNameKeys = {};
     	let userIDKeys = {};
     	
@@ -20,6 +20,8 @@ class Utillity
     	}
     	
     	localStorage['aggrohuman'] = JSON.stringify(dataFrom);
+    	
+    	callback();
     }
     
     static logPrint(color, text)
@@ -47,7 +49,7 @@ class Utillity
     static settingToStrConvert(settingType) {
 		let settingTypeStr;
 		
-		switch(settingType) {
+		switch(parseInt(settingType)) {
 			case 0:
 				settingTypeStr = "설정없음";
 				break;

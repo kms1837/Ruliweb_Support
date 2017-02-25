@@ -203,6 +203,8 @@
 	    _createClass(Utillity, null, [{
 	        key: "saveJson",
 	        value: function saveJson(jsonData) {
+	            var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 	            var userNameKeys = {};
 	            var userIDKeys = {};
 
@@ -219,6 +221,8 @@
 	            };
 
 	            localStorage['aggrohuman'] = JSON.stringify(dataFrom);
+
+	            callback();
 	        }
 	    }, {
 	        key: "logPrint",
@@ -247,7 +251,7 @@
 	        value: function settingToStrConvert(settingType) {
 	            var settingTypeStr = void 0;
 
-	            switch (settingType) {
+	            switch (parseInt(settingType)) {
 	                case 0:
 	                    settingTypeStr = "설정없음";
 	                    break;

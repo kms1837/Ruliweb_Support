@@ -67,8 +67,11 @@
 			this.nowMenuNumber = 0; //현재 선택된 메뉴
 			this.eventBind();
 
+			// object bind
 			this.eventBind = this.eventBind.bind(this);
 			this.changeMenu = this.changeMenu.bind(this);
+			this.deleteCell = this.deleteCell.bind(this);
+			this.userOptionsAllChange = this.userOptionsAllChange.bind(this);
 		}
 
 		_createClass(Option, [{
@@ -76,30 +79,32 @@
 			value: function eventBind() {
 				var _this = this;
 
-				console.log(JSON.parse(localStorage['aggrohuman']));
 				$(document).on('click', '#addBadUser', function () {
 					var aggroUserNameTextBox = document.getElementById('aggrohuman');
 					var aggroUserName = aggroUserNameTextBox.value;
+					var blockColor = document.getElementById('blockColor');
+					var blockTypeValue = $('#blockTypeSelect').val();
 
-					_userIO2.default.addUser(aggroUserName, undefined, function (userData) {
-						var userList = $('.badUserList');
-						//userList[0].innerHTML  += this.addCell(0, Utility.getDate(), aggroUserName, '', 0, 0);
-						userList[0].innerHTML += _this.addCell(userData);
-						_utility2.default.logPrint('#005CFF', '어그로 유저 추가');
+					if (aggroUserName.length > 0) {
+						var addUserForm = Object.assign(_userIO2.default.defaultUserForm, {
+							name: aggroUserName,
+							settingType: blockTypeValue,
+							settingColor: blockColor.value,
+							addDate: _utility2.default.getDate()
+						});
 
-						/*
-	     badUserList[0].innerHTML  += this.addCell(aggrohumanJson.userCellInfo.length - 1,
-	     							addDate, 
-	     							aggroUserName, 
-	     							'',
-	     							settingType,
-	     							aggrohumanList.length-1);
-	     Utility.logPrint('#005CFF', '어그로 유저 추가');
-	              */
+						_userIO2.default.addUser(addUserForm, function (userData) {
+							aggroUserNameTextBox.value = '';
 
-						aggroUserNameTextBox.value = '';
-						$('.deleteCellBtn').click(_this.deleteCell); //삭제 버튼 이벤트
-					});
+							_this.addCell(userData);
+							$('.deleteCellBtn').click(_this.deleteCell); //삭제 버튼 이벤트
+							_this.restoreOptions();
+
+							_utility2.default.logPrint('#005CFF', '어그로 유저 추가');
+						});
+					} else {
+						_utility2.default.logPrint('red', '이름이 비어있음');
+					}
 				});
 
 				$(document).on('change', '#importOption', _userIO2.default.importOption);
@@ -182,26 +187,21 @@
 
 				if (allSwitch) {
 					var aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
-					var blockTypeCheck = document.getElementsByName('blockTypeRadio');
 					var blockColor = document.getElementById('blockColor');
-					var blockTypeValue = void 0;
+					var blockTypeValue = $('#blockTypeSelect').val();
 
-					for (var i = 0; i < blockTypeCheck.length; i++) {
-						if (blockTypeCheck[i].checked === true) blockTypeValue = blockTypeCheck[i].value;
-					}
-
-					for (var _i = 0; _i < aggrohuman.length; _i++) {
-						aggrohuman[_i].settingType = blockTypeValue;
-						aggrohuman[_i].settingColor = blockColor.value;
+					for (var i = 0; i < aggrohuman.length; i++) {
+						aggrohuman[i].settingType = blockTypeValue;
+						aggrohuman[i].settingColor = blockColor.value;
 					}
 
 					_utility2.default.saveJson(aggrohuman);
+
+					$('.badUserList').html('');
+
+					this.restoreOptions();
+					_utility2.default.logPrint('#005CFF', '일괄처리 완료');
 				}
-
-				$('.badUserList').html('');
-
-				this.restoreOptions();
-				_utility2.default.logPrint('#005CFF', '일괄처리 완료');
 			} //function restoreOptions - 옵션 저장
 
 		}, {
@@ -222,7 +222,7 @@
 				$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
 				$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
 				$('#blockColor')[0].value = aggrohuman[userNumber].settingColor;
-				$('#userMemo')[0].value = aggrohuman[userNumber].user_memo;
+				$('#userMemo')[0].value = aggrohuman[userNumber].userMemo;
 
 				var settingType = aggrohuman[userNumber].settingType;
 
@@ -235,19 +235,14 @@
 
 				if (menuNumber != this.nowMenuNumber) {
 					$('#content').load('option_menu' + menuNumber + '.html', function () {
-						var menuList = $("#left_menu li");
-
-						for (var i = 1; i <= menuList.length; i++) {
-							var selectorName = '#menu' + i;
-
-							if (i != menuNumber) menuList[i - 1].id = 'menu' + i;else menuList[i - 1].id = 'selectedMenuItem';
-						}
+						$("#left_menu #selectedMenuItem").removeAttr('id');
+						$("#left_menu li")[menuNumber - 1].id = 'selectedMenuItem';
 
 						_this2.nowMenuNumber = menuNumber;
 
-						if (_this2.nowMenuNumber != 3) _this2.restoreOptions();
+						if (_this2.nowMenuNumber <= 2) _this2.restoreOptions();
 
-						switch (menuNumber) {
+						switch (parseInt(menuNumber)) {
 							case 1:
 								document.querySelector('#save').addEventListener('click', _this2.userOptionsAllChange);
 								document.querySelector('#reset').addEventListener('click', _this2.optionReset);
@@ -263,21 +258,42 @@
 		}, {
 			key: 'restoreOptions',
 			value: function restoreOptions() {
+				var userList = $('.badUserList');
 				var aggrohuman = localStorage['aggrohuman']; //어그로 목록
 
+				userList[0].innerHTML = '';
+
 				if (aggrohuman != undefined) {
-					var badUserList = $('.badUserList');
 					var date = _utility2.default.getDate();
 					var _aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 
 					for (var i = 0; i < _aggrohuman.length; i++) {
-						badUserList[0].innerHTML += this.addCell(i, _aggrohuman[i].addDate, _aggrohuman[i].name, _aggrohuman[i].ruliwebID, _aggrohuman[i].settingType, i);
-					}
+						this.addCell(_aggrohuman[i]);
+					}$('.badUserList li').each(function (index, li) {
+						$(li).attr('itemprop', index);
+					});
 
 					$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 				}
 			} //function restoreOptions - 페이지 로드
 
+		}, {
+			key: 'addCell',
+			value: function addCell(celldata) {
+				var userList = $('.badUserList');
+				userList[0].innerHTML += this.userCellForm(celldata);
+			} //function addCell - 리스트 셀 형식
+
+		}, {
+			key: 'userCellForm',
+			value: function userCellForm(celldata) {
+				//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
+				var settingTypeStr = _utility2.default.settingToStrConvert(parseInt(celldata.settingType));
+				// { id, date, name, ruliwebID, settingType, cellNumber }
+				var index = 0;
+
+				return '<li>\n\t\t  \t\t\t<div class="cellState">\n\t\t\t    \t\t<p class="date">' + celldata.addDate + '</p>\n\t\t\t    \t\t<p class="userState">' + settingTypeStr + '</p>\n\t\t\t    \t</div>\n\t\t\t    \t<div class="badUserName">\n\t\t\t    \t\t<p class="userName">' + celldata.name + '</p>\n\t\t\t    \t\t<p class="userID">' + celldata.ruliwebID + '</p>\n\t\t\t    \t</div>\n\t\t\t    \t<button class="deleteCellBtn">\uC0AD\uC81C</button>\n\t\t\t      </li>';
+			}
 		}, {
 			key: 'optionReset',
 			value: function optionReset() {
@@ -298,42 +314,19 @@
 			} //function optionReset - 옵션 초기화
 
 		}, {
-			key: 'addCell',
-			value: function addCell(celldata) {
-				// { id, date, name, ruliwebID, settingType, cellNumber }
-				var settingTypeStr = _utility2.default.settingToStrConvert(parseInt(celldata.settingType));
-
-				return '<li userid=' + celldata.ruliwebID + '>\n\t\t  \t\t\t<div class="cellState">\n\t\t\t    \t\t<p class="date">' + celldata.addDate + '</p>\n\t\t\t    \t\t<p class="userState">' + settingTypeStr + '</p>\n\t\t\t    \t</div>\n\t\t\t    \t<div class="badUserName">\n\t\t\t    \t\t<p class="userName">' + celldata.name + '</p>\n\t\t\t    \t\t<p class="userID">' + celldata.ruliwebID + '</p>\n\t\t\t    \t</div>\n\t\t\t    \t<button class="deleteCellBtn">\uC0AD\uC81C</button>\n\t\t\t      </li>';
-			} //function addCell - 리스트 셀 형식
-
-		}, {
 			key: 'deleteCell',
 			value: function deleteCell(data) {
-				var deleteCellNumber = data.currentTarget.value;
+				var deleteCellNumber = data.currentTarget.closest('li').getAttribute('itemprop');
 				var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
 				var aggrohumanList = aggrohumanJson.userCellInfo;
-				var badUserList = $('.badUserList');
-				var tempArray = [];
 
-				badUserList[0].innerHTML = '';
+				aggrohumanList.splice(deleteCellNumber, 1);
+				aggrohumanJson.userCellInfo = aggrohumanList;
 
-				for (var i = 0; i < aggrohumanList.length; i++) {
-					if (i != deleteCellNumber) {
-						var aggroUserName = aggrohumanList[i].name;
-						var date = aggrohumanList[i].addDate;
-						var settingType = aggrohumanList[i].settingType;
-						var ruliwebID = aggrohumanList[i].ruliwebID;
-						tempArray.push(aggrohumanList[i]);
-						badUserList[0].innerHTML += this.addCell(i, date, aggroUserName, ruliwebID, settingType, tempArray.length - 1);
-					}
-				}
-
-				if (tempArray.length != 0) $('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
-
-				aggrohumanJson.userCellInfo = tempArray;
 				_utility2.default.saveJson(aggrohumanJson.userCellInfo);
-
 				_utility2.default.logPrint('#005CFF', '셀 삭제 완료');
+
+				this.restoreOptions();
 			}
 		}]);
 
@@ -367,6 +360,8 @@
 	    _createClass(Utillity, null, [{
 	        key: "saveJson",
 	        value: function saveJson(jsonData) {
+	            var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 	            var userNameKeys = {};
 	            var userIDKeys = {};
 
@@ -383,6 +378,8 @@
 	            };
 
 	            localStorage['aggrohuman'] = JSON.stringify(dataFrom);
+
+	            callback();
 	        }
 	    }, {
 	        key: "logPrint",
@@ -411,7 +408,7 @@
 	        value: function settingToStrConvert(settingType) {
 	            var settingTypeStr = void 0;
 
-	            switch (settingType) {
+	            switch (parseInt(settingType)) {
 	                case 0:
 	                    settingTypeStr = "설정없음";
 	                    break;
@@ -449,7 +446,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -463,114 +460,89 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var defaultUserForm = {
-		ruliwebID: '',
-		name: '',
-		user_memo: '',
-		settingType: 0,
-		settingColor: '#ffffff',
-		addDate: ''
+	  ruliwebID: '',
+	  name: '',
+	  userMemo: '',
+	  settingType: 0,
+	  settingColor: '#ffffff',
+	  addDate: ''
 	};
 
 	var UserIo = function () {
-		function UserIo() {
-			_classCallCheck(this, UserIo);
-		}
+	  function UserIo() {
+	    _classCallCheck(this, UserIo);
+	  }
 
-		_createClass(UserIo, null, [{
-			key: 'importOption',
-			value: function importOption(event) {
-				var _this = this;
+	  _createClass(UserIo, null, [{
+	    key: 'importOption',
+	    value: function importOption(event) {
+	      var _this = this;
 
-				var optionFile = event.target.files[0];
-				var reader = new FileReader();
+	      var optionFile = event.target.files[0];
+	      var reader = new FileReader();
 
-				reader.onload = function (file) {
-					try {
-						var userData = JSON.parse(file.target.result);
-						$(userData).each(function (index, object) {
-							_this.addUser(object.name, object);
-						});
-						_utility2.default.logPrint('#005CFF', '유저 추가');
-					} catch (err) {
-						_utility2.default.logPrint('red', '파일내용을 확인해 주세요');
-					}
-				};
+	      reader.onload = function (file) {
+	        try {
+	          var userData = JSON.parse(file.target.result);
+	          $(userData).each(function (index, object) {
+	            _this.addUser(object.name, object);
+	          });
+	          _utility2.default.logPrint('#005CFF', '유저 추가');
+	        } catch (err) {
+	          _utility2.default.logPrint('red', '파일내용을 확인해 주세요');
+	        }
+	      };
 
-				reader.readAsText(optionFile);
-			}
-		}, {
-			key: 'exportOption',
-			value: function exportOption() {
-				var result = JSON.parse(localStorage['aggrohuman']);
-				var url = 'data:application/json;base64,' + btoa(unescape(encodeURIcomponent(JSON.stringify(result.userCellInfo))));
-				chrome.downloads.download({
-					url: url,
-					filename: 'user-list.json'
-				});
-			}
-		}, {
-			key: 'addUser',
-			value: function addUser(aggroUserName) {
-				var form = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-				var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+	      reader.readAsText(optionFile);
+	    }
+	  }, {
+	    key: 'exportOption',
+	    value: function exportOption() {
+	      var result = JSON.parse(localStorage['aggrohuman']);
+	      var url = 'data:application/json;base64,' + btoa(unescape(encodeURIcomponent(JSON.stringify(result.userCellInfo))));
+	      chrome.downloads.download({
+	        url: url,
+	        filename: 'user-list.json'
+	      });
+	    }
+	  }, {
+	    key: 'addUser',
+	    value: function addUser() {
+	      var form = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+	      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-				if (aggroUserName != '') {
-					if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
-						if (form === undefined) {
-							var firstAddUserData = Object.assign({
-								name: aggroUserName,
-								addDate: _utility2.default.getDate()
-							}, defaultUserForm);
-							_utility2.default.saveJson([firstAddUserData]);
-							callback(firstAddUserData);
-						} else {
-							_utility2.default.saveJson([form]);
-							callback(form);
-						}
-						// 최초 추가
-					} else {
-						var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
-						var addSwitch = true;
-						var aggrohumanList = aggrohumanJson.userCellInfo;
+	      if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
+	        _utility2.default.saveJson([form]);
+	        callback(form);
+	        // 최초 추가
+	      } else {
+	        var aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
+	        var addSwitch = true;
+	        var aggrohumanList = aggrohumanJson.userCellInfo;
 
-						for (var i = 0; i < aggrohumanList.length; i++) {
-							if (aggrohumanList[i].name == aggroUserName) {
-								addSwitch = false;
-								_utility2.default.logPrint('red', '리스트에 이미 존재함');
-								return;
-							}
-						} //for - 중복체크
+	        for (var i = 0; i < aggrohumanList.length; i++) {
+	          if (aggrohumanList[i].name == form.name) {
+	            addSwitch = false;
+	            _utility2.default.logPrint('red', '리스트에 이미 존재함');
+	            return;
+	          }
+	        } //for - 중복체크
 
-						if (addSwitch) {
-							if (form === undefined) {
-								var addUserData = Object.assign({
-									name: aggroUserName,
-									settingType: 0,
-									addDate: _utility2.default.getDate()
-								}, defaultUserForm);
+	        if (addSwitch) {
+	          aggrohumanJson.userCellInfo.push(form);
+	          _utility2.default.saveJson(aggrohumanJson.userCellInfo);
+	          callback(form);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'defaultUserForm',
+	    get: function get() {
+	      return defaultUserForm;
+	    }
+	  }]);
 
-								aggrohumanJson.userCellInfo.push(addUserData);
-								callback(addUserData);
-							} else {
-								aggrohumanJson.userCellInfo.push(form);
-								callback(form);
-							}
-
-							_utility2.default.saveJson(aggrohumanJson.userCellInfo);
-						}
-					}
-				} else {
-					_utility2.default.logPrint('red', '이름이 비어있음');
-				}
-			}
-		}, {
-			key: 'defaultUserForm',
-			get: function get() {
-				return defaultUserForm;
-			}
-		}]);
-
-		return UserIo;
+	  return UserIo;
 	}();
 
 	exports.default = UserIo;

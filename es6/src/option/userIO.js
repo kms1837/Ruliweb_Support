@@ -72,8 +72,8 @@ class UserIo
 	
 	    	if (addSwitch) {
 				aggrohumanJson.userCellInfo.push(form);
-				callback(form);
 				Utility.saveJson(aggrohumanJson.userCellInfo);
+				callback(form);
 			}
 		}
 	}
