@@ -51,6 +51,8 @@ class BoardCheck
     	}
     	
     	Common.displayCheckCount(countFrom);
+    	
+    	console.log('게시판을 체크합니다.');
     }//function BoadtTableCheck - 게시판 어그로 체크
     
     static BoardCommentCheck(response) //blockType, checkUserList

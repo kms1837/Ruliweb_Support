@@ -3,9 +3,6 @@
     core의 기타함수를 모아놨습니다.
 */
 
-Common.prototype.seleteUser = undefined;
-// shared state
-
 const defaultCheckUserForm = {
     writerName: '',
 	writerID: ''
@@ -133,5 +130,8 @@ class Common
     	}
     }//td색 변경 (리스트의 한줄부분임)
 }
+
+Common.prototype.seleteUser = undefined;
+// shared state
 
 export default Common;

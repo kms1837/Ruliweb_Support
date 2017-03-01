@@ -47,7 +47,7 @@ class Core {
 					$.observer = new MutationObserver( (mutations) => {
 						let tartgetName = $(mutations[0].target).attr('class');
 						if (tartgetName === 'comment_view normal row') {
-				    		BoardCheck.BoardCommentCheck(response);
+				    		BoardCheck.boardCommentCheck(response);
 						}
 					});
 		
@@ -55,7 +55,7 @@ class Core {
 								
 					if (checkUserList!='') {
 						if (pageStatuse === 'news' || endPointStatuse === 'review') {
-							BoardCheck.BoardCommentCheck(response);
+							BoardCheck.boardCommentCheck(response);
 							$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 							
 						} else if (rootPageStatuse === 'mypi') {
@@ -63,9 +63,9 @@ class Core {
 							else					MypiCheck.mypiMainCheck(response);
 							
 						} else {
-							BoardCheck.BoardTableCheck(response);
+							BoardCheck.boardTableCheck(response);
 							if (pageStatuseType === 'read') {
-								BoardCheck.BoardCommentCheck(response);
+								BoardCheck.boardCommentCheck(response);
 								$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 							}
 						}

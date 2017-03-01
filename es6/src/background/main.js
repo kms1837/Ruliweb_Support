@@ -22,7 +22,7 @@ class Background
 	    return defaultMessageFrom;
 	}
 	
-	messageProcess(request, sender, sendResponse) {
+	static messageProcess(request, sender, sendResponse) {
 		switch (request.type) {
 			case 'load':
 				this.init();
@@ -74,7 +74,7 @@ class Background
 		}
 	}
 	
-	requestProcess(request, sender, sendResponse) {
+	static requestProcess(request, sender, sendResponse) {
 		if (request.method == "getLocalStorage") {
 			let sendData = localStorage.length > 0 ? localStorage : undefined;
 			sendResponse({data: sendData});
