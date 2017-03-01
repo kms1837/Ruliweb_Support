@@ -1,5 +1,5 @@
 
-import Utility from './utility'
+import Commmon from './common'
 
 class MypiCheck
 {
@@ -15,14 +15,14 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= $(object).find('a')[0].href;
     		
-    		writerID = Utility.convertID(writerID, '&');
+    		writerID = Commmon.convertID(writerID, '&');
     		
     		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Commmon.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if (countFlag) {
     			let defaultInfo = {
@@ -43,7 +43,7 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Utility.displayCheckCount(countFrom);
+    	Commmon.displayCheckCount(countFrom);
     }//마이피 메인
     
     mypiCheck(response)
@@ -103,7 +103,7 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Utility.displayCheckCount(countFrom);
+    	Commmon.displayCheckCount(countFrom);
     }//마이피 체크
     
     mypiCateCheck(response)
@@ -118,14 +118,14 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
     		
-    		writerID = writerID ? Utility.convertID(writerID.href.split('?')[1], '&') : ''
+    		writerID = writerID ? Commmon.convertID(writerID.href.split('?')[1], '&') : ''
     		
     		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Commmon.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if(countFlag) {
     			let defaultInfo = {
@@ -146,7 +146,7 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Utility.displayCheckCount(countFrom);
+    	Commmon.displayCheckCount(countFrom);
     }
 };
 

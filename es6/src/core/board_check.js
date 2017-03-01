@@ -1,5 +1,5 @@
 
-import Utility from './utility'
+import Common from './common'
 
 class BoardCheck
 {
@@ -9,7 +9,7 @@ class BoardCheck
     	let count = 0;
     	let logs = {};
     	
-    	Utility.tableAddID(boardTable);
+    	Common.tableAddID(boardTable);
     	
     	$(boardTable).each( (index, object) => {
     		let writerEle 	= $(object).find('.writer');
@@ -19,17 +19,17 @@ class BoardCheck
     
     		if (writerName === '') {
     			writerName = $(object).find('.writer').text();
-    			writerEle.contextmenu(contextMenu)
+    			writerEle.contextmenu(Common.contextMenu)
     		} else {
-    			$(object).find('.writer a').contextmenu(contextMenu);
+    			$(object).find('.writer a').contextmenu(Common.contextMenu);
     		}
     		
-    		let userInfo = {
-    			writerName  : writerName,
+    		let userInfo = Object.assign(Common.defaultCheckUserForm, {
+    	        writerName  : writerName,
     			writerID	: writerID
-    		}
+    	    });
     		
-    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     
     		if(countFlag) {
     			let defaultInfo = {
@@ -50,7 +50,7 @@ class BoardCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Utility.displayCheckCount(countFrom);
+    	Common.displayCheckCount(countFrom);
     }//function BoadtTableCheck - 게시판 어그로 체크
     
     static BoardCommentCheck(response) //blockType, checkUserList
@@ -67,16 +67,16 @@ class BoardCheck
      		
      		writerID = writerID.substr(1, writerID.length-2);
      		
-     		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
+     		$(object).find('.user_inner_wrapper .nick a').contextmenu(Common.contextMenu);
      		
-     		let userInfo = {
-     			writerName  : writerName,
-     			writerID	: writerID
-     		};
+     		let userInfo = Object.assign(Common.defaultCheckUserForm, {
+    	        writerName  : writerName,
+    			writerID	: writerID
+    	    });
      		
-     		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+     		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
      	
-     		if(countFlag) {
+     		if (countFlag) {
      			let defaultInfo = {
      				name 	: writerName,
      				id 		: writerID,
@@ -96,14 +96,14 @@ class BoardCheck
     		
     		writerID = writerID.substr(1, writerID.length-2);
     		
-    		$(object).find('.user_inner_wrapper .nick a').contextmenu(contextMenu);
+    		$(object).find('.user_inner_wrapper .nick a').contextmenu(Common.contextMenu);
     		
-    		let userInfo = {
-    			writerName  : writerName,
+    		let userInfo = Object.assign(Common.defaultCheckUserForm, {
+    	        writerName  : writerName,
     			writerID	: writerID
-    		};
-    		
-    		let countFlag = Utility.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    	    });
+    	    
+    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if(countFlag) {
     			let defaultInfo = {
@@ -125,7 +125,7 @@ class BoardCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Utility.displayCheckCount(countFrom);
+    	Common.displayCheckCount(countFrom);
     }//function BoardCommentCheck - 댓글 어그로 체크
 }
 

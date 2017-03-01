@@ -1,11 +1,25 @@
 
 import Utility from '../common/utility';
+import UserIO from '../option/userIO';
+
+const background = chrome.extension.getBackgroundPage();
+
+const defaultMessageFrom = {
+	type: '',
+	key: '',
+	userName: ''
+}
 
 class Background 
 {
-	init() {
-		counts = [];
-		contextFlag = false;
+	constructor() {
+		this.userInfo = {};
+		this.counts = [];
+		this.contextFlag = false;
+	}
+	
+	static get defaultMessageFrom () {
+	    return defaultMessageFrom;
 	}
 	
 	messageProcess(request, sender, sendResponse) {
@@ -20,7 +34,7 @@ class Background
 				this.count(request);
 				break;
 			case 'getCount': 
-				sendResponse(counts);
+				sendResponse(this.counts);
 				break;
 			default:
 				break;
@@ -28,31 +42,34 @@ class Background
 	}
 	
 	count(inForm) {
-		counts.push(inForm);
+		this.counts.push(inForm);
 	}
 	
 	context(inForm) {
 		if (inForm.key === 'adduser') {
-			userInfo = inForm.userName;
+			this.userInfo = Object.assign(UserIO.defaultUserForm, {
+    	        name: inForm.userName,
+    	    });
+			
 			let userForm = {
-				'title': '유저추가('+ userInfo +')',
+				'title': '유저추가('+ this.userInfo.name +')',
 				'contexts':['page', 'selection', 'link', 'editable', 'image'],
-				onclick: Utility.addUser
+				onclick: () => { UserIO.addUser(this.userInfo); }
 			};
 	
-			if (contextFlag) {
+			if (this.contextFlag) {
 				chrome.contextMenus.update('adduser', userForm);
 			} else {
 				userForm['id'] = 'adduser';
 				chrome.contextMenus.create(userForm);
 			}
 	
-			contextFlag = true;
+			this.contextFlag = true;
 			
 		} else {
-			if(contextFlag) {
+			if (this.contextFlag) {
 				chrome.contextMenus.remove('adduser');
-				contextFlag = false;
+				this.contextFlag = false;
 			}
 		}
 	}
@@ -66,7 +83,7 @@ class Background
 		}
 	}
 	
-	addUser (event) {
+	/*addUser (event) {
 		let defaultUserForm = {
 		  	ruliwebID: '', 
 		  	user_memo: '', 
@@ -103,13 +120,10 @@ class Background
 				alert('유저추가 완료');
 			}
 	  	}
-	}
+	}*/
 }
-
-const background = chrome.extension.getBackgroundPage();
-let userInfo;
-let counts = [];
-let contextFlag = false;
 
 chrome.runtime.onMessage.addListener(Background.messageProcess);
 chrome.extension.onRequest.addListener(Background.requestProcess);
+
+export default Background

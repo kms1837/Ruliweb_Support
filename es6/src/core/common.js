@@ -3,8 +3,69 @@
     core의 기타함수를 모아놨습니다.
 */
 
-class Utility
+Common.prototype.seleteUser = undefined;
+// shared state
+
+const defaultCheckUserForm = {
+    writerName: '',
+	writerID: ''
+}
+
+class Common
 {
+    
+    static get defaultCheckUserForm() {
+        return defaultCheckUserForm;
+    }
+    
+	static contextMenu(response) {
+    	let inUserName = $.trim($(response.target).text());
+    	$(response.target).css('background-color', '#ccc');
+    	$(response.target).css('color', '#fff');
+    	
+    	this.seleteUser = $(response.target);
+    	
+    	let messageFrom = {
+    		type: "context",
+    		key: "adduser",
+    		userName: inUserName
+    	}
+    			
+    	chrome.extension.sendMessage(messageFrom);
+    }
+	
+    static userNodeCheck(data, subject, userInfo) {
+    	let jsonData = JSON.parse(data);
+    	let userInfoList = jsonData.userCellInfo;
+    	
+    	let writerName  = $.trim(userInfo.writerName);
+    	let writerID	= userInfo.writerID;
+    	let infoIndex	= jsonData.userNameKeys[writerName] != undefined ?
+    					  jsonData.userNameKeys[writerName] :
+    					  jsonData.userIDKeys[writerID];
+    	
+    	if (infoIndex != undefined) {
+    		let user = userInfoList[infoIndex];
+    		switch (parseInt(user.settingType)) {
+    			case 1: // 글 제거
+    				$(subject).css('display', 'none');
+    				break;
+    			case 2: // 글 가리기
+    				this.hideTd($(subject).find('td'));
+    				break;
+    			case 3:
+    				this.changeTdColor($(subject).find('td'), user.settingColor);
+    				break;
+    			case 4:
+    				$(subject).find('.writer a').text('어글러');
+    				break;
+    		}
+    		return true;
+    	}
+    	
+    	return false;
+    }
+
     static tableAddID(table) {
     	let boardTable = table;
     
@@ -73,4 +134,4 @@ class Utility
     }//td색 변경 (리스트의 한줄부분임)
 }
 
-export default Utility;
+export default Common;
