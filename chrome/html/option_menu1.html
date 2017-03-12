@@ -2,7 +2,7 @@
 	
 <div class="badUserOption">
 	<div class="userSetting">
-		<div class="block">
+		<!--<div class="block">
 			<p>추가할 관리 유저 이름:</p>
 			<input type="text" id="aggrohuman"></input>
 			<button id="addBadUser">추가</button>
@@ -17,24 +17,59 @@
 				<option value=2>글 가리기</option>
 				<option value=3>줄 색칠</option>
 			</select>
-			
-			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked> 설정하지않음 </input></a>
-			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1> 글 제거</input></a>
-			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2> 글 가리기(beta)</input></a>
-			<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 줄 색칠
-				<input type="color" id="blockColor" value="#FFFFFF"/>
-			</input></a>
-			<!--<a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=4> 마우스 오버시 메모표시</input></a>-->
-			<!-- <a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=5> 닉네임 강제 변경</input></a> -->
+			<input type="color" id="blockColor" value="#FFFFFF"/>
 		</div>
 		
 		<div id="log">Log ^ㅅ^</div>
 		<div class="option_btns">
 			<button id="save">일괄 옵션변경</button>
 			<button id="reset">초기화</button>
+		</div>-->
+		
+		<div class="itemTitle">
+			+ 유저추가
+		</div>
+		
+		<div class="itemContent">
+			<div class="option-item">
+				<input type="text" id="aggrohuman"></input>
+				<span class="inputDeco">[</span>
+				<input type="text" id="aggrohumanID"></input>
+				<span class="inputDeco">]</span>
+			</div>
+			
+			<div class="option-item">
+				<select id="blockTypeSelect">
+					<option value=0>설정하지 않음</option>
+					<option value=1>글 제거</option>
+					<option value=2>글 가리기</option>
+					<option value=3>줄 색칠</option>
+				</select>
+				<input type="color" id="blockColor" value="#FFFFFF"/>
+			</div>
+			
+			<div class="option-item">
+				<button id="addBadUser">추가</button>
+			</div>
 		</div>
 	</div>
+	
+	<div class="itemBlock userList">
+		<div class="itemTitle">
+			<span>
+				ㅁ 관리중인 리스트
+			</span>
+			<span class="titleTools">
+				<button>All</button> <!-- 일괄 옵션 -->
+				<button>I</button> <!-- import -->
+				<button>E</button> <!-- export -->
+			</span>
+		</div>
+		<div class="itemContent">
+			<ul class="badUserList">
 
-	<ul class="badUserList">
-	</ul>
+			</ul>
+		</div>
+	</div>
+	
 </div>
