@@ -2,10 +2,22 @@
 import Utility from '../common/utility';
 import UserIO from './userIO';
 
+const defaultOptionForm = {
+	aggrohuman: '',
+	userNameKeys: [],
+	userIDKeys: [],
+	dislikeBlock: {
+		flag: false,
+		limit: 0
+	}, // 비추천 차단
+	prisonerBlock: false // 죄수 번호 차단
+}
+
 class Option
 {
 	constructor() {
 		this.nowMenuNumber = 0; //현재 선택된 메뉴
+		this.memoFlag = true;
 		this.eventBind();
 		
 		// object bind
@@ -176,17 +188,23 @@ class Option
 				
 				this.nowMenuNumber = menuNumber;
 				
-				if (this.nowMenuNumber <= 2) this.restoreOptions();
+				this.memoFlag = parseInt(menuNumber) === 1 ? true : false;
 				
+				if (this.nowMenuNumber <= 2) this.restoreOptions();
+
 				switch (parseInt(menuNumber)) {
 					case 1:
 						document.querySelector('#save').addEventListener('click', this.userOptionsAllChange);
 						document.querySelector('#reset').addEventListener('click', this.optionReset);
+						this.memoFlag = true;
 						break;
+					case 2:
+						this.memoFlag = false;
 					case 3:
 						document.querySelector('#export_option').addEventListener('click', UserIO.exportOption);
 						break;
 				}//페이지 셋팅
+				
 			});
 		}
 	}//function changeMenu - 옵션메뉴 변경
@@ -221,18 +239,23 @@ class Option
 		//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
 		let settingTypeStr = Utility.settingToStrConvert(parseInt(celldata.settingType));
 		// { id, date, name, ruliwebID, settingType, cellNumber }
+		let memo = this.memoFlag ? '<div class="overMemoArea"> > </div>' : '';
+		
 		let index = 0;
 		
 		return	`<li>
-		  			<div class="cellState">
-			    		<p class="date">${celldata.addDate}</p>
-			    		<p class="userState">${settingTypeStr}</p>
-			    	</div>
-			    	<div class="badUserName">
-			    		<p class="userName">${celldata.name}</p>
-			    		<p class="userID">${celldata.ruliwebID}</p>
-			    	</div>
-			    	<button class="deleteCellBtn">삭제</button>
+					<div class="cellContent">
+			  			<div class="cellState">
+				    		<p class="date">${celldata.addDate}</p>
+				    		<p class="userState">${settingTypeStr}</p>
+				    	</div>
+				    	<div class="badUserName">
+				    		<p class="userName">${celldata.name}</p>
+				    		<p class="userID">${celldata.ruliwebID}</p>
+				    	</div>
+			    		<button class="deleteCellBtn">삭제</button>
+		    		</div>
+		    		${memo}
 			      </li>`;
 	}
 	

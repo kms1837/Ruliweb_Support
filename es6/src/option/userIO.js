@@ -4,9 +4,11 @@ import Utility from '../common/utility';
 const defaultUserForm = {
   ruliwebID: '',
   name: '',
+  nameRegex: '', //정규식
   userMemo: '', 
-  settingType: 0, 
+  settingType: 0,
   settingColor: '#ffffff',
+  subSetting: 0,
   addDate: ''
 };
 	
