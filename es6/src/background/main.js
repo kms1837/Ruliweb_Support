@@ -13,9 +13,24 @@ const defaultMessageFrom = {
 class Background 
 {
 	constructor() {
+		this.init();
+	}
+	
+	static init() {
+		Background.prototype.userInfo = {};
+		Background.prototype.counts = [];
+		Background.prototype.contextFlag = false;
+
+		/*
 		this.userInfo = {};
 		this.counts = [];
 		this.contextFlag = false;
+		*/
+		
+		this.init = this.init.bind(Background);
+		this.messageProcess = this.messageProcess.bind(Background);
+		this.count = this.count.bind(Background);
+		console.log('init!');
 	}
 	
 	static get defaultMessageFrom () {
@@ -25,27 +40,28 @@ class Background
 	static messageProcess(request, sender, sendResponse) {
 		switch (request.type) {
 			case 'load':
-				this.init();
+				Background.init();
 				break;
 			case 'context': 
-				this.context(request);
+				Background.context(request);
 				break;
 			case 'count': 
-				this.count(request);
+				Background.count(request);
 				break;
 			case 'getCount': 
-				sendResponse(this.counts);
+				sendResponse(Background.prototype.counts);
 				break;
 			default:
 				break;
 		}
 	}
 	
-	count(inForm) {
-		this.counts.push(inForm);
+	static count(inForm) {
+		//TODO - 작동안함.
+		Background.prototype.counts.push(inForm);
 	}
 	
-	context(inForm) {
+	static context(inForm) {
 		if (inForm.key === 'adduser') {
 			this.userInfo = Object.assign(UserIO.defaultUserForm, {
     	        name: inForm.userName,

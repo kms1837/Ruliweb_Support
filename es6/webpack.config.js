@@ -12,7 +12,8 @@ module.exports = {
     entry: {
         option: `${devPath}/option/main.js`,
         background: `${devPath}/background/main.js`,
-        core: `${devPath}/core/main.js`
+        core: `${devPath}/core/main.js`,
+        popup: `${devPath}/popup/main.js`
     },
     
     output : {
