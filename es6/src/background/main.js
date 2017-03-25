@@ -57,7 +57,6 @@ class Background
 	}
 	
 	static count(inForm) {
-		//TODO - 작동안함.
 		Background.prototype.counts.push(inForm);
 	}
 	
