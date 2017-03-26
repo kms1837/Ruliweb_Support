@@ -31,13 +31,16 @@ class Option
 	eventBind() {
 		$(document).on('click', '#addBadUser', () => {
 			let aggroUserNameTextBox = document.getElementById('aggrohuman');
+			let aggroUserIDTextBox = document.getElementById('aggrohumanID');
 			let aggroUserName = aggroUserNameTextBox.value;
+			let aggroUserID = aggroUserIDTextBox.value;
 			let blockColor = document.getElementById('blockColor');
 			let blockTypeValue = $('#blockTypeSelect').val();
 	
 			if (aggroUserName.length > 0) {
 				let addUserForm = Object.assign(UserIO.defaultUserForm, {
 	    	        name: aggroUserName,
+	    	        ruliwebID: aggroUserID,
 	    	        settingType: blockTypeValue,
 					settingColor: blockColor.value,
 	    	        addDate: Utility.getDate()
@@ -45,9 +48,9 @@ class Option
 	    	    
 				UserIO.addUser(addUserForm, userData => {
 					aggroUserNameTextBox.value = '';
+					aggroUserIDTextBox.value = '';
 					
 					this.addCell(userData);
-					$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 					this.restoreOptions();
 					
 					Utility.logPrint('#005CFF', '어그로 유저 추가');
@@ -115,16 +118,19 @@ class Option
 		$(document).on('keyup', '.choiceSetting #userMemo', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 			let userid = $('.select').attr('itemprop');
-			let inID = data.target.value;
 			
-			aggrohuman[userid].user_memo = data.target.value;
+			aggrohuman[userid].userMemo = data.target.value;
 			
 			Utility.saveJson(aggrohuman);
 		});
 		
-		$(document).on('change', '.choiceSetting #userMemo', () => {
+		$(document).on('change', '.choiceSetting #userMemo', data => {
 			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
 			let userid = $('.select').attr('itemprop');
+			
+			aggrohuman[userid].userMemo = data.target.value;
+			
+			Utility.saveJson(aggrohuman);
 			
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 		});
@@ -194,7 +200,7 @@ class Option
 
 				switch (parseInt(menuNumber)) {
 					case 1:
-						document.querySelector('#save').addEventListener('click', this.userOptionsAllChange);
+						document.querySelector('#allChangeBtn').addEventListener('click', this.userOptionsAllChange);
 						document.querySelector('#reset').addEventListener('click', this.optionReset);
 						this.memoFlag = true;
 						break;
@@ -225,7 +231,24 @@ class Option
 			$('.badUserList li').each( (index, li) => {
 				$(li).attr('itemprop', index);
 			});
-		
+			
+			$('.overMemoArea').mouseover((event) => {
+				let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+				let cellNum = event.target.closest('li').getAttribute('itemprop');
+				let overUserMemo = $('#overUserMemo');
+				
+				let memo = aggrohuman[cellNum].userMemo.length > 0 ? aggrohuman[cellNum].userMemo : '메모없음';
+				
+				$('#overUserMemo .memoText').text(memo);
+				
+				overUserMemo.removeClass('hidden');
+				overUserMemo.css('top', event.target.offsetTop + 5);
+			});
+			
+			$('.overMemoArea').mouseout((event) => {
+				$('#overUserMemo').addClass('hidden');
+			});
+			
 			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
 		}
 	}//function restoreOptions - 페이지 로드

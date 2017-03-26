@@ -37,8 +37,39 @@ ul {list-style: none;}
 	text-align: center; 	
 	background-color: #ccc;
 }
+
 #left_menu #selectedMenuItem { position: relative; margin-left: -30px; border-right:none; background-color: #fff; z-index:3;}
-#log{color: #005CFF; text-align: center; margin: 10px auto;}
+
+#log {
+	float: left;
+	color: #005CFF; 
+	text-align: center; 
+	margin: 10px 0;
+	border-left: #c90000 4px solid;
+    padding: 5px 0;
+    border-right: #c90000 4px solid;
+}
+
+#overUserMemo {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.71);
+    color: white;
+    min-height: 20px;
+    padding: 10px;
+    width: 230px;
+    left: 630px;
+    transition: background 0.3s;
+    word-wrap: break-word;
+}
+
+.hidden {
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.hidden .memoText {
+	display: none;
+}
+
 #aggrohuman { width:120px; }
 #aggrohumanID { width:60px; }
 #aggrohuman, #aggrohumanID {
@@ -72,7 +103,9 @@ ul {list-style: none;}
 
 /* option page1 */
 .userList>.itemTitle { background-color: #c90000; }
-.userSetting   { float: left; width: 280px; background-color: #c90000; margin-right: 10px;}
+.leftOption { float:left;}
+.leftOption>#log { width:272px; }
+.userSetting   { width: 280px; background-color: #c90000; margin-right: 10px;}
 .userSetting { height: 200px;}
 .badUserList, .choiceSetting { float: right; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .badUserList { width: 300px;}
@@ -95,6 +128,7 @@ ul {list-style: none;}
 .addUserMenu {display: block; margin: 50px 0; text-align: center;}
 
 /* option page2 */
+.choiceBadUserOption>#log { width: 592px;}
 .choiceSetting { width: 270px; }
 .choiceBadUserOption>.badUserList { margin-right: 10px; }
 
@@ -112,7 +146,7 @@ ul {list-style: none;}
 	width: 660px; 
 	margin: 60px auto; 
 	background-color: #fff; 
- 	box-shadow: 0px 0px 13px 2px rgba(124, 124, 124, 0.41); 
+ 	/*box-shadow: 0px 0px 13px 2px rgba(124, 124, 124, 0.41); */
 }
 
 #content {
