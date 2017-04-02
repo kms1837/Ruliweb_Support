@@ -3,7 +3,7 @@ import Utility from '../common/utility';
 import UserIO from './userIO';
 
 const defaultOptionForm = {
-	aggrohuman: '',
+	userList: [],
 	userNameKeys: [],
 	userIDKeys: [],
 	dislikeBlock: {
@@ -11,10 +11,14 @@ const defaultOptionForm = {
 		limit: 0
 	}, // 비추천 차단
 	prisonerBlock: false // 죄수 번호 차단
-}
+};
 
 class Option
 {
+	static get defaultOptionForm() {
+		return defaultOptionForm;
+	}
+	
 	constructor() {
 		this.nowMenuNumber = 0; //현재 선택된 메뉴
 		this.memoFlag = true;
@@ -23,9 +27,11 @@ class Option
 		// object bind
 		this.eventBind = this.eventBind.bind(this);
 		this.detailOptionSceneBind = this.detailOptionSceneBind.bind(this);
+		this.otherOptionSceneBind = this.otherOptionSceneBind.bind(this);
 		this.changeMenu = this.changeMenu.bind(this);
 		this.deleteCell = this.deleteCell.bind(this);
 		this.userOptionsAllChange = this.userOptionsAllChange.bind(this);
+		this.restoreOptions = this.restoreOptions.bind(this);
 	}
 	
 	eventBind() {
@@ -68,17 +74,18 @@ class Option
 		});
 		
 		this.detailOptionSceneBind();
+		this.otherOptionSceneBind();
 
 		this.changeMenu(1);
 	}
 	
 	detailOptionSceneBind() {
 		$(document).on('click', '.choiceSetting input[type="radio"]', data => {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 			
 			aggrohuman[userid].settingType = data.target.value;
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 			
 			let setType = Utility.settingToStrConvert(parseInt(data.target.value));
 			
@@ -87,28 +94,28 @@ class Option
 		});
 		
 		$(document).on('change', '.choiceSetting input[type="color"]', data => {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 	
 			aggrohuman[userid].settingColor = data.target.value;
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 	
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 		});
 		
 		$(document).on('keyup', '.choiceSetting #userID', data =>{
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 			let inID = data.target.value;
 			data.target.value = inID.replace(/[^0-9]/, "");
 			
 			aggrohuman[userid].ruliwebID = data.target.value;
 			
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 		});
 		
 		$(document).on('change', '.choiceSetting #userID', () => {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 			
 			$('.select .userID').text(aggrohuman[userid].ruliwebID);
@@ -116,21 +123,21 @@ class Option
 		});
 		
 		$(document).on('keyup', '.choiceSetting #userMemo', data => {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 			
 			aggrohuman[userid].userMemo = data.target.value;
 			
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 		});
 		
 		$(document).on('change', '.choiceSetting #userMemo', data => {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let userid = $('.select').attr('itemprop');
 			
 			aggrohuman[userid].userMemo = data.target.value;
 			
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 			
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
 		});
@@ -141,11 +148,27 @@ class Option
 		});
 	}
 	
+	otherOptionSceneBind() {
+		$(document).on('click', '.otherOption #saveBtn', data => {
+			let saveFlag = confirm("이 옵션을 저장 하시겠습니까?");
+		
+			if (saveFlag) {
+				let originOption = JSON.parse(localStorage['ruliweb-support']);
+				
+				originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
+				originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
+				originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
+				
+				localStorage['ruliweb-support'] = JSON.stringify(originOption);
+			}
+		});
+	}
+	
 	userOptionsAllChange() {
 		let allSwitch = confirm("정말 일괄로 적용하겠습니까?");
 		
 		if (allSwitch) {
-			let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 			let blockColor = document.getElementById('blockColor');
 			let blockTypeValue = $('#blockTypeSelect').val();
 			
@@ -154,7 +177,7 @@ class Option
 				aggrohuman[i].settingColor = blockColor.value;
 			}
 			
-			Utility.saveJson(aggrohuman);
+			Utility.saveUser(aggrohuman);
 			
 			$('.badUserList').html('');
 		
@@ -164,7 +187,7 @@ class Option
 	}//function restoreOptions - 옵션 저장
 	
 	userChoice(cellObj, userNumber) {
-		let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+		let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 		let radiobox = document.getElementsByName('blockTypeRadio');
 		
 		let blockgroup = $('.blockGroup');
@@ -207,23 +230,33 @@ class Option
 					case 2:
 						this.memoFlag = false;
 					case 3:
-						document.querySelector('#export_option').addEventListener('click', UserIO.exportOption);
+						let option = JSON.parse(localStorage['ruliweb-support']);
+						if (option != undefined) {
+							$('#dislikeBlock')[0].checked = option.dislikeBlock.flag;
+							$('#dislikeLimit').val(option.dislikeBlock.limit);
+							$('#prisonerBlock')[0].checked = option.prisonerBlock;
+						}
+						//document.querySelector('#export_option').addEventListener('click', UserIO.exportOption);
 						break;
 				}//페이지 셋팅
-				
 			});
 		}
 	}//function changeMenu - 옵션메뉴 변경
 	
 	restoreOptions() {
 		let userList = $('.badUserList');
-		let aggrohuman = localStorage['aggrohuman']; //어그로 목록
+		let data = localStorage['ruliweb-support']; //어그로 목록
 		
 		userList[0].innerHTML = '';
 		
-		if (aggrohuman != undefined) {
+		if (data === undefined) {
+			data = Object.assign(Option.defaultOptionForm);
+			localStorage['ruliweb-support'] = JSON.stringify(data);
+			Utility.logPrint('#005CFF', '[최초 실행] 데이터를 구성하였습니다.');
+			// 최초 실행
+		} else {
 			let date        = Utility.getDate();
-			let aggrohuman  = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+			let aggrohuman  = JSON.parse(data).userList;
 	
 			for(let i=0; i<aggrohuman.length; i++)
 				this.addCell(aggrohuman[i]);
@@ -233,7 +266,7 @@ class Option
 			});
 			
 			$('.overMemoArea').mouseover((event) => {
-				let aggrohuman = JSON.parse(localStorage['aggrohuman']).userCellInfo;
+				let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
 				let cellNum = event.target.closest('li').getAttribute('itemprop');
 				let overUserMemo = $('#overUserMemo');
 				
@@ -259,10 +292,9 @@ class Option
 	}//function addCell - 리스트 셀 형식
 
 	userCellForm(celldata) {
-		//TODO - 선택할때 순서 DOM에 부여 못하고 있음 수정할것.
 		let settingTypeStr = Utility.settingToStrConvert(parseInt(celldata.settingType));
 		// { id, date, name, ruliwebID, settingType, cellNumber }
-		let memo = this.memoFlag ? '<div class="overMemoArea"> > </div>' : '';
+		let memo = this.memoFlag ? '<div class="overMemoArea"> ▶ </div>' : '';
 		
 		let index = 0;
 		
@@ -290,7 +322,7 @@ class Option
 			let radiobox       = document.getElementsByName('blockTypeRadio');
 			let badUserList    = $('.badUserList');
 			
-			delete localStorage['aggrohuman'];
+			delete localStorage['ruliweb-support'];
 			
 			badUserList[0].innerHTML = '';
 			radiobox[0].checked      = true;
@@ -301,13 +333,13 @@ class Option
 	
 	deleteCell(data) {
 		let deleteCellNumber = data.currentTarget.closest('li').getAttribute('itemprop');
-		let aggrohumanJson = JSON.parse(localStorage['aggrohuman']);
-		let aggrohumanList = aggrohumanJson.userCellInfo;
+		let aggrohumanJson = JSON.parse(localStorage['ruliweb-support']);
+		let aggrohumanList = aggrohumanJson.userList;
 		
 		aggrohumanList.splice(deleteCellNumber, 1);
-		aggrohumanJson.userCellInfo = aggrohumanList;
+		aggrohumanJson.userList = aggrohumanList;
 		
-		Utility.saveJson(aggrohumanJson.userCellInfo);
+		Utility.saveUser(aggrohumanJson.userList);
 		Utility.logPrint('#005CFF', '셀 삭제 완료');
 		
 		this.restoreOptions();
@@ -318,3 +350,5 @@ window.onload = function () {
 	let option = new Option;
 	window.ruliwebSupportOption = option;
 }
+
+export default Option;
