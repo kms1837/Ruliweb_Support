@@ -1,7 +1,7 @@
 
 import Utility from '../common/utility';
 import UserIO from './userIO';
-import Sweetalert from 'sweetalert';
+import Sweetalert from 'sweetalert2';
 
 const defaultOptionForm = {
 	userList: [],
@@ -72,12 +72,13 @@ class Option
 		
 		$(document).on('click', '#importBtn', () => {
 			Sweetalert({
-				title: "파일 선택",
-				text: "옵션에서 내보낸 .json 파일을 선택해 주세요",
-				type: 'input',
-				cancelButtonText: "취소",
-				showCancelButton: true
-			}, () => {
+				title: '파일 선택',
+				text: '파일 선택 ㅎㅎ <input type="file" id="importOption"></input>',
+				input: 'file',
+				cancelButtonText: '취소',
+				showCancelButton: true,
+				html: true
+			}).then(() => {
 				
 			});
 			//UserIO.importOption
@@ -174,18 +175,16 @@ class Option
 				cancelButtonText: "취소",
 				showCancelButton: true,
 				closeOnConfirm: false
-			}, (saveFlag) => {
-				if (saveFlag) {
-					let originOption = JSON.parse(localStorage['ruliweb-support']);
-					
-					originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
-					originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
-					originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
-					
-					localStorage['ruliweb-support'] = JSON.stringify(originOption);
-					
-					swal("완료", "저장하였습니다.", "success");
-				}	
+			}).then(() => {
+				let originOption = JSON.parse(localStorage['ruliweb-support']);
+				
+				originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
+				originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
+				originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
+				
+				localStorage['ruliweb-support'] = JSON.stringify(originOption);
+				
+				Sweetalert("완료", "저장하였습니다.", "success");
 			});
 		});
 	}
@@ -199,25 +198,23 @@ class Option
 			cancelButtonText: "취소",
 			showCancelButton: true,
 			closeOnConfirm: false
-		}, (isConfirm) => {
-			if (isConfirm) {
-				let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-				let blockColor = document.getElementById('blockColor');
-				let blockTypeValue = $('#blockTypeSelect').val();
-				
-				for (let i=0; i<aggrohuman.length; i++) {
-					aggrohuman[i].settingType = blockTypeValue;
-					aggrohuman[i].settingColor = blockColor.value;
-				}
-				
-				Utility.saveUser(aggrohuman);
-				
-				$('.badUserList').html('');
+		}).then(() => {
+			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
+			let blockColor = document.getElementById('blockColor');
+			let blockTypeValue = $('#blockTypeSelect').val();
 			
-				this.restoreOptions();
-				Utility.logPrint('#005CFF', '일괄처리 완료');
-				swal("완료", "일괄 적용 완료", "success");
+			for (let i=0; i<aggrohuman.length; i++) {
+				aggrohuman[i].settingType = blockTypeValue;
+				aggrohuman[i].settingColor = blockColor.value;
 			}
+			
+			Utility.saveUser(aggrohuman);
+			
+			$('.badUserList').html('');
+		
+			this.restoreOptions();
+			Utility.logPrint('#005CFF', '일괄처리 완료');
+			Sweetalert("완료", "일괄 적용 완료", "success");
 		});
 	}//function restoreOptions - 옵션 저장
 	
@@ -361,20 +358,18 @@ class Option
 			cancelButtonText: "취소",
 			showCancelButton: true,
 			closeOnConfirm: false
-		}, (isConfirm) => {
-			if (isConfirm) {
-				let aggroUserName  = document.getElementById('aggrohuman');
-				let radiobox       = document.getElementsByName('blockTypeRadio');
-				let badUserList    = $('.badUserList');
-				
-				delete localStorage['ruliweb-support'];
-				
-				badUserList[0].innerHTML = '';
-				aggroUserName.value      = '';
-				Utility.logPrint('#005CFF', '옵션 초기화 완료');
-				
-				swal("완료", "옵션 초기화 완료", "success");
-			}
+		}).then(() => {
+			let aggroUserName  = document.getElementById('aggrohuman');
+			let radiobox       = document.getElementsByName('blockTypeRadio');
+			let badUserList    = $('.badUserList');
+			
+			delete localStorage['ruliweb-support'];
+			
+			badUserList[0].innerHTML = '';
+			aggroUserName.value      = '';
+			Utility.logPrint('#005CFF', '옵션 초기화 완료');
+			
+			Sweetalert("완료", "옵션 초기화 완료", "success");
 		});
 	}//function optionReset - 옵션 초기화
 	
