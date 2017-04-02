@@ -1,6 +1,7 @@
 
 import Utility from '../common/utility';
 import UserIO from './userIO';
+import Sweetalert from 'sweetalert';
 
 const defaultOptionForm = {
 	userList: [],
@@ -69,7 +70,19 @@ class Option
 			}
 		});
 		
-		$(document).on('change', '#importOption', UserIO.importOption);
+		$(document).on('click', '#importBtn', () => {
+			Sweetalert({
+				title: "파일 선택",
+				text: "옵션에서 내보낸 .json 파일을 선택해 주세요",
+				type: 'input',
+				cancelButtonText: "취소",
+				showCancelButton: true
+			}, () => {
+				
+			});
+			//UserIO.importOption
+		});
+		$(document).on('click', '#importOptionBtn', UserIO.exportOption);
 	
 		$('#left_menu ul li').click( e => {
 			let clickMenuID = e.target.getAttribute('itemprop');
@@ -153,40 +166,59 @@ class Option
 	
 	otherOptionSceneBind() {
 		$(document).on('click', '.otherOption #saveBtn', data => {
-			let saveFlag = confirm("이 옵션을 저장 하시겠습니까?");
-		
-			if (saveFlag) {
-				let originOption = JSON.parse(localStorage['ruliweb-support']);
-				
-				originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
-				originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
-				originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
-				
-				localStorage['ruliweb-support'] = JSON.stringify(originOption);
-			}
+			Sweetalert({
+				title: "저장",
+				text: "이 옵션을 저장 하시겠습니까?",
+				type: "info",
+				confirmButtonText: "저장",
+				cancelButtonText: "취소",
+				showCancelButton: true,
+				closeOnConfirm: false
+			}, (saveFlag) => {
+				if (saveFlag) {
+					let originOption = JSON.parse(localStorage['ruliweb-support']);
+					
+					originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
+					originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
+					originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
+					
+					localStorage['ruliweb-support'] = JSON.stringify(originOption);
+					
+					swal("완료", "저장하였습니다.", "success");
+				}	
+			});
 		});
 	}
 	
 	userOptionsAllChange() {
-		let allSwitch = confirm("정말 일괄로 적용하겠습니까?");
-		
-		if (allSwitch) {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let blockColor = document.getElementById('blockColor');
-			let blockTypeValue = $('#blockTypeSelect').val();
+		Sweetalert({
+			title: "일괄 적용",
+			text: "정말 일괄로 적용하겠습니까?",
+			type: "warning",
+			confirmButtonText: "일괄 적용",
+			cancelButtonText: "취소",
+			showCancelButton: true,
+			closeOnConfirm: false
+		}, (isConfirm) => {
+			if (isConfirm) {
+				let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
+				let blockColor = document.getElementById('blockColor');
+				let blockTypeValue = $('#blockTypeSelect').val();
+				
+				for (let i=0; i<aggrohuman.length; i++) {
+					aggrohuman[i].settingType = blockTypeValue;
+					aggrohuman[i].settingColor = blockColor.value;
+				}
+				
+				Utility.saveUser(aggrohuman);
+				
+				$('.badUserList').html('');
 			
-			for (let i=0; i<aggrohuman.length; i++) {
-				aggrohuman[i].settingType = blockTypeValue;
-				aggrohuman[i].settingColor = blockColor.value;
+				this.restoreOptions();
+				Utility.logPrint('#005CFF', '일괄처리 완료');
+				swal("완료", "일괄 적용 완료", "success");
 			}
-			
-			Utility.saveUser(aggrohuman);
-			
-			$('.badUserList').html('');
-		
-			this.restoreOptions();
-			Utility.logPrint('#005CFF', '일괄처리 완료');
-		}
+		});
 	}//function restoreOptions - 옵션 저장
 	
 	userChoice(cellObj, userNumber) {
@@ -242,7 +274,6 @@ class Option
 							$('#dislikeLimit').val(option.dislikeBlock.limit);
 							$('#prisonerBlock')[0].checked = option.prisonerBlock;
 						}
-						//document.querySelector('#export_option').addEventListener('click', UserIO.exportOption);
 						break;
 					}
 				}//페이지 셋팅
@@ -322,19 +353,29 @@ class Option
 	}
 	
 	optionReset() {
-		let resetSwitch = confirm("정말 옵션을 초기화 하시겠습니까? (추가하신 모든 리스트가 사라집니다.)");
-		
-		if (resetSwitch) {
-			let aggroUserName  = document.getElementById('aggrohuman');
-			let radiobox       = document.getElementsByName('blockTypeRadio');
-			let badUserList    = $('.badUserList');
-			
-			delete localStorage['ruliweb-support'];
-			
-			badUserList[0].innerHTML = '';
-			aggroUserName.value      = '';
-			Utility.logPrint('#005CFF', '옵션 초기화 완료');
-		}
+		Sweetalert({
+			title: "초기화",
+			text: "정말 옵션을 초기화 하시겠습니까? (추가하신 모든 리스트가 사라집니다.)",
+			type: 'warning',
+			confirmButtonText: "초기화",
+			cancelButtonText: "취소",
+			showCancelButton: true,
+			closeOnConfirm: false
+		}, (isConfirm) => {
+			if (isConfirm) {
+				let aggroUserName  = document.getElementById('aggrohuman');
+				let radiobox       = document.getElementsByName('blockTypeRadio');
+				let badUserList    = $('.badUserList');
+				
+				delete localStorage['ruliweb-support'];
+				
+				badUserList[0].innerHTML = '';
+				aggroUserName.value      = '';
+				Utility.logPrint('#005CFF', '옵션 초기화 완료');
+				
+				swal("완료", "옵션 초기화 완료", "success");
+			}
+		});
 	}//function optionReset - 옵션 초기화
 	
 	deleteCell(data) {
