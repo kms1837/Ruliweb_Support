@@ -1,25 +1,24 @@
 
 class Utillity
 {
-    static saveJson(jsonData, callback=()=>{}) {
+    static saveUser(jsonData, callback=()=>{}) {
+        let changedJson = JSON.parse(localStorage['ruliweb-support']);
     	let userNameKeys = {};
     	let userIDKeys = {};
     	
     	$(jsonData).each( (index, data) => {
-    		if(data.name)
+    		if (data.name)
     		    userNameKeys[data.name] = index;
     		    
-    		if(data.ruliwebID)
+    		if (data.ruliwebID)
     		    userIDKeys[data.ruliwebID] = index;
     	});
     	
-    	var dataFrom = {
-    		"userCellInfo": jsonData,
-    		"userNameKeys": userNameKeys, 
-    		"userIDKeys": userIDKeys
-    	}
+    	changedJson["userList"] = jsonData;
+    	changedJson["userNameKeys"] = userNameKeys;
+    	changedJson["userIDKeys"] = userIDKeys;
     	
-    	localStorage['aggrohuman'] = JSON.stringify(dataFrom);
+    	localStorage['ruliweb-support'] = JSON.stringify(changedJson);
     	
     	callback();
     }
