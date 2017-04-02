@@ -185,10 +185,16 @@ ul {list-style: none;}
 .blockGroup #userMemo { width:97%; height: 100px; padding: 5px;}
 
 /* other option page */
+
 .otherOption .option-item {
 	text-align: left;
 	width: 390px;
 	margin: 10px auto;
+}
+
+#dislikeLimit {
+    padding: 2px 5px;
+    width: 50px;
 }
 
 /* info page */

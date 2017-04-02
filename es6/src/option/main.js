@@ -42,6 +42,9 @@ class Option
 			let aggroUserID = aggroUserIDTextBox.value;
 			let blockColor = document.getElementById('blockColor');
 			let blockTypeValue = $('#blockTypeSelect').val();
+			
+			blockTypeValue = blockTypeValue === undefined ? 0 : blockTypeValue;
+			// detail 옵션에서 blockType 선택하는 것이 없어서 대응
 	
 			if (aggroUserName.length > 0) {
 				let addUserForm = Object.assign(UserIO.defaultUserForm, {
@@ -222,14 +225,17 @@ class Option
 				if (this.nowMenuNumber <= 2) this.restoreOptions();
 
 				switch (parseInt(menuNumber)) {
-					case 1:
+					case 1: {
 						document.querySelector('#allChangeBtn').addEventListener('click', this.userOptionsAllChange);
-						document.querySelector('#reset').addEventListener('click', this.optionReset);
+						document.querySelector('#resetBtn').addEventListener('click', this.optionReset);
 						this.memoFlag = true;
 						break;
-					case 2:
+					}
+					case 2: {
 						this.memoFlag = false;
-					case 3:
+						break;
+					}
+					case 3: {
 						let option = JSON.parse(localStorage['ruliweb-support']);
 						if (option != undefined) {
 							$('#dislikeBlock')[0].checked = option.dislikeBlock.flag;
@@ -238,6 +244,7 @@ class Option
 						}
 						//document.querySelector('#export_option').addEventListener('click', UserIO.exportOption);
 						break;
+					}
 				}//페이지 셋팅
 			});
 		}
@@ -325,7 +332,6 @@ class Option
 			delete localStorage['ruliweb-support'];
 			
 			badUserList[0].innerHTML = '';
-			radiobox[0].checked      = true;
 			aggroUserName.value      = '';
 			Utility.logPrint('#005CFF', '옵션 초기화 완료');
 		}
