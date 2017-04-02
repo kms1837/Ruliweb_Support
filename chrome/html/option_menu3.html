@@ -1,16 +1,16 @@
 <p class="title">기타</p>
 
-<div class="menuBox center">
+<div class="otherOption">
     <div class="option-item">
-        <input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3>
-        (활성/비활성) 과다 비추천 필터링
-        <input type="text"></input>
+        <input type="checkbox" id="dislikeBlock">
+        <label>(활성/비활성) 과다 비추천 필터링</label>
+        <input type="text" id="dislikeLimit"></input>
     </div>
     <div class="option-item">
-        <input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3>
-        죄수번호 차단
+        <input type="checkbox" id="prisonerBlock">
+        <label>죄수번호 차단</label>
     </div>
-    <!--<div class="option-item">
-	    <button id="export_option" class="big">옵션 내보내기</button>
-	</div>-->
+    <div class="option-item center">
+        <button id="saveBtn">저장</button>
+    </div>
 </div>
