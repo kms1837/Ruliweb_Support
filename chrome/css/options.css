@@ -133,7 +133,7 @@ ul {list-style: none;}
 .badUserList li .date, .selectedUser .date{font-size: 10pt;}
 .cellContent .deleteCellBtn { float:right; }
 .selectedUser button{ float:right; margin-left: 9px; }
-.badUserList .select {background-color: #FF7203;}
+.badUserList .select {background-color: #6f6f6f;}
 .cellContent { float: left; padding: 6px; }
 .cellState { float: left; text-align: center; }
 .addUserMenu {display: block; margin: 50px 0; text-align: center;}
