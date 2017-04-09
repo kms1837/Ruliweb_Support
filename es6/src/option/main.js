@@ -21,7 +21,7 @@ class Option
 	}
 	
 	constructor() {
-		this.nowMenuNumber = 0; //현재 선택된 메뉴
+		this.nowMenuNumber = 0; // 현재 선택된 메뉴
 		this.memoFlag = true;
 		this.eventBind();
 		
@@ -72,18 +72,33 @@ class Option
 		
 		$(document).on('click', '#importBtn', () => {
 			Sweetalert({
-				title: '파일 선택',
-				text: '파일 선택 ㅎㅎ <input type="file" id="importOption"></input>',
+				title: '유저목록 불러오기',
+				text: 'JSON, CSV파일만 지원합니다.',
 				input: 'file',
-				cancelButtonText: '취소',
-				showCancelButton: true,
-				html: true
-			}).then(() => {
-				
+				inputAttributes: {
+					accept: 'json/*'
+				}
+			}).then((file) => {
+				UserIO.importOption(file);
 			});
-			//UserIO.importOption
 		});
-		$(document).on('click', '#importOptionBtn', UserIO.exportOption);
+		
+		$(document).on('click', '#exportBtn', () => {
+			Sweetalert({
+				title: '다운로드할 파일 형식 선택',
+				html: ` <button class="swalBtn csv">
+							<i class="fa fa-file"></i></br>
+							CSV
+						</button>
+						<button class="swalBtn json">
+							<i class="fa fa-file"></i></br>
+							JSON
+						</button>`
+			});
+		});
+		
+		$(document).on('click', '.swalBtn.csv', UserIO.exportCSV);
+		$(document).on('click', '.swalBtn.json', UserIO.exportJson);
 	
 		$('#left_menu ul li').click( e => {
 			let clickMenuID = e.target.getAttribute('itemprop');
@@ -307,10 +322,12 @@ class Option
 				
 				let memo = aggrohuman[cellNum].userMemo.length > 0 ? aggrohuman[cellNum].userMemo : '메모없음';
 				
+				let listScrollPos = $('.badUserList').scrollTop();
+				
 				$('#overUserMemo .memoText').text(memo);
 				
 				overUserMemo.removeClass('hidden');
-				overUserMemo.css('top', event.target.offsetTop + 5);
+				overUserMemo.css('top', event.target.offsetTop - listScrollPos + 5);
 			});
 			
 			$('.overMemoArea').mouseout((event) => {
@@ -352,7 +369,7 @@ class Option
 	optionReset() {
 		Sweetalert({
 			title: "초기화",
-			text: "정말 옵션을 초기화 하시겠습니까? (추가하신 모든 리스트가 사라집니다.)",
+			html: "정말 옵션을 초기화 하시겠습니까?</br>(추가하신 모든 리스트가 사라집니다.)",
 			type: 'warning',
 			confirmButtonText: "초기화",
 			cancelButtonText: "취소",
