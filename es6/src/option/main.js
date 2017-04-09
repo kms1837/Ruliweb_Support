@@ -117,11 +117,18 @@ class Option
 			let userid = $('.select').attr('itemprop');
 			
 			aggrohuman[userid].settingType = data.target.value;
-			Utility.saveUser(aggrohuman);
 			
 			let setType = Utility.settingToStrConvert(parseInt(data.target.value));
 			
 			$('.select .userState').text(setType);
+			
+			if (parseInt(aggrohuman[userid].settingType) === 3)
+				$('.select .userState').css('background', aggrohuman[userid].settingColor);
+			else 
+				$('.select .userState').css('background', 'none');
+			
+			Utility.saveUser(aggrohuman);
+			
 			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
 		});
 		
@@ -130,9 +137,13 @@ class Option
 			let userid = $('.select').attr('itemprop');
 	
 			aggrohuman[userid].settingColor = data.target.value;
+			
+			if (parseInt(aggrohuman[userid].settingType) === 3)
+				$('.select .userState').css('background', data.target.value);
+				
 			Utility.saveUser(aggrohuman);
-	
-			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
+			
+			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '색 변경');
 		});
 		
 		$(document).on('keyup', '.choiceSetting #userID', data =>{
@@ -348,13 +359,15 @@ class Option
 		// { id, date, name, ruliwebID, settingType, cellNumber }
 		let memo = this.memoFlag ? '<div class="overMemoArea"> ▶ </div>' : '';
 		
+		let stateStyle = parseInt(celldata.settingType) === 3 ? `style="background:${celldata.settingColor}"` : '';
+		
 		let index = 0;
 		
 		return	`<li>
 					<div class="cellContent">
 			  			<div class="cellState">
 				    		<p class="date">${celldata.addDate}</p>
-				    		<p class="userState">${settingTypeStr}</p>
+				    		<p class="userState" ${stateStyle}>${settingTypeStr}</p>
 				    	</div>
 				    	<div class="badUserName">
 				    		<p class="userName">${celldata.name}</p>
