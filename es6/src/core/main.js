@@ -42,7 +42,7 @@ class Core {
 		chrome.extension.sendRequest({method: "getLocalStorage", key: ''}, 
 			response => {
 				if (response.data != undefined) {
-					let checkUserList  = JSON.parse(response.data.aggrohuman).userCellInfo;
+					let checkUserList  = JSON.parse(response.data.aggrohuman).userList;
 					
 					$.observer = new MutationObserver( (mutations) => {
 						let tartgetName = $(mutations[0].target).attr('class');

@@ -22,9 +22,8 @@ class UserIo
 	    return defaultUserForm;
 	}
     
-    static importOption(event)
-    {
-    	let optionFile = event.target.files[0];
+    static importOption(file) {
+    	let optionFile = file.target.files[0];
     	let reader = new FileReader();
     
     	reader.onload = ((file) => {
@@ -42,18 +41,37 @@ class UserIo
     	reader.readAsText(optionFile);
     }
     
-    static exportOption()
-	{
-		let result = JSON.parse(localStorage['ruliweb-support']);
-		let url = 'data:application/json;base64,' + btoa(unescape(encodeURIcomponent(JSON.stringify(result.userList))));
+    static exportCSV() {
+		//let result = JSON.parse(localStorage['ruliweb-support']);
+		/*
+		var url = 'data:application/json;base64,' + btoa(result);
+	    chrome.downloads.download({
+	        url: url,
+	        filename: 'filename_of_exported_file.json'
+	    });*/
+	    
+	    //"data:text/csv;"
+	    
+		//let url = 'data:application/json;base64,' + btoa(unescape(encodeURIcomponent(JSON.stringify(result.userList))));
+		let userList = JSON.parse(localStorage['ruliweb-support'])['userList'];
+		let file = btoa(localStorage['ruliweb-support']);
+		let url = `data:application/json;base64,${file}`;
+		console.log(url);
+		/*
 		chrome.downloads.download({
 			url : url,
 			filename : 'user-list.json'
-		});
+		});*/
+	}
+	
+	static exportJson() {
+		let userList = JSON.parse(localStorage['ruliweb-support'])['userList'];
+		let file = btoa(JSON.stringify(userList));
+		let url = `data:application/json;base64,${file}`;
+		console.log(url);
 	}
     
-    static addUser(form=undefined, callback=()=>{})
-	{
+    static addUser(form=undefined, callback=()=>{}) {
 	    if (localStorage['ruliweb-support'] == '' || localStorage['ruliweb-support'] == null) {
 	    	Utility.saveUser([form]);
     		callback(form);

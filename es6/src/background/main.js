@@ -106,16 +106,16 @@ class Background
 		  	settingColor: '#ffffff'
 		};
 		
-	    if (localStorage['aggrohuman'] == '' || localStorage['aggrohuman'] == null) {
+	    if (localStorage['ruliweb-support'] == '' || localStorage['ruliweb-support'] == null) {
 	      	defaultUserForm.addDate = Utility.getDate();
 	    	defaultUserForm.name	= userInfo;
 	    	Utility.saveJson([defaultUserForm]);
 	    	
 	      	alert('유저추가 완료');
 	  	} else {
-			let aggrohumanJson  = JSON.parse(localStorage['aggrohuman']);
+			let aggrohumanJson  = JSON.parse(localStorage['ruliweb-support']);
 			let addSwitch 		= true;
-			let aggrohumanList  = aggrohumanJson.userCellInfo;
+			let aggrohumanList  = aggrohumanJson.userList;
 	
 			for (let i=0; i<aggrohumanList.length; i++) {
 				if (aggrohumanList[i].name === userInfo) {
@@ -129,9 +129,9 @@ class Background
 				defaultUserForm.addDate = Utility.getDate();
 				defaultUserForm.name = userInfo;
 		    		
-		        aggrohumanJson.userCellInfo.push(defaultUserForm);
+		        aggrohumanJson.userList.push(defaultUserForm);
 		        
-		        Utility.saveJson(aggrohumanJson.userCellInfo);
+		        Utility.saveJson(aggrohumanJson.userList);
 				alert('유저추가 완료');
 			}
 	  	}

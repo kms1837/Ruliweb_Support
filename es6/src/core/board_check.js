@@ -31,15 +31,7 @@ class BoardCheck
     		
     		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     
-    		if(countFlag) {
-    			let defaultInfo = {
-    				name 	: writerName,
-    				id 		: writerID,
-    				count 	: 0
-    			}
-    			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
-    			logs[writerName].count = parseInt(logs[writerName].count) + 1;
-    		}
+    		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
     		count = countFlag ? count+1 : count;
     	});
@@ -51,11 +43,9 @@ class BoardCheck
     	}
     	
     	Common.displayCheckCount(countFrom);
-    	
-    	console.log('게시판을 체크합니다.');
     }//function BoadtTableCheck - 게시판 어그로 체크
     
-    static BoardCommentCheck(response) //blockType, checkUserList
+    static boardCommentCheck(response) //blockType, checkUserList
     {
     	let commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
     	let commentBast		= $('.comment_view_wrapper .comment_view.best.row tbody tr');
@@ -77,16 +67,8 @@ class BoardCheck
     	    });
      		
      		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
-     	
-     		if (countFlag) {
-     			let defaultInfo = {
-     				name 	: writerName,
-     				id 		: writerID,
-     				count 	: 0
-     			}
-     			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
-     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
-     		}
+     		
+     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
      
      		count = countFlag ? count+1 : count;
      	});
@@ -106,19 +88,9 @@ class BoardCheck
     	    });
     	    
     		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
-    		
-    		if(countFlag) {
-    			let defaultInfo = {
-    				name 	: writerName,
-    				id 		: writerID,
-    				count 	: 0
-    			}
-    			
-    			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
-    			logs[writerName].count = parseInt(logs[writerName].count) + 1;
-    		}
+    		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
-    		count = countFlag ? count+1 : count;
+    		count = countFlag ? count + 1 : count;
     	});
     	
     	let countFrom = {

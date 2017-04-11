@@ -1,5 +1,5 @@
 
-import Commmon from './common'
+import Common from './common'
 
 class MypiCheck
 {
@@ -15,22 +15,22 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= $(object).find('a')[0].href;
     		
-    		writerID = Commmon.convertID(writerID, '&');
+    		writerID = Common.convertID(writerID, '&');
     		
     		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		let countFlag = Commmon.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if (countFlag) {
-    			let defaultInfo = {
-    				name 	: writerName,
-    				id 		: writerID,
-    				count 	: 0
+    			if (logs[writerName] === undefined) {
+    			    logs[writerName] = Object.assign(Common.defaultCheckUserForm, {
+        				name 	: writerName,
+        				id 		: writerID,
+        			});
     			}
-    			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
     		}
     		
@@ -43,13 +43,13 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Commmon.displayCheckCount(countFrom);
+    	Common.displayCheckCount(countFrom);
     }//마이피 메인
     
     mypiCheck(response)
     {
     	let data  = JSON.parse(response.data.aggrohuman);
-    	let userInfoList = data.userCellInfo;
+    	let userInfoList = data.userList;
     	let count = 0;
     	let logs = {};
     	
@@ -86,13 +86,14 @@ class MypiCheck
     					commentUserName.innerHTML += '(어글러)';
     					break;
     			}
-    			let defaultInfo = {
-    				name 	: writerName,
-    				id 		: writerID,
-    				count 	: 0
+    			
+    			if (logs[commentUserName] === undefined) {
+    			    logs[commentUserName] = Object.assign(Common.defaultCheckUserForm, {
+        				name 	: commentUserName,
+        				id 		: commentUserId,
+        			});
     			}
-    			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
-    			logs[writerName].count = parseInt(logs[writerName].count) + 1;
+    			logs[commentUserName].count = parseInt(logs[commentUserName].count) + 1;
     			count++;
     		}
     	}
@@ -103,7 +104,7 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Commmon.displayCheckCount(countFrom);
+    	Common.displayCheckCount(countFrom);
     }//마이피 체크
     
     mypiCateCheck(response)
@@ -118,22 +119,22 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
     		
-    		writerID = writerID ? Commmon.convertID(writerID.href.split('?')[1], '&') : ''
+    		writerID = writerID ? Common.convertID(writerID.href.split('?')[1], '&') : ''
     		
     		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
     		
-    		let countFlag = Commmon.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
     		
     		if(countFlag) {
-    			let defaultInfo = {
-    				name 	: writerName,
-    				id 		: writerID,
-    				count 	: 0
+    			if (logs[writerName] === undefined) {
+    			    logs[writerName] = Object.assign(Common.defaultCheckUserForm, {
+        				name 	: writerName,
+        				id 		: writerID,
+        			});
     			}
-    			if(logs[writerName] === undefined) logs[writerName] = defaultInfo;
     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
     		}
     		
@@ -146,7 +147,7 @@ class MypiCheck
     		logs  : JSON.stringify(logs)
     	}
     	
-    	Commmon.displayCheckCount(countFrom);
+    	Common.displayCheckCount(countFrom);
     }
 };
 

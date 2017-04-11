@@ -8,12 +8,32 @@ const defaultCheckUserForm = {
 	writerID: ''
 }
 
+const defaultDisplayCheckedUserForm = {
+    name: '',
+    id: '',
+    count : 0
+}
+
 class Common
 {
-    
     static get defaultCheckUserForm() {
         return defaultCheckUserForm;
     }
+    
+    static get defaultDisplayCheckedUserForm() {
+        return defaultDisplayCheckedUserForm;
+    }
+    
+    static logUserCounter(logs, writerName, writerID) {
+		if (logs[writerName] === undefined) {
+		    logs[writerName] = Object.assign(this.defaultDisplayCheckedUserForm, {
+				name 	: writerName,
+				id 		: writerID,
+			});
+		}
+		
+		logs[writerName].count = parseInt(logs[writerName].count) + 1;
+    }//pipup의 유저 노드를 카운트합니다 ex) 링크공주 3개
     
 	static contextMenu(response) {
     	let inUserName = $.trim($(response.target).text());
@@ -33,7 +53,7 @@ class Common
 	
     static userNodeCheck(data, subject, userInfo) {
     	let jsonData = JSON.parse(data);
-    	let userInfoList = jsonData.userCellInfo;
+    	let userInfoList = jsonData.userList;
     	
     	let writerName  = $.trim(userInfo.writerName);
     	let writerID	= userInfo.writerID;
