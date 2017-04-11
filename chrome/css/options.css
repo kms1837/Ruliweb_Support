@@ -26,9 +26,17 @@ ul {list-style: none;}
 	border: 5px solid #C90000;
 	text-align: center; 	
 	background-color: #ccc;
+	cursor: pointer;
 }
 
-#left_menu #selectedMenuItem { position: relative; margin-left: -30px; border-right:none; background-color: #fff; z-index:3;}
+#left_menu #selectedMenuItem { 
+	position: relative; 
+	margin-left: -30px; 
+	border-right:none; 
+	background-color: #fff; 
+	z-index:3;
+	cursor: default;
+}
 
 #content {
 	position: relative;
@@ -80,6 +88,13 @@ ul {list-style: none;}
     color: #fff;
     padding: 3px 5px;
 }
+
+#aggrohuman::-webkit-input-placeholder,
+#aggrohumanID::-webkit-input-placeholder{
+    color: #cacaca;
+    text-align: center;
+}
+
 .inputDeco { font-size: 20px; font-weight: bold; }
 .block a{ display: block; }
 .otherOption, .badUserOption, .choiceBadUserOption { margin: 0 auto; width: 600px; }
@@ -103,7 +118,6 @@ ul {list-style: none;}
 #blockTypeSelect { padding: 3px 20px; border: none; }
 
 /* option page1 */
-
 .userList>.itemTitle { background-color: #c90000; }
 .leftOption { float:left;}
 .leftOption>#log { width:272px; }
@@ -128,6 +142,7 @@ ul {list-style: none;}
 .badUserName{ width: 120px; overflow: auto; float: left;}
 .badUserName .userName {font-size: 18px;}
 .badUserName .userID {font-size: 9px;}
+
 .badUserName .userName, .badUserName .userID {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .badUserList li .badUserName, .selectedUser .badUserName{ font-size: 18pt; margin: 0px 1px 0px 10px; }
 .badUserList li .date, .selectedUser .date{font-size: 10pt;}
@@ -137,6 +152,18 @@ ul {list-style: none;}
 .cellContent { float: left; padding: 6px; }
 .cellState { float: left; text-align: center; }
 .addUserMenu {display: block; margin: 50px 0; text-align: center;}
+
+.swalBtn {
+	padding: 30px 50px;
+    border: 3px solid;
+    font-weight: bold;
+    box-shadow: inset -2px -2px 0px 3px #c3c3c3;
+}
+
+.swalBtn:hover {
+	border: 3px solid;
+	box-shadow: inset 2px 2px 0px 3px #c3c3c3;
+}
 
 /* option page2 */
 .choiceBadUserOption>#log { width: 592px;}
