@@ -39,10 +39,11 @@ class Core {
 		let pageStatuse 	= pageUrlElement[3];
 		let pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 	
-		chrome.extension.sendRequest({method: "getLocalStorage", key: ''}, 
+		//chrome.extension.sendRequest({method: "getLocalStorage", key: ''},
+        chrome.storage.sync.get('ruliweb-support',
 			response => {
 				if (response.data != undefined) {
-					let checkUserList  = JSON.parse(response.data.aggrohuman).userList;
+					let checkUserList  = JSON.parse(response.data['ruliweb-support']).userList;
 					
 					$.observer = new MutationObserver( (mutations) => {
 						let tartgetName = $(mutations[0].target).attr('class');

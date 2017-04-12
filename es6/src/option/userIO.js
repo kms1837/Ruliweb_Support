@@ -1,5 +1,6 @@
 
 import Utility from '../common/utility';
+import StorageIO from '../common/storageIO';
 
 const defaultUserForm = {
 	ruliwebID: '',
@@ -72,18 +73,12 @@ class UserIo
 	}
     
     static addUser(form=undefined, callback=()=>{}) {
-	    if (localStorage['ruliweb-support'] == '' || localStorage['ruliweb-support'] == null) {
-	    	Utility.saveUser([form]);
-    		callback(form);
-	    	// 최초 추가
-	    	
-	    } else {
-	   		let aggrohumanJson = JSON.parse(localStorage['ruliweb-support']);
-	     	let addSwitch      = true;
-	     	let aggrohumanList = aggrohumanJson.userList;
+        StorageIO.getData( data => {
+	   		let userList = data.userList;
+	     	let addSwitch = true;
 	
-			for (let i=0; i<aggrohumanList.length; i++) {
-				if (aggrohumanList[i].name == form.name) {
+			for (let i=0; i<userList.length; i++) {
+				if (userList[i].name == form.name) {
 					addSwitch = false;
 					Utility.logPrint('red', '리스트에 이미 존재함');
 					return;
@@ -91,11 +86,11 @@ class UserIo
 			}//for - 중복체크
 	
 	    	if (addSwitch) {
-				aggrohumanJson.userList.push(form);
-				Utility.saveUser(aggrohumanJson.userList);
+				userList.push(form);
+				StorageIO.saveUser(userList);
 				callback(form);
 			}
-		}
+        });
 	}
 }
 

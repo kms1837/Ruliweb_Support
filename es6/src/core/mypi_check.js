@@ -22,7 +22,7 @@ class MypiCheck
     			writerID	: writerID
     		}
     		
-    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
     		
     		if (countFlag) {
     			if (logs[writerName] === undefined) {
@@ -126,7 +126,7 @@ class MypiCheck
     			writerID	: writerID
     		}
     		
-    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
     		
     		if(countFlag) {
     			if (logs[writerName] === undefined) {

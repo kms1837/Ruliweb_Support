@@ -28,8 +28,8 @@ class BoardCheck
     	        writerName  : writerName,
     			writerID	: writerID
     	    });
-    		
-    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+
+    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
     
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
@@ -66,7 +66,7 @@ class BoardCheck
     			writerID	: writerID
     	    });
      		
-     		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+     		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
      		
      		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
      
@@ -87,7 +87,7 @@ class BoardCheck
     			writerID	: writerID
     	    });
     	    
-    		let countFlag = Common.userNodeCheck(response.data.aggrohuman, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
     		count = countFlag ? count + 1 : count;

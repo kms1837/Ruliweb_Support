@@ -52,14 +52,14 @@ class Common
     }
 	
     static userNodeCheck(data, subject, userInfo) {
-    	let jsonData = JSON.parse(data);
-    	let userInfoList = jsonData.userList;
+    	let userInfoList = data.userList;
     	
     	let writerName  = $.trim(userInfo.writerName);
     	let writerID	= userInfo.writerID;
-    	let infoIndex	= jsonData.userNameKeys[writerName] != undefined ?
-    					  jsonData.userNameKeys[writerName] :
-    					  jsonData.userIDKeys[writerID];
+        console.log(data, typeof data)
+    	let infoIndex	= data.userNameKeys[writerName] !== undefined ?
+    					  data.userNameKeys[writerName] :
+    					  data.userIDKeys[writerID];
     	
     	if (infoIndex != undefined) {
     		let user = userInfoList[infoIndex];

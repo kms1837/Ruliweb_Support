@@ -1,5 +1,6 @@
 
 import Utility from '../common/utility';
+import StorageIO from '../common/storageIO';
 import UserIO from './userIO';
 import Sweetalert from 'sweetalert2';
 
@@ -21,6 +22,7 @@ class Option
 	}
 	
 	constructor() {
+        StorageIO.getData( data => { console.log(data); });
 		this.nowMenuNumber = 0; // 현재 선택된 메뉴
 		this.memoFlag = true;
 		this.eventBind();
@@ -112,77 +114,94 @@ class Option
 	}
 	
 	detailOptionSceneBind() {
-		$(document).on('click', '.choiceSetting input[type="radio"]', data => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-			
-			aggrohuman[userid].settingType = data.target.value;
-			
-			let setType = Utility.settingToStrConvert(parseInt(data.target.value));
-			
-			$('.select .userState').text(setType);
-			
-			if (parseInt(aggrohuman[userid].settingType) === 3)
-				$('.select .userState').css('background', aggrohuman[userid].settingColor);
-			else 
-				$('.select .userState').css('background', 'none');
-			
-			Utility.saveUser(aggrohuman);
-			
-			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '옵션 변경');
-		});
+		$(document).on('click', '.choiceSetting input[type="radio"]', event => {
+			StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                let user = userList[userid];
+
+                user.settingType = event.target.value;
+                
+                let setType = Utility.settingToStrConvert(parseInt(event.target.value));
+                
+                $('.select .userState').text(setType);
+                
+                if (parseInt(user.settingType) === 3)
+                    $('.select .userState').css('background', user.settingColor);
+                else 
+                    $('.select .userState').css('background', 'none');
+                
+                StorageIO.saveUser(userList);
+                
+                Utility.logPrint('#005CFF', user.name + ' : ' + '옵션 변경');
+            });
+        });
 		
-		$(document).on('change', '.choiceSetting input[type="color"]', data => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-	
-			aggrohuman[userid].settingColor = data.target.value;
-			
-			if (parseInt(aggrohuman[userid].settingType) === 3)
-				$('.select .userState').css('background', data.target.value);
-				
-			Utility.saveUser(aggrohuman);
-			
-			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '색 변경');
-		});
+		$(document).on('change', '.choiceSetting input[type="color"]', event => {
+			StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                let user = userList[userid];
+
+                user.settingColor = event.target.value;
+                
+                if (parseInt(user.settingType) === 3)
+                    $('.select .userState').css('background', event.target.value);
+                    
+                StorageIO.saveUser(userList);
+                
+                Utility.logPrint('#005CFF', user.name + ' : ' + '색 변경');
+            });
+        });
 		
-		$(document).on('keyup', '.choiceSetting #userID', data =>{
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-			let inID = data.target.value;
-			data.target.value = inID.replace(/[^0-9]/, "");
-			
-			aggrohuman[userid].ruliwebID = data.target.value;
-			
-			Utility.saveUser(aggrohuman);
+		$(document).on('keyup', '.choiceSetting #userID', event =>{
+			StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                let user = userList[userid];
+                let inID = event.target.value;
+                
+                event.target.value = inID.replace(/[^0-9]/, "");
+                
+                user.ruliwebID = event.target.value;
+                
+                StorageIO.saveUser(userList);
+            });
 		});
 		
 		$(document).on('change', '.choiceSetting #userID', () => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-			
-			$('.select .userID').text(aggrohuman[userid].ruliwebID);
-			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + 'ID 변경');
+            StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                let user = userList[userid];
+
+                $('.select .userID').text(user.ruliwebID);
+                Utility.logPrint('#005CFF', user.name + ' : ' + 'ID 변경');
+            });
 		});
 		
-		$(document).on('keyup', '.choiceSetting #userMemo', data => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-			
-			aggrohuman[userid].userMemo = data.target.value;
-			
-			Utility.saveUser(aggrohuman);
+		$(document).on('keyup', '.choiceSetting #userMemo', event => {
+            StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                
+                userList[userid].userMemo = event.target.value;
+                
+                StorageIO.saveUser(userList);
+            });
 		});
 		
-		$(document).on('change', '.choiceSetting #userMemo', data => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let userid = $('.select').attr('itemprop');
-			
-			aggrohuman[userid].userMemo = data.target.value;
-			
-			Utility.saveUser(aggrohuman);
-			
-			Utility.logPrint('#005CFF', aggrohuman[userid].name + ' : ' + '유저 메모 추가');
+		$(document).on('change', '.choiceSetting #userMemo', event => {
+            StorageIO.getData( data => {
+                let userList = data.userList;
+                let userid = $('.select').attr('itemprop');
+                
+                userList[userid].userMemo = event.target.value;
+                
+                StorageIO.saveUser(userList);
+                
+                Utility.logPrint('#005CFF', userList[userid].name + ' : ' + '유저 메모 추가');
+            });
 		});
 		
 		$(document).on('click', '.choiceBadUserOption ul.badUserList li', data => {
@@ -202,15 +221,17 @@ class Option
 				showCancelButton: true,
 				closeOnConfirm: false
 			}).then(() => {
-				let originOption = JSON.parse(localStorage['ruliweb-support']);
-				
-				originOption['dislikeBlock']['flag'] = $('#dislikeBlock')[0].checked;
-				originOption['dislikeBlock']['limit'] = $('#dislikeLimit').val();
-				originOption['prisonerBlock'] = $('#prisonerBlock')[0].checked;
-				
-				localStorage['ruliweb-support'] = JSON.stringify(originOption);
-				
-				Sweetalert("완료", "저장하였습니다.", "success");
+                let otherOption = {
+                    dislikeBlock: {
+                        flag: $('#dislikeBlock')[0].checked,
+                        limit: $('#dislikeLimit').val()
+                    },
+                    prisonerBlock: $('#prisonerBlock')[0].checked
+                };
+                    
+                StorageIO.setData( otherOption, () => {
+                    Sweetalert("완료", "저장하였습니다.", "success");
+                });
 			});
 		});
 	}
@@ -225,46 +246,52 @@ class Option
 			showCancelButton: true,
 			closeOnConfirm: false
 		}).then(() => {
-			let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-			let blockColor = document.getElementById('blockColor');
-			let blockTypeValue = $('#blockTypeSelect').val();
-			
-			for (let i=0; i<aggrohuman.length; i++) {
-				aggrohuman[i].settingType = blockTypeValue;
-				aggrohuman[i].settingColor = blockColor.value;
-			}
-			
-			Utility.saveUser(aggrohuman);
-			
-			$('.badUserList').html('');
-		
-			this.restoreOptions();
-			Utility.logPrint('#005CFF', '일괄처리 완료');
-			Sweetalert("완료", "일괄 적용 완료", "success");
+            StorageIO.getData( data => {
+                let userList = data.userList;
+                let blockColor = document.getElementById('blockColor');
+                let blockTypeValue = $('#blockTypeSelect').val();
+                
+                for (let i=0; i<userList.length; i++) {
+                    userList[i].settingType = blockTypeValue;
+                    userList[i].settingColor = blockColor.value;
+                }
+
+                StorageIO.setData({'userList': userList}, () => {
+                    StorageIO.saveUser(userList);
+                    
+                    $('.badUserList').html('');
+                
+                    this.restoreOptions();
+                    Utility.logPrint('#005CFF', '일괄처리 완료');
+                    Sweetalert("완료", "일괄 적용 완료", "success");
+                });
+            });
 		});
 	}//function restoreOptions - 옵션 저장
 	
 	userChoice(cellObj, userNumber) {
-		let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-		let radiobox = document.getElementsByName('blockTypeRadio');
-		
-		let blockgroup = $('.blockGroup');
-		
-		blockgroup.removeClass();
-		blockgroup.addClass('blockGroup');
-		
-		$('#userID')[0].value = '';
-		
-		$('.select').removeClass();
-		$(cellObj).addClass('select');
-		$('.choiceSetting .choiceUserName').text(aggrohuman[userNumber].name);
-		$('#userID')[0].value = aggrohuman[userNumber].ruliwebID;
-		$('#blockColor')[0].value = aggrohuman[userNumber].settingColor;
-		$('#userMemo')[0].value = aggrohuman[userNumber].userMemo;
-		
-		let settingType = aggrohuman[userNumber].settingType;
-		
-		radiobox[settingType].checked = true;
+        StorageIO.getData( data => {
+            let user = data.userList[userNumber];
+            let radiobox = document.getElementsByName('blockTypeRadio');
+            
+            let blockgroup = $('.blockGroup');
+
+            blockgroup.removeClass();
+            blockgroup.addClass('blockGroup');
+            
+            $('#userID')[0].value = '';
+            
+            $('.select').removeClass();
+            $(cellObj).addClass('select');
+            $('.choiceSetting .choiceUserName').text(user.name);
+            $('#userID')[0].value = user.ruliwebID;
+            $('#blockColor')[0].value = user.settingColor;
+            $('#userMemo')[0].value = user.userMemo;
+            
+            let settingType = user.settingType;
+            
+            radiobox[settingType].checked = true;
+        });
 	}
 	
 	changeMenu(menuNumber) {
@@ -291,12 +318,11 @@ class Option
 						break;
 					}
 					case 3: {
-						let option = JSON.parse(localStorage['ruliweb-support']);
-						if (option != undefined) {
-							$('#dislikeBlock')[0].checked = option.dislikeBlock.flag;
-							$('#dislikeLimit').val(option.dislikeBlock.limit);
-							$('#prisonerBlock')[0].checked = option.prisonerBlock;
-						}
+                        StorageIO.getData( data => {
+                            $('#dislikeBlock')[0].checked = data.dislikeBlock.flag;
+                            $('#dislikeLimit').val(data.dislikeBlock.limit);
+                            $('#prisonerBlock')[0].checked = data.prisonerBlock;
+                        });
 						break;
 					}
 				}//페이지 셋팅
@@ -305,48 +331,54 @@ class Option
 	}//function changeMenu - 옵션메뉴 변경
 	
 	restoreOptions() {
-		let userList = $('.badUserList');
-		let data = localStorage['ruliweb-support']; //어그로 목록
-		
-		userList[0].innerHTML = '';
-		
-		if (data === undefined) {
-			data = Object.assign(Option.defaultOptionForm);
-			localStorage['ruliweb-support'] = JSON.stringify(data);
-			Utility.logPrint('#005CFF', '[최초 실행] 데이터를 구성하였습니다.');
-			// 최초 실행
-		} else {
-			let date        = Utility.getDate();
-			let aggrohuman  = JSON.parse(data).userList;
-	
-			for(let i=0; i<aggrohuman.length; i++)
-				this.addCell(aggrohuman[i]);
-				
-			$('.badUserList li').each( (index, li) => {
-				$(li).attr('itemprop', index);
-			});
-			
-			$('.overMemoArea').mouseover((event) => {
-				let aggrohuman = JSON.parse(localStorage['ruliweb-support']).userList;
-				let cellNum = event.target.closest('li').getAttribute('itemprop');
-				let overUserMemo = $('#overUserMemo');
-				
-				let memo = aggrohuman[cellNum].userMemo.length > 0 ? aggrohuman[cellNum].userMemo : '메모없음';
-				
-				let listScrollPos = $('.badUserList').scrollTop();
-				
-				$('#overUserMemo .memoText').text(memo);
-				
-				overUserMemo.removeClass('hidden');
-				overUserMemo.css('top', event.target.offsetTop - listScrollPos + 5);
-			});
-			
-			$('.overMemoArea').mouseout((event) => {
-				$('#overUserMemo').addClass('hidden');
-			});
-			
-			$('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
-		}
+        StorageIO.getData( data => {
+            let userList = $('.badUserList');
+            
+            userList[0].innerHTML = '';
+
+            if (Object.keys(data).length === 0) {
+                data = Object.assign(Option.defaultOptionForm);
+                StorageIO.setData(data, () => {
+                    Utility.logPrint('#005CFF', '[최초 실행] 데이터를 구성하였습니다.');
+                });
+                // 최초 실행
+            } else {
+                let date        = Utility.getDate();
+                let userList  = data['userList'];
+        
+                for(let i=0; i<userList.length; i++)
+                    this.addCell(userList[i]);
+                    
+                $('.badUserList li').each( (index, li) => {
+                    $(li).attr('itemprop', index);
+                });
+                
+                $('.overMemoArea').mouseover((event) => {
+                    StorageIO.getData( data => {
+                        let userList = data['userList'];
+                        let cellNum = event.target.closest('li').getAttribute('itemprop');
+                        let overUserMemo = $('#overUserMemo');
+
+                        let user = userList[cellNum];
+                        
+                        let memo = user.userMemo.length > 0 ? user.userMemo : '메모없음';
+                        
+                        let listScrollPos = $('.badUserList').scrollTop();
+                        
+                        $('#overUserMemo .memoText').text(memo);
+                        
+                        overUserMemo.removeClass('hidden');
+                        overUserMemo.css('top', event.target.offsetTop - listScrollPos + 5);
+                    });
+                });
+                
+                $('.overMemoArea').mouseout((event) => {
+                    $('#overUserMemo').addClass('hidden');
+                });
+                
+                $('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
+            }
+        });
 	}//function restoreOptions - 페이지 로드
 	
 	addCell(celldata) {
@@ -382,7 +414,7 @@ class Option
 	optionReset() {
 		Sweetalert({
 			title: "초기화",
-			html: "정말 옵션을 초기화 하시겠습니까?</br>(추가하신 모든 리스트가 사라집니다.)",
+			html: "정말 옵션을 초기화 하시겠습니까?</br>(추가하신 모든 리스트및 기타 옵션이 사라집니다.)",
 			type: 'warning',
 			confirmButtonText: "초기화",
 			cancelButtonText: "취소",
@@ -393,28 +425,29 @@ class Option
 			let radiobox       = document.getElementsByName('blockTypeRadio');
 			let badUserList    = $('.badUserList');
 			
-			delete localStorage['ruliweb-support'];
-			
 			badUserList[0].innerHTML = '';
 			aggroUserName.value      = '';
-			Utility.logPrint('#005CFF', '옵션 초기화 완료');
+            
+            StorageIO.setData( Object.assign(Option.defaultOptionForm), () => {
+			    Utility.logPrint('#005CFF', '옵션 초기화 완료');
 			
-			Sweetalert("완료", "옵션 초기화 완료", "success");
+			    Sweetalert("완료", "옵션 초기화 완료", "success");
+            });
 		});
 	}//function optionReset - 옵션 초기화
 	
-	deleteCell(data) {
-		let deleteCellNumber = data.currentTarget.closest('li').getAttribute('itemprop');
-		let aggrohumanJson = JSON.parse(localStorage['ruliweb-support']);
-		let aggrohumanList = aggrohumanJson.userList;
-		
-		aggrohumanList.splice(deleteCellNumber, 1);
-		aggrohumanJson.userList = aggrohumanList;
-		
-		Utility.saveUser(aggrohumanJson.userList);
-		Utility.logPrint('#005CFF', '셀 삭제 완료');
-		
-		this.restoreOptions();
+	deleteCell(event) {
+		let deleteCellNumber = event.currentTarget.closest('li').getAttribute('itemprop');
+        StorageIO.getData( data => {
+            let userList = data.userList;
+            
+            userList.splice(deleteCellNumber, 1);
+            
+            StorageIO.saveUser(userList);
+            Utility.logPrint('#005CFF', '셀 삭제 완료');
+            
+            this.restoreOptions();
+        });
 	}
 }
 
