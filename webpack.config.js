@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const nyanProgressPlugin = require('nyan-progress-webpack-plugin');
 
-const devPath = __dirname + '/src';
+const devPath = __dirname + '/es6/src';
 
 module.exports = {
     resolve : {
@@ -17,7 +17,7 @@ module.exports = {
     },
     
     output : {
-        path: `${__dirname}/../chrome/js/`,
+        path: `${__dirname}/chrome/js/`,
         filename: '[name].js'
     },
     
