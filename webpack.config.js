@@ -33,7 +33,7 @@ module.exports = {
                 exclude: './node_modules/',
                 query: {
                     compact: false,
-                    presets: ["es2015"]
+                    presets: ['es2015', 'stage-2']
                 }
             }
         ]
