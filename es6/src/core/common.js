@@ -56,7 +56,6 @@ class Common
     	
     	let writerName  = $.trim(userInfo.writerName);
     	let writerID	= userInfo.writerID;
-        console.log(data, typeof data)
     	let infoIndex	= data.userNameKeys[writerName] !== undefined ?
     					  data.userNameKeys[writerName] :
     					  data.userIDKeys[writerID];

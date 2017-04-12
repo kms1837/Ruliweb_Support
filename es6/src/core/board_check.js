@@ -3,7 +3,7 @@ import Common from './common'
 
 class BoardCheck
 {
-    static boardTableCheck(response)
+    static boardTableCheck(data)
     { 
     	let boardTable = $('.board_list_table tbody tr');
     	let count = 0;
@@ -29,7 +29,7 @@ class BoardCheck
     			writerID	: writerID
     	    });
 
-    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
     
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
@@ -45,7 +45,7 @@ class BoardCheck
     	Common.displayCheckCount(countFrom);
     }//function BoadtTableCheck - 게시판 어그로 체크
     
-    static boardCommentCheck(response) //blockType, checkUserList
+    static boardCommentCheck(data) //blockType, checkUserList
     {
     	let commentTable	= $('.comment_view_wrapper .comment_view.normal.row tbody tr')
     	let commentBast		= $('.comment_view_wrapper .comment_view.best.row tbody tr');
@@ -66,7 +66,7 @@ class BoardCheck
     			writerID	: writerID
     	    });
      		
-     		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
+     		let countFlag = Common.userNodeCheck(data, subject, userInfo);
      		
      		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
      
@@ -87,7 +87,7 @@ class BoardCheck
     			writerID	: writerID
     	    });
     	    
-    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
     		count = countFlag ? count + 1 : count;

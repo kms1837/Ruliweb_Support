@@ -18,7 +18,7 @@ ul {list-style: none;}
 #top_menu ul a:hover { color:black; background-color: #fff; }
 #top_menu li:last-of-type { border:none; }
 #left_menu 	  { float: left; }
-#left_menu ul { list-style: none; margin-left: -115px;}
+#left_menu ul { list-style: none; margin-left: -105px;}
 #left_menu li {
 	padding: 10px; 
 	margin-bottom: 10px;
@@ -34,7 +34,6 @@ ul {list-style: none;}
 	margin-left: -30px; 
 	border-right:none; 
 	background-color: #fff; 
-	z-index:3;
 	cursor: default;
 }
 

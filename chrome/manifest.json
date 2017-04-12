@@ -3,14 +3,14 @@
 
   "name"		: "Ruliweb Board Support",
   "description" : "당신의 루리웹 생활을 윤택하게 해드립니다.",
-  "version"		: "0.701",
+  "version"		: "0.8.0",
 
   "icons" : {
     "128" :"resource/128.png"
   },
 
   "permissions": [
-    "tabs", "activeTab", "alarms", "contextMenus", "downloads"
+    "tabs", "activeTab", "alarms", "contextMenus", "downloads", "storage", "unlimitedStorage"
   ],
 
   "content_scripts" : [{

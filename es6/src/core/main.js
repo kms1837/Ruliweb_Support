@@ -1,7 +1,9 @@
 
 import BoardCheck from './board_check';
 import MypiCheck from './mypi_check';
-import Commmon from './common'
+import Common from './common';
+
+import StorageIO from '../common/storageIO';
 
 class Core {
 	constructor() {
@@ -16,9 +18,9 @@ class Core {
 		chrome.extension.sendMessage({type: "load"});
 	
 		$(document).mousedown( event => {
-			if (Commmon.seleteUser != undefined) {
-				Commmon.seleteUser.removeAttr('style');
-				Commmon.seleteUser = undefined;
+			if (Common.seleteUser != undefined) {
+				Common.seleteUser.removeAttr('style');
+				Common.seleteUser = undefined;
 			}
 			
 			if (event.button != 2 ) {
@@ -40,33 +42,32 @@ class Core {
 		let pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 	
 		//chrome.extension.sendRequest({method: "getLocalStorage", key: ''},
-        chrome.storage.sync.get('ruliweb-support',
-			response => {
-				if (response.data != undefined) {
-					let checkUserList  = JSON.parse(response.data['ruliweb-support']).userList;
+        StorageIO.getData( data => {
+				if (Object.keys(data).length > 0) {
+					let userList  = data.userList
 					
 					$.observer = new MutationObserver( (mutations) => {
 						let tartgetName = $(mutations[0].target).attr('class');
 						if (tartgetName === 'comment_view normal row') {
-				    		BoardCheck.boardCommentCheck(response);
+				    		BoardCheck.boardCommentCheck(data);
 						}
 					});
 		
 					let observerConfig = { childList: true};
 								
-					if (checkUserList!='') {
+					if (userList.length > 0) {
 						if (pageStatuse === 'news' || endPointStatuse === 'review') {
-							BoardCheck.boardCommentCheck(response);
+							BoardCheck.boardCommentCheck(data);
 							$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 							
 						} else if (rootPageStatuse === 'mypi') {
-							if(pageStatuse != '')	MypiCheck.mypiCheck(response);
-							else					MypiCheck.mypiMainCheck(response);
+							if(pageStatuse != '')	MypiCheck.mypiCheck(data);
+							else					MypiCheck.mypiMainCheck(data);
 							
 						} else {
-							BoardCheck.boardTableCheck(response);
+							BoardCheck.boardTableCheck(data);
 							if (pageStatuseType === 'read') {
-								BoardCheck.boardCommentCheck(response);
+								BoardCheck.boardCommentCheck(data);
 								$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 							}
 						}
