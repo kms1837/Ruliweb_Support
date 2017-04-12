@@ -51,6 +51,28 @@ class Common
     			
     	chrome.extension.sendMessage(messageFrom);
     }
+
+    static addBlockNode(message, object) {
+        let hiddenTds = $(object).find('td');
+        hiddenTds.each( (index, td) => {
+            $(td).css('display', 'none');
+        });
+
+        $(object).append(`
+            <td id="dislike-block" colspan=${hiddenTds.length + 1} style="text-align:center; padding:30px 0; background: rgba(0, 0, 0, 0.5); color:white;">
+                <h3>${message}</h3>
+                <button id="block-cancel-btn" style="color:white; border: 2px solid; padding:3px 5px; margin-top: 5px;">차단해제</button>
+            </td>
+        `);
+
+        $(object).find('#block-cancel-btn').click( (event) => {
+            let tds = $(event.target).closest('tr').find('td');
+            tds.each( (index, td) => {
+                $(td).css('display', '');
+            });
+            $(event.target).closest('td').remove();
+        });
+    }
 	
     static userNodeCheck(data, subject, userInfo) {
     	let userInfoList = data.userList;
@@ -78,7 +100,13 @@ class Common
     				break;
     		}
     		return true;
-    	}
+    	} else if(data.prisonerBlock) {
+            let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
+            if (priCheck.length === 0) {
+                Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
+                return true;
+            }
+        }
     	
     	return false;
     }
