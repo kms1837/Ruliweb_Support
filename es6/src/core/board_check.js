@@ -46,6 +46,33 @@ class BoardCheck
     	Common.displayCheckCount(countFrom);
     }//function BoadtTableCheck - 게시판 어그로 체크
 
+    static dislikeCheck(limit, object) {
+        let controlBox = $(object).find('.control_box');
+        let dislike = controlBox.find('.btn_dislike .num').text().replace(/[^0-9]/g, '');
+
+        if (parseInt(dislike) >= limit) {
+            let hiddenTds = $(object).find('td');
+            hiddenTds.each( (index, td) => {
+                $(td).css('display', 'none');
+            });
+
+            $(object).append(`
+                <td id="dislike-block" colspan=3 style="text-align:center; padding:30px 0; background: rgba(0, 0, 0, 0.5); color:white;">
+                    <h3>비추가 ${limit}개 넘은 댓글입니다.</h3>
+                    <button id="block-cancel-btn" style="color:white; border: 2px solid; padding:3px 5px; margin-top: 5px;">댓글보기</button>
+                </td>
+            `);
+
+            $(object).find('#block-cancel-btn').click( (event) => {
+                let tds = $(event.target).closest('tr').find('td');
+                tds.each( (index, td) => {
+                    $(td).css('display', '');
+                });
+                $(event.target).closest('td').remove();
+            });
+        }
+    }
+
     static commentCheck(data, logs, object) {
         let writerName = $(object).find('.user_inner_wrapper .nick a').text();
         let writerID = $(object).find('.user_inner_wrapper .member_srl').text();
@@ -63,8 +90,12 @@ class BoardCheck
         
         let countFlag = Common.userNodeCheck(data, subject, userInfo);
         
-        if (countFlag) Common.logUserCounter(logs, writerName, writerID);
-
+        if (countFlag) {
+            Common.logUserCounter(logs, writerName, writerID);
+        } else if(data.dislikeBlock.flag) {
+            BoardCheck.dislikeCheck(data.dislikeBlock.limit, subject);
+        }
+            
         return countFlag;
     }
     
