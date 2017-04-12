@@ -26,7 +26,8 @@ class Common
     
     static logUserCounter(logs, writerName, writerID) {
 		if (logs[writerName] === undefined) {
-		    logs[writerName] = Object.assign(this.defaultDisplayCheckedUserForm, {
+		    logs[writerName] = Object.assign({
+                ...this.defaultDisplayCheckedUserForm,
 				name 	: writerName,
 				id 		: writerID,
 			});
