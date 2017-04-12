@@ -1,3 +1,6 @@
+
+import Utility from './utility';
+
 class StorageIO 
 {
     static get storageName () {
@@ -26,13 +29,18 @@ class StorageIO
     }
 
     static getData(callback = () => { }) {
-        chrome.storage.sync.get(null, data => {
+        chrome.storage.local.get(null, data => {
             callback(data);
         });
     }
 
     static setData(inData, callback = () => { }) {
-        chrome.storage.sync.set(inData, callback);
+        try {
+            chrome.storage.local.set(inData, callback);
+        } catch (err) {
+            console.log(err);
+            Utility.logPrint('red', '문제가 있어 변경사항을 적용하지 못하였습니다');
+        }
     }
 }
 
