@@ -68,7 +68,7 @@ class Common
     				$(subject).css('display', 'none');
     				break;
     			case 2: // 글 가리기
-    				this.hideTd($(subject).find('td'));
+                    this.hideTd($(subject).find('td'));
     				break;
     			case 3:
     				this.changeTdColor($(subject).find('td'), user.settingColor);
@@ -139,8 +139,18 @@ class Common
     }// 클래스 탐색
     
     static hideTd(td) {
-    	for(var i=0;i<td.length;i++)
+    	for(var i=0;i<td.length;i++) {
     	    td[i].style.fontSize = '0px';
+            let links = $(td[i]).find('a');
+            let images = $(td[i]).find('img');
+
+            if (links.length > 0)
+                links.css('visibility', 'hidden');
+            
+            if (images.length > 0)
+                images.css('visibility', 'hidden');
+
+        }
     }
     
     static changeTdColor(td, colorValue) {
