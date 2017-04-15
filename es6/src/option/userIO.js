@@ -1,6 +1,7 @@
 
 import Utility from '../common/utility';
 import StorageIO from '../common/storageIO';
+import Sweetalert from 'sweetalert2';
 
 const defaultUserForm = {
 	ruliwebID: '',
@@ -24,14 +25,14 @@ class UserIo
 	}
     
     static importOption(file) {
-    	let optionFile = file.target.files[0];
+    	let optionFile = file;
     	let reader = new FileReader();
-    
-    	reader.onload = ((file) => {
+
+    	reader.onload = ((loadFile) => {
     		try {
-    			let userData = JSON.parse(file.target.result);
+    			let userData = JSON.parse(loadFile.target.result);
     			$(userData).each((index, object) => {
-    				this.addUser(object.name, object);
+    				this.addUser(object);
     			});
     			Utility.logPrint('#005CFF', '유저 추가');
     		} catch(err) {
@@ -65,11 +66,34 @@ class UserIo
 		});*/
 	}
 	
+	static exportOldJson() {
+		chrome.extension.sendRequest({ method: "getLocalStorage", key: '' }, (response) => {
+			if (response.data != undefined) {
+				let userList = JSON.parse(response.data.aggrohuman)['userList'];
+				let file = window.btoa(unescape(encodeURIComponent(JSON.stringify(userList))));
+				let url = `data:application/json;base64,${file}`;
+
+				chrome.downloads.download({
+					url : url,
+					filename : 'user-list.json'
+				});
+			} else {
+				Sweetalert({
+					text: '다운로드에 실패하였습니다.'
+				});
+			}
+		});
+	} // 구버전 백업.
+
 	static exportJson() {
-		let userList = JSON.parse(localStorage['ruliweb-support'])['userList'];
-		let file = btoa(JSON.stringify(userList));
-		let url = `data:application/json;base64,${file}`;
-		console.log(url);
+		StorageIO.getData( data => {
+			let file = window.btoa(unescape(encodeURIComponent(JSON.stringify(data.userList))));
+			let url = `data:application/json;base64,${file}`;
+			chrome.downloads.download({
+				url : url,
+				filename : 'user-list.json'
+			});	
+		});
 	}
     
     static addUser(form=undefined, callback=()=>{}) {

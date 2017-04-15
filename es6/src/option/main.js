@@ -75,7 +75,7 @@ class Option
 		$(document).on('click', '#importBtn', () => {
 			Sweetalert({
 				title: '유저목록 불러오기',
-				text: 'JSON, CSV파일만 지원합니다.',
+				text: 'JSON파일만 지원합니다.',
 				input: 'file',
 				inputAttributes: {
 					accept: 'json/*'
@@ -86,21 +86,30 @@ class Option
 		});
 		
 		$(document).on('click', '#exportBtn', () => {
+			/*
+			<button class="swalBtn csv">
+				<i class="fa fa-file"></i></br>
+				CSV
+			</button>
+			*/
 			Sweetalert({
 				title: '다운로드할 파일 형식 선택',
-				html: ` <button class="swalBtn csv">
-							<i class="fa fa-file"></i></br>
-							CSV
-						</button>
+				html: `
 						<button class="swalBtn json">
 							<i class="fa fa-file"></i></br>
 							JSON
-						</button>`
+						</button>
+						<button class="swalBtn oldjson">
+							<i class="fa fa-file"></i></br>
+							<label>구버전 이용자</label>
+						</button>
+					`
 			});
 		});
 		
-		$(document).on('click', '.swalBtn.csv', UserIO.exportCSV);
+		/*$(document).on('click', '.swalBtn.csv', UserIO.exportCSV);*/
 		$(document).on('click', '.swalBtn.json', UserIO.exportJson);
+		$(document).on('click', '.swalBtn.oldjson', UserIO.exportOldJson);
 	
 		$('#left_menu ul li').click( e => {
 			let clickMenuID = e.target.getAttribute('itemprop');
