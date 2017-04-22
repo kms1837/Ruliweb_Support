@@ -22,7 +22,7 @@ class Option
 	}
 	
 	constructor() {
-        StorageIO.getData( data => { console.log(data); });
+        StorageIO.getData().then( data => { console.log(data); });
 		this.nowMenuNumber = 0; // 현재 선택된 메뉴
 		this.memoFlag = true;
 		this.eventBind();
@@ -50,22 +50,22 @@ class Option
 			// detail 옵션에서 blockType 선택하는 것이 없어서 대응
 	
 			if (aggroUserName.length > 0) {
-				let addUserForm = Object.assign(UserIO.defaultUserForm, {
+				let addUserForm = {
+					...UserIO.defaultUserForm,
 	    	        name: aggroUserName,
 	    	        ruliwebID: aggroUserID,
 	    	        settingType: blockTypeValue,
 					settingColor: blockColor.value,
 	    	        addDate: Utility.getDate()
-	    	    });
+	    	    };
 	    	    
-				UserIO.addUser(addUserForm, userData => {
+				UserIO.addUser(addUserForm).then(() => {
 					aggroUserNameTextBox.value = '';
 					aggroUserIDTextBox.value = '';
-					
-					this.addCell(userData);
+
 					this.restoreOptions();
 					
-					Utility.logPrint('#005CFF', '어그로 유저 추가');
+					Utility.logPrint('#005CFF', '관리 유저 추가');
 				});
 			} else {
 				Utility.logPrint('red', '이름이 비어있음');	
@@ -81,7 +81,10 @@ class Option
 					accept: 'json/*'
 				}
 			}).then((file) => {
-				UserIO.importOption(file);
+				UserIO.importOption(file).then( (result)=> {
+					this.restoreOptions();
+					Utility.logPrint('#005CFF', `유저 추가완료(성공:${result.success}, 실패:${result.fail})`);
+				});
 			});
 		});
 		
@@ -124,7 +127,7 @@ class Option
 	
 	detailOptionSceneBind() {
 		$(document).on('click', '.choiceSetting input[type="radio"]', event => {
-			StorageIO.getData( data => {
+			StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 let user = userList[userid];
@@ -147,7 +150,7 @@ class Option
         });
 		
 		$(document).on('change', '.choiceSetting input[type="color"]', event => {
-			StorageIO.getData( data => {
+			StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 let user = userList[userid];
@@ -164,7 +167,7 @@ class Option
         });
 		
 		$(document).on('keyup', '.choiceSetting #userID', event =>{
-			StorageIO.getData( data => {
+			StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 let user = userList[userid];
@@ -179,7 +182,7 @@ class Option
 		});
 		
 		$(document).on('change', '.choiceSetting #userID', () => {
-            StorageIO.getData( data => {
+            StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 let user = userList[userid];
@@ -190,7 +193,7 @@ class Option
 		});
 		
 		$(document).on('keyup', '.choiceSetting #userMemo', event => {
-            StorageIO.getData( data => {
+            StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 
@@ -201,7 +204,7 @@ class Option
 		});
 		
 		$(document).on('change', '.choiceSetting #userMemo', event => {
-            StorageIO.getData( data => {
+            StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let userid = $('.select').attr('itemprop');
                 
@@ -238,7 +241,7 @@ class Option
                     prisonerBlock: $('#prisonerBlock')[0].checked
                 };
                     
-                StorageIO.setData( otherOption, () => {
+                StorageIO.setData( otherOption).then( () => {
                     Sweetalert("완료", "저장하였습니다.", "success");
                 });
 			});
@@ -255,7 +258,7 @@ class Option
 			showCancelButton: true,
 			closeOnConfirm: false
 		}).then(() => {
-            StorageIO.getData( data => {
+            StorageIO.getData().then( data => {
                 let userList = data.userList;
                 let blockColor = document.getElementById('blockColor');
                 let blockTypeValue = $('#blockTypeSelect').val();
@@ -265,7 +268,7 @@ class Option
                     userList[i].settingColor = blockColor.value;
                 }
 
-                StorageIO.setData({'userList': userList}, () => {
+                StorageIO.setData({'userList': userList}).then( () => {
                     StorageIO.saveUser(userList);
                     
                     $('.badUserList').html('');
@@ -279,7 +282,7 @@ class Option
 	}//function restoreOptions - 옵션 저장
 	
 	userChoice(cellObj, userNumber) {
-        StorageIO.getData( data => {
+        StorageIO.getData().then( data => {
             let user = data.userList[userNumber];
             let radiobox = document.getElementsByName('blockTypeRadio');
             
@@ -327,7 +330,7 @@ class Option
 						break;
 					}
 					case 3: {
-                        StorageIO.getData( data => {
+                        StorageIO.getData().then( data => {
                             $('#dislikeBlock')[0].checked = data.dislikeBlock.flag;
                             $('#dislikeLimit').val(data.dislikeBlock.limit);
                             $('#prisonerBlock')[0].checked = data.prisonerBlock;
@@ -340,7 +343,7 @@ class Option
 	}//function changeMenu - 옵션메뉴 변경
 	
 	restoreOptions() {
-        StorageIO.getData( data => {
+        StorageIO.getData().then( data => {
             let userList = $('.badUserList');
             
             userList[0].innerHTML = '';
@@ -363,7 +366,7 @@ class Option
                 });
                 
                 $('.overMemoArea').mouseover((event) => {
-                    StorageIO.getData( data => {
+                    StorageIO.getData().then( data => {
                         let userList = data['userList'];
                         let cellNum = event.target.closest('li').getAttribute('itemprop');
                         let overUserMemo = $('#overUserMemo');
@@ -447,7 +450,7 @@ class Option
 	
 	deleteCell(event) {
 		let deleteCellNumber = event.currentTarget.closest('li').getAttribute('itemprop');
-        StorageIO.getData( data => {
+        StorageIO.getData().then( data => {
             let userList = data.userList;
             
             userList.splice(deleteCellNumber, 1);

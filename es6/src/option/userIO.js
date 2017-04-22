@@ -28,19 +28,34 @@ class UserIo
     	let optionFile = file;
     	let reader = new FileReader();
 
-    	reader.onload = ((loadFile) => {
-    		try {
-    			let userData = JSON.parse(loadFile.target.result);
-    			$(userData).each((index, object) => {
-    				this.addUser(object);
-    			});
-    			Utility.logPrint('#005CFF', '유저 추가');
-    		} catch(err) {
-    			Utility.logPrint('red', '파일내용을 확인해 주세요');
-    		}
-    	});
-    
-    	reader.readAsText(optionFile);
+		reader.readAsText(optionFile);
+
+		return new Promise( (rootResolve, reject) => {
+			reader.onload = ((loadFile) => {
+				try {		
+					let userData = JSON.parse(loadFile.target.result);
+					Promise.resolve({index: 0, success: 0, fail: 0}).then(function loop(result) {
+						if (result.index < userData.length) {
+							UserIo.addUser(userData[result.index]).then(() => {
+								result['index'] = result['index'] + 1;
+								result['success'] = result['success'] + 1;
+								loop(result);
+							},
+							() => {
+								result['index'] = result['index'] + 1;
+								result['fail'] = result['fail'] + 1;
+								loop(result);
+							});
+						} else {
+							rootResolve(result);
+						}
+					});
+				} catch(err) {
+					console.error(err);
+					Utility.logPrint('red', '파일내용을 확인해 주세요');
+				}
+			});
+		});
     }
     
     static exportCSV() {
@@ -86,7 +101,7 @@ class UserIo
 	} // 구버전 백업.
 
 	static exportJson() {
-		StorageIO.getData( data => {
+		StorageIO.getData().then( data => {
 			let file = window.btoa(unescape(encodeURIComponent(JSON.stringify(data.userList))));
 			let url = `data:application/json;base64,${file}`;
 			chrome.downloads.download({
@@ -96,25 +111,29 @@ class UserIo
 		});
 	}
     
-    static addUser(form=undefined, callback=()=>{}) {
-        StorageIO.getData( data => {
-	   		let userList = data.userList;
-	     	let addSwitch = true;
-	
-			for (let i=0; i<userList.length; i++) {
-				if (userList[i].name == form.name) {
-					addSwitch = false;
-					Utility.logPrint('red', '리스트에 이미 존재함');
-					return;
+    static addUser(form=undefined) {
+		return new Promise( (resolve, reject) => {
+			StorageIO.getData().then( data => {
+				let userList = data.userList;
+				let addSwitch = true;
+		
+				for (let i=0; i<userList.length; i++) {
+					if (userList[i].name == form.name) {
+						addSwitch = false;
+						Utility.logPrint('red', '리스트에 이미 존재함');
+						reject();
+						return;
+					}
+				}//for - 중복체크
+		
+				if (addSwitch) {
+					userList.push(form);
+					StorageIO.saveUser(userList).then(() => {
+						resolve();
+					});
 				}
-			}//for - 중복체크
-	
-	    	if (addSwitch) {
-				userList.push(form);
-				StorageIO.saveUser(userList);
-				callback(form);
-			}
-        });
+			});
+		});
 	}
 }
 

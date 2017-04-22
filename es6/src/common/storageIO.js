@@ -7,7 +7,7 @@ class StorageIO
         return storageName;
     }
 
-    static saveUser (userList, callback = () => {}) {
+    static saveUser (userList) {
         let userNameKeys = {};
         let userIDKeys = {};
         
@@ -25,21 +25,29 @@ class StorageIO
             'userIDKeys': userIDKeys
         }
 
-        StorageIO.setData(inData, callback);
+        return StorageIO.setData(inData);
     }
 
     static getData(callback = () => { }) {
-        chrome.storage.local.get(null, data => {
-            callback(data);
+        return new Promise( (resolve, rejected) => {
+            chrome.storage.local.get(null, data => {
+                resolve(data);
+            });
         });
     }
 
-    static setData(inData, callback = () => { }) {
+    static setData(inData) {
         try {
-            chrome.storage.local.set(inData, callback);
+            return new Promise( (resolve, rejected) => {
+                chrome.storage.local.set(inData, resolve);
+            });
         } catch (err) {
-            console.log(err);
+            console.error(err);
             Utility.logPrint('red', '문제가 있어 변경사항을 적용하지 못하였습니다');
+            
+            return new Promise( (resolve, rejected) => {
+                chrome.storage.local.set(inData, rejected);
+            });
         }
     }
 }
