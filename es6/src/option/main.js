@@ -345,18 +345,22 @@ class Option
 	restoreOptions() {
         StorageIO.getData().then( data => {
             let userList = $('.badUserList');
+			let footer = $('.itemFooter');
             
-            userList[0].innerHTML = '';
+            userList.text('');
 
             if (Object.keys(data).length === 0) {
                 data = Object.assign(Option.defaultOptionForm);
                 StorageIO.setData(data, () => {
                     Utility.logPrint('#005CFF', '[최초 실행] 데이터를 구성하였습니다.');
                 });
+				footer.text('총 0명 관리중');
                 // 최초 실행
             } else {
-                let date        = Utility.getDate();
-                let userList  = data['userList'];
+                let date = Utility.getDate();
+                let userList = data['userList'];
+
+				footer.text(`총 ${userList.length}명 관리중`);
         
                 for(let i=0; i<userList.length; i++)
                     this.addCell(userList[i]);
@@ -436,11 +440,14 @@ class Option
 			let aggroUserName  = document.getElementById('aggrohuman');
 			let radiobox       = document.getElementsByName('blockTypeRadio');
 			let badUserList    = $('.badUserList');
+			let footer = $('.itemFooter');
 			
 			badUserList[0].innerHTML = '';
 			aggroUserName.value      = '';
+			footer.text('총 0명 관리중');
             
-            StorageIO.setData( Object.assign(Option.defaultOptionForm), () => {
+            StorageIO.setData(Object.assign(Option.defaultOptionForm))
+			.then( () => {
 			    Utility.logPrint('#005CFF', '옵션 초기화 완료');
 			
 			    Sweetalert("완료", "옵션 초기화 완료", "success");
