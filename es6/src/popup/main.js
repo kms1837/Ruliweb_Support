@@ -7,8 +7,8 @@ class Popup {
     
     render(data) {
         let ele = $('#userCounter').find('ul')[0];
-    
-		if (data.length > 0) {
+
+		if (data!==undefined&& data!==null && data.length > 0) {
 			$(data).each((index, object) => {
 			    console.log(object);
 				let addEle = `<li>
@@ -21,16 +21,17 @@ class Popup {
 					let keys = Object.keys(logs);
 					
 					if (keys.length > 0) {
-						$(keys).each(function(index, key) {
+						$(keys).each((index, key) => {
 							addEle = addEle + `<li> 
 												 <label class="title"> ${logs[key].name} </label> 
 												 <span class="count"> ${logs[key].count} </span>
 											   </li>`;
 						});
 					} else {
-						addEle = addEle `<li> 
-											<label class="title"> 관리 유저 없음 </label> 
-										 </li>`;
+						addEle = addEle +
+								 `<li> 
+								   <label class="title"> 관리 유저 없음 </label> 
+								 </li>`;
 					}
 				}
 

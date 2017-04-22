@@ -16,13 +16,15 @@ class Core {
 	
 	init() {
 		chrome.extension.sendMessage({type: "load"});
-	
-		$(document).mousedown( event => {
+		
+		$(document).mouseover( () => {
 			if (Common.seleteUser != undefined) {
 				Common.seleteUser.removeAttr('style');
 				Common.seleteUser = undefined;
 			}
-			
+		});
+
+		$(document).mousedown(() => {
 			if (event.button != 2 ) {
 				let messageFrom = {
 					type: "context",
@@ -41,8 +43,7 @@ class Core {
 		let pageStatuse 	= pageUrlElement[3];
 		let pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 	
-		//chrome.extension.sendRequest({method: "getLocalStorage", key: ''},
-        StorageIO.getData( data => {
+        StorageIO.getData().then( data => {
 				if (Object.keys(data).length > 0) {
 					let userList  = data.userList
 					

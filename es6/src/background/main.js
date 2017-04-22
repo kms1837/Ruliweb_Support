@@ -20,7 +20,17 @@ class Background
 		Background.prototype.userInfo = {};
 		Background.prototype.counts = [];
 		Background.prototype.contextFlag = false;
-
+		chrome.contextMenus.create({
+			'id': 'adduser',
+			'title': `선택한 유저추가`,
+			'contexts':['page', 'selection', 'link', 'editable', 'image'],
+			'enabled': true,
+			onclick: () => { 
+				let flag = confirm(`선택한 ${Background.userInfo.name} 유저를 추가 하시겠습니까?`);
+				if (flag)
+					UserIO.addUser(Background.userInfo); 
+			}
+		});
 		/*
 		this.userInfo = {};
 		this.counts = [];
@@ -62,30 +72,14 @@ class Background
 	
 	static context(inForm) {
 		if (inForm.key === 'adduser') {
-			this.userInfo = Object.assign(UserIO.defaultUserForm, {
-    	        name: inForm.userName,
-    	    });
-			
-			let userForm = {
-				'title': '유저추가('+ this.userInfo.name +')',
-				'contexts':['page', 'selection', 'link', 'editable', 'image'],
-				onclick: () => { UserIO.addUser(this.userInfo); }
-			};
+			Background.userInfo = {
+				...UserIO.defaultUserForm,
+    	        name: inForm.userName
+    	    };
 	
-			if (this.contextFlag) {
-				chrome.contextMenus.update('adduser', userForm);
-			} else {
-				userForm['id'] = 'adduser';
-				chrome.contextMenus.create(userForm);
-			}
-	
-			this.contextFlag = true;
-			
+			chrome.contextMenus.update('adduser', {'title': `관리유저등록(${Background.userInfo.name})`, 'enabled': true});
 		} else {
-			if (this.contextFlag) {
-				chrome.contextMenus.remove('adduser');
-				this.contextFlag = false;
-			}
+			chrome.contextMenus.update('adduser', {'title': '유저를 선택해 주세요', 'enabled': false});
 		}
 	}
 	
@@ -97,45 +91,6 @@ class Background
 			sendResponse({});
 		}
 	}
-	
-	/*addUser (event) {
-		let defaultUserForm = {
-		  	ruliwebID: '', 
-		  	user_memo: '', 
-		  	settingType: 0, 
-		  	settingColor: '#ffffff'
-		};
-		
-	    if (localStorage['ruliweb-support'] == '' || localStorage['ruliweb-support'] == null) {
-	      	defaultUserForm.addDate = Utility.getDate();
-	    	defaultUserForm.name	= userInfo;
-	    	Utility.saveJson([defaultUserForm]);
-	    	
-	      	alert('유저추가 완료');
-	  	} else {
-			let aggrohumanJson  = JSON.parse(localStorage['ruliweb-support']);
-			let addSwitch 		= true;
-			let aggrohumanList  = aggrohumanJson.userList;
-	
-			for (let i=0; i<aggrohumanList.length; i++) {
-				if (aggrohumanList[i].name === userInfo) {
-					alert('이미 유저가 존재합니다.');
-			  		addSwitch = false;
-			  		break;
-				}
-			}//for - 중복체크
-	
-			if (addSwitch) {
-				defaultUserForm.addDate = Utility.getDate();
-				defaultUserForm.name = userInfo;
-		    		
-		        aggrohumanJson.userList.push(defaultUserForm);
-		        
-		        Utility.saveJson(aggrohumanJson.userList);
-				alert('유저추가 완료');
-			}
-	  	}
-	}*/
 }
 
 chrome.runtime.onMessage.addListener(Background.messageProcess);

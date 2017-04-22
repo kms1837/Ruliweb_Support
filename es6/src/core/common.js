@@ -35,13 +35,11 @@ class Common
 		
 		logs[writerName].count = parseInt(logs[writerName].count) + 1;
     }//pipup의 유저 노드를 카운트합니다 ex) 링크공주 3개
-    
-	static contextMenu(response) {
-    	let inUserName = $.trim($(response.target).text());
-    	$(response.target).css('background-color', '#ccc');
-    	$(response.target).css('color', '#fff');
-    	
-    	this.seleteUser = $(response.target);
+
+	static contextMenuUpdate(response) {
+		let inUserName = $.trim($(response.target).text());
+
+		this.seleteUser = $(response.target);
     	
     	let messageFrom = {
     		type: "context",
@@ -50,6 +48,14 @@ class Common
     	}
     			
     	chrome.extension.sendMessage(messageFrom);
+	}
+    
+	static contextMenu(response) {
+    	let inUserName = $.trim($(response.target).text());
+    	$(response.target).css('background-color', '#ccc');
+    	$(response.target).css('color', '#fff');
+    	
+    	Common.contextMenuUpdate(response);
     }
 
     static addBlockNode(message, object) {
