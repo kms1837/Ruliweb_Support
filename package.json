@@ -2,6 +2,9 @@
   "name": "ruliweb_board_support",
   "version": "0.8.0",
   "description": "Ruliweb Board Management Support",
+  "scripts": {
+    "build": "webpack --progress --color --watch"
+  },
   "dependencies": {
     "sweetalert2": "^6.5.3"
   },
