@@ -3,7 +3,7 @@ import Common from './common'
 
 class MypiCheck
 {
-    mypiMainCheck(response)
+    static mypiMainCheck(response)
     {
     	let mypiMainTable = $('.m_recently tbody tr');
     	let count = 0;
@@ -26,10 +26,11 @@ class MypiCheck
     		
     		if (countFlag) {
     			if (logs[writerName] === undefined) {
-    			    logs[writerName] = Object.assign(Common.defaultCheckUserForm, {
-        				name 	: writerName,
-        				id 		: writerID,
-        			});
+    			    logs[writerName] = {
+						...Common.defaultCheckUserForm,
+        				name: writerName,
+        				id: writerID,
+        			};
     			}
     			logs[writerName].count = parseInt(logs[writerName].count) + 1;
     		}
@@ -46,56 +47,30 @@ class MypiCheck
     	Common.displayCheckCount(countFrom);
     }//마이피 메인
     
-    mypiCheck(response)
+    static mypiCheck(data)
     {
-    	let data  = JSON.parse(response.data.aggrohuman);
     	let userInfoList = data.userList;
     	let count = 0;
     	let logs = {};
     	
     	let commentDocument = $('#mCenter tbody .mypiReply').find('div');
-    	let commentUserClass;
-    	let commentUserName;
-    	let commentUserId;
+		let commentUserClass, commentUserName, commentUserId;
     	
-    	for(let i=0; i<commentDocument.length; i=i+2) {
+    	for (let i=0; i<commentDocument.length; i=i+2) {
     		commentUserClass = $(commentDocument[i]).find('.cm01');
-    		commentUserName  = commentUserClass.find('b')[0];
-    		commentUserId	 = commentUserClass.find('a')[0].href.split('?')[1].substr(3);
-    		
-    		let infoIndex = data.userNameKeys[commentUserName] ?
-    						data.userNameKeys[commentUserName] :
-    						data.userIDKeys[commentUserId];
-    		
-    		if (infoIndex != undefined) {
-    			let user = userInfoList[infoIndex];
-    			switch(parseInt(user.settingType)) {
-    				case '1': //글 제거
-    					commentDocument[i].style.display = 'none';
-    					commentDocument[i+1].style.display = 'none';
-    					break;
-    				case '2': //글 가리기
-    					commentDocument[i].style.fontSize = '0px';
-    					commentDocument[i+1].style.fontSize = '0px';
-    					break;
-    				case '3':
-    					commentDocument[i].style.backgroundColor 	= user.settingColor;
-    					commentDocument[i+1].style.backgroundColor  = user.settingColor;
-    					break;
-    				case '4':
-    					commentUserName.innerHTML += '(어글러)';
-    					break;
-    			}
-    			
-    			if (logs[commentUserName] === undefined) {
-    			    logs[commentUserName] = Object.assign(Common.defaultCheckUserForm, {
-        				name 	: commentUserName,
-        				id 		: commentUserId,
-        			});
-    			}
-    			logs[commentUserName].count = parseInt(logs[commentUserName].count) + 1;
-    			count++;
-    		}
+			commentUserName = commentUserClass.find('b').text();
+			commentUserId = commentUserClass.find('a')[0].href.split('?')[1].substr(4);
+
+			let userInfo = {
+                ...Common.defaultCheckUserForm,
+    	        writerName  : commentUserName,
+    			writerID	: commentUserId
+    	    };
+
+			let countFlag = Common.userMypiNodeCheck(data, [commentDocument[i], commentDocument[i+1]], userInfo);
+			if (countFlag) Common.logUserCounter(logs, commentUserName, commentUserId);
+
+			count = countFlag ? count+1 : count;
     	}
     	
     	let countFrom = {
@@ -107,7 +82,7 @@ class MypiCheck
     	Common.displayCheckCount(countFrom);
     }//마이피 체크
     
-    mypiCateCheck(response)
+    static mypiCateCheck(data)
     {
     	let mypiCateTable = $('#mypilist tbody tr');
     	let count = 0;
@@ -126,7 +101,7 @@ class MypiCheck
     			writerID	: writerID
     		}
     		
-    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
+    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
     		
     		if(countFlag) {
     			if (logs[writerName] === undefined) {

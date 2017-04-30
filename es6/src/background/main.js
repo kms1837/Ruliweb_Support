@@ -40,11 +40,6 @@ class Background
 				}
 			}
 		});
-		/*
-		this.userInfo = {};
-		this.counts = [];
-		this.contextFlag = false;
-		*/
 		
 		this.init = this.init.bind(Background);
 		this.messageProcess = this.messageProcess.bind(Background);

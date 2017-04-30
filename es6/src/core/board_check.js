@@ -87,7 +87,7 @@ class BoardCheck
         return countFlag;
     }
     
-    static boardCommentCheck(data) //blockType, checkUserList
+    static boardCommentCheck(data)
     {
     	let commentTable = $('.comment_view_wrapper .comment_view.normal.row tbody tr')
     	let commentBast = $('.comment_view_wrapper .comment_view.best.row tbody tr');

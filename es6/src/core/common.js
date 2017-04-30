@@ -60,6 +60,7 @@ class Common
 
     static addBlockNode(message, object) {
         let hiddenTds = $(object).find('td');
+		
         hiddenTds.each( (index, td) => {
             $(td).css('display', 'none');
         });
@@ -79,6 +80,48 @@ class Common
             $(event.target).closest('td').remove();
         });
     }
+
+	static userMypiNodeCheck(data, subject, userInfo) {
+		let userInfoList = data.userList;
+		
+		let infoIndex = data.userNameKeys[userInfo.writerName] ?
+						data.userNameKeys[userInfo.writerName] :
+						data.userIDKeys[userInfo.writerID];
+		
+		if (infoIndex !== undefined) {
+			let user = userInfoList[infoIndex];
+			
+			switch(parseInt(user.settingType)) {
+				case 1: //글 제거
+					subject[0].style.display = 'none';
+					subject[1].style.display = 'none';
+					break;
+				case 2: //글 가리기
+					subject[0].style.fontSize = '0px';
+					subject[1].style.fontSize = '0px';
+					break;
+				case 3: // 색칠
+					subject[0].style.backgroundColor = user.settingColor;
+					subject[1].style.backgroundColor = user.settingColor;
+					break;
+				case 4:
+					subject.innerHTML += '(어글러)';
+					break;
+			}
+
+			return true;
+
+		} else if(data.prisonerBlock) {
+            let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
+            if (priCheck.length === 0) {
+                Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
+
+                return true;
+            }
+        }
+
+		return false;
+	} // 마이피 전용 유저체크
 	
     static userNodeCheck(data, subject, userInfo) {
     	let userInfoList = data.userList;
@@ -105,17 +148,20 @@ class Common
     				$(subject).find('.writer a').text('어글러');
     				break;
     		}
+
     		return true;
+
     	} else if(data.prisonerBlock) {
             let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
             if (priCheck.length === 0) {
                 Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
+
                 return true;
             }
         }
     	
     	return false;
-    }
+    } // 유저 체크
 
     static tableAddID(table) {
     	let boardTable = table;
