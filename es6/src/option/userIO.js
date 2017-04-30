@@ -120,7 +120,6 @@ class UserIo
 				for (let i=0; i<userList.length; i++) {
 					if (userList[i].name == form.name) {
 						addSwitch = false;
-						//Utility.logPrint('red', '리스트에 이미 존재함');
 						reject({message: '리스트에 이미 존재함'});
 						return;
 					}

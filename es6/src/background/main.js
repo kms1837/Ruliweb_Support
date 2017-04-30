@@ -29,7 +29,7 @@ class Background
 				if (Object.keys(Background.userInfo).length > 0) {
 					let flag = confirm(`선택한 ${Background.userInfo.name} 유저를 추가 하시겠습니까?`);
 					if (flag) {
-						UserIO.addUser(Background.userInfo)
+						UserIO.addUser({...Background.userInfo, addDate: Utility.getDate()})
 						.then( () => {
 							alert('유저를 추가하였습니다.');
 						})

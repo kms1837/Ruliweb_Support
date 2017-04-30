@@ -59,13 +59,17 @@ class Option
 	    	        addDate: Utility.getDate()
 	    	    };
 	    	    
-				UserIO.addUser(addUserForm).then(() => {
+				UserIO.addUser(addUserForm)
+				.then(() => {
 					aggroUserNameTextBox.value = '';
 					aggroUserIDTextBox.value = '';
 
 					this.restoreOptions();
 					
 					Utility.logPrint('#005CFF', '관리 유저 추가');
+				})
+				.catch( response => {
+					Utility.logPrint('red', response.message);
 				});
 			} else {
 				Utility.logPrint('red', '이름이 비어있음');	
