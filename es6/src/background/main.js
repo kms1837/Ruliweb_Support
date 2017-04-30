@@ -22,13 +22,22 @@ class Background
 		Background.prototype.contextFlag = false;
 		chrome.contextMenus.create({
 			'id': 'adduser',
-			'title': `선택한 유저추가`,
+			'title': `유저를 선택해 주세요`,
 			'contexts':['page', 'selection', 'link', 'editable', 'image'],
-			'enabled': true,
+			'enabled': false,
 			onclick: () => { 
-				let flag = confirm(`선택한 ${Background.userInfo.name} 유저를 추가 하시겠습니까?`);
-				if (flag)
-					UserIO.addUser(Background.userInfo); 
+				if (Object.keys(Background.userInfo).length > 0) {
+					let flag = confirm(`선택한 ${Background.userInfo.name} 유저를 추가 하시겠습니까?`);
+					if (flag) {
+						UserIO.addUser(Background.userInfo)
+						.then( () => {
+							alert('유저를 추가하였습니다.');
+						})
+						.catch( res => {
+							alert(res.message);
+						});
+					}
+				}
 			}
 		});
 		/*

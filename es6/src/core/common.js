@@ -39,7 +39,7 @@ class Common
 	static contextMenuUpdate(response) {
 		let inUserName = $.trim($(response.target).text());
 
-		this.seleteUser = $(response.target);
+		Common.seleteUser = $(response.target);
     	
     	let messageFrom = {
     		type: "context",
