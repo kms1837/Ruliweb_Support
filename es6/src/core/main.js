@@ -18,7 +18,7 @@ class Core {
 		chrome.extension.sendMessage({type: "load"});
 		
 		$(document).mouseover( () => {
-			if (Common.seleteUser != undefined) {
+			if (Common.seleteUser !== undefined) {
 				Common.seleteUser.removeAttr('style');
 				Common.seleteUser = undefined;
 			}
@@ -42,38 +42,50 @@ class Core {
 		let endPointStatuse	= pageUrlElement[pageUrlElement.length-1];
 		let pageStatuse 	= pageUrlElement[3];
 		let pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
-	
+		let parm = pageURL.split('?')[1];
+
+		/*
+		console.log('rootPageStatuse', rootPageStatuse);
+		console.log('endPointStatuse', endPointStatuse);
+		console.log('pageStatuse', pageStatuse);
+		console.log('pageStatuseType', pageStatuseType);
+		console.log('first parm', parm);
+		*/
+
         StorageIO.getData().then( data => {
-				if (Object.keys(data).length > 0) {
-					let userList  = data.userList
-					
-					$.observer = new MutationObserver( (mutations) => {
-						let tartgetName = $(mutations[0].target).attr('class');
-						if (tartgetName === 'comment_view normal row') {
-				    		BoardCheck.boardCommentCheck(data);
-						}
-					});
-		
-					let observerConfig = { childList: true};
-								
-					if (userList.length > 0) {
-						if (pageStatuse === 'news' || endPointStatuse === 'review') {
-							BoardCheck.boardCommentCheck(data);
-							$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
-							
-						} else if (rootPageStatuse === 'mypi') {
-							if(pageStatuse != '')	MypiCheck.mypiCheck(data);
-							else					MypiCheck.mypiMainCheck(data);
-							
-						} else {
-							BoardCheck.boardTableCheck(data);
-							if (pageStatuseType === 'read') {
-								BoardCheck.boardCommentCheck(data);
-								$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
-							}
-						}
-					}
+			let userList  = data.userList
+			
+			$.observer = new MutationObserver( (mutations) => {
+				let tartgetName = $(mutations[0].target).attr('class');
+				if (tartgetName === 'comment_view normal row') {
+					BoardCheck.boardCommentCheck(data);
 				}
+			});
+
+			let observerConfig = { childList: true};
+			
+			if (pageStatuse === 'news' || endPointStatuse === 'review') {
+				BoardCheck.boardCommentCheck(data);
+				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
+			}
+			else if (rootPageStatuse === 'mypi') {
+				if(pageStatuse != '') {
+					if (parm.split('=')[0] === 'cate')
+						MypiCheck.mypiCateCheck(data);
+					else
+						MypiCheck.mypiCheck(data);
+				}
+				else {
+					MypiCheck.mypiMainCheck(data);
+				}
+			} 
+			else {
+				BoardCheck.boardTableCheck(data);
+				if (pageStatuseType === 'read') {
+					BoardCheck.boardCommentCheck(data);
+					$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
+				}
+			}
 		});
 	}
 }

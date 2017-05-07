@@ -3,8 +3,7 @@ import Common from './common'
 
 class MypiCheck
 {
-    static mypiMainCheck(response)
-    {
+    static mypiMainCheck(data) {
     	let mypiMainTable = $('.m_recently tbody tr');
     	let count = 0;
     	let logs = {};
@@ -22,20 +21,11 @@ class MypiCheck
     			writerID	: writerID
     		}
     		
-    		let countFlag = Common.userNodeCheck(response.data, subject, userInfo);
-    		
-    		if (countFlag) {
-    			if (logs[writerName] === undefined) {
-    			    logs[writerName] = {
-						...Common.defaultCheckUserForm,
-        				name: writerName,
-        				id: writerID,
-        			};
-    			}
-    			logs[writerName].count = parseInt(logs[writerName].count) + 1;
-    		}
-    		
-    		count = countFlag ? count + 1 : count;
+    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
+    
+    		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
+    
+    		count = countFlag ? count+1 : count;
     	});
     	
     	let countFrom = {
@@ -47,8 +37,7 @@ class MypiCheck
     	Common.displayCheckCount(countFrom);
     }//마이피 메인
     
-    static mypiCheck(data)
-    {
+    static mypiCheck(data) {
     	let userInfoList = data.userList;
     	let count = 0;
     	let logs = {};
@@ -82,8 +71,7 @@ class MypiCheck
     	Common.displayCheckCount(countFrom);
     }//마이피 체크
     
-    static mypiCateCheck(data)
-    {
+    static mypiCateCheck(data) {
     	let mypiCateTable = $('#mypilist tbody tr');
     	let count = 0;
     	let logs = {};
@@ -100,19 +88,11 @@ class MypiCheck
     			writerName  : writerName,
     			writerID	: writerID
     		}
-    		
-    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
-    		
-    		if(countFlag) {
-    			if (logs[writerName] === undefined) {
-    			    logs[writerName] = Object.assign(Common.defaultCheckUserForm, {
-        				name 	: writerName,
-        				id 		: writerID,
-        			});
-    			}
-    			logs[writerName].count = parseInt(logs[writerName].count) + 1;
-    		}
-    		
+
+			let countFlag = Common.userNodeCheck(data, subject, userInfo);
+    
+    		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
+    
     		count = countFlag ? count+1 : count;
     	});
     	
