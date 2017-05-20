@@ -84,7 +84,7 @@ class UserIo
 	static exportOldJson() {
 		chrome.extension.sendRequest({ method: "getLocalStorage", key: '' }, (response) => {
 			if (response.data != undefined) {
-				let userList = JSON.parse(response.data.aggrohuman)['userList'];
+				let userList = JSON.parse(response.data.aggrohuman)['userCellInfo'];
 				let file = window.btoa(unescape(encodeURIComponent(JSON.stringify(userList))));
 				let url = `data:application/json;base64,${file}`;
 
