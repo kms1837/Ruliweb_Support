@@ -19,6 +19,7 @@ class Core {
 		
 		$(document).mouseover( () => {
 			if (Common.seleteUser !== undefined) {
+				Common.seleteUser.parents('td').removeAttr('style');
 				Common.seleteUser.removeAttr('style');
 				Common.seleteUser = undefined;
 			}

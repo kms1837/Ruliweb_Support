@@ -20,10 +20,13 @@ class Background
 		Background.prototype.userInfo = {};
 		Background.prototype.counts = [];
 		Background.prototype.contextFlag = false;
+
+		//['page', 'selection', 'link', 'editable', 'image']
 		chrome.contextMenus.create({
 			'id': 'adduser',
 			'title': `유저를 선택해 주세요`,
-			'contexts':['page', 'selection', 'link', 'editable', 'image'],
+			'contexts': ['link', 'editable'],
+			'documentUrlPatterns': ['*://*.ruliweb.com/*'],
 			'enabled': false,
 			onclick: () => { 
 				if (Object.keys(Background.userInfo).length > 0) {
@@ -39,12 +42,11 @@ class Background
 					}
 				}
 			}
-		});
+		});	
 		
 		this.init = this.init.bind(Background);
 		this.messageProcess = this.messageProcess.bind(Background);
 		this.count = this.count.bind(Background);
-		console.log('init!');
 	}
 	
 	static get defaultMessageFrom () {

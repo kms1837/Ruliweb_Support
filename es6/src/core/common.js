@@ -51,8 +51,8 @@ class Common
 	}
     
 	static contextMenu(response) {
-    	let inUserName = $.trim($(response.target).text());
-    	$(response.target).css('background-color', '#ccc');
+		let inUserName = $.trim($(response.target).text());
+    	$(response.target).parents('td').css('background-color', '#ccc');
     	$(response.target).css('color', '#fff');
     	
     	Common.contextMenuUpdate(response);
