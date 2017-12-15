@@ -25,12 +25,12 @@ class Background
 		chrome.contextMenus.create({
 			'id': 'adduser',
 			'title': `유저를 선택해 주세요`,
-			'contexts': ['link', 'editable'],
+			'contexts': ['link', 'editable', 'page'],
 			'documentUrlPatterns': ['*://*.ruliweb.com/*'],
 			'enabled': false,
 			onclick: () => { 
 				if (Object.keys(Background.userInfo).length > 0) {
-					let flag = confirm(`선택한 ${Background.userInfo.name} 유저를 추가 하시겠습니까?`);
+					let flag = confirm(`선택한 ${Background.userInfo.name} (${Background.userInfo.ruliwebID}) 유저를 추가 하시겠습니까?`);
 					if (flag) {
 						UserIO.addUser({...Background.userInfo, addDate: Utility.getDate()})
 						.then( () => {
@@ -80,7 +80,8 @@ class Background
 		if (inForm.key === 'adduser') {
 			Background.userInfo = {
 				...UserIO.defaultUserForm,
-    	        name: inForm.userName
+				name: inForm.userName,
+				ruliwebID: inForm.userID
     	    };
 	
 			chrome.contextMenus.update('adduser', {'title': `관리유저등록(${Background.userInfo.name})`, 'enabled': true});

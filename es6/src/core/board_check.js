@@ -19,11 +19,9 @@ class BoardCheck
     
     		if (writerName === '') {
     			writerName = $(object).find('.writer').text();
-    			writerEle.mouseover(Common.contextMenuUpdate);
-				writerEle.contextmenu(Common.contextMenu);
+				Common.setContextEvent(writerEle);
     		} else {
-    			$(object).find('.writer a').mouseover(Common.contextMenuUpdate);
-				$(object).find('.writer a').contextmenu(Common.contextMenu);
+				Common.setContextEvent($(object).find('.writer a'));
     		}
     		
     		let userInfo = {
@@ -67,8 +65,7 @@ class BoardCheck
 
         writerID = writerID.replace(/[^0-9]/g, "");
 
-        $(object).find('.user_inner_wrapper .nick a').mouseover(Common.contextMenuUpdate);
-		$(object).find('.user_inner_wrapper .nick a').contextmenu(Common.contextMenu);
+		Common.setContextEvent($(object).find('.user_inner_wrapper .nick a'));
         
         let userInfo = {
             ...Common.defaultCheckUserForm,

@@ -22,7 +22,14 @@ class Common
     
     static get defaultDisplayCheckedUserForm() {
         return defaultDisplayCheckedUserForm;
-    }
+	}
+	
+	static get mypiCheck() {
+		let pageURL = window.location.href;
+		let rootPageStatuse = pageURL.split('.')[0].substr(7);
+
+		return rootPageStatuse === 'mypi';
+	}// 마이피인지 체크합니다.
     
     static logUserCounter(logs, writerName, writerID) {
 		if (logs[writerName] === undefined) {
@@ -34,26 +41,82 @@ class Common
 		}
 		
 		logs[writerName].count = parseInt(logs[writerName].count) + 1;
-    }//pipup의 유저 노드를 카운트합니다 ex) 링크공주 3개
+	}//pipup의 유저 노드를 카운트합니다 ex) 링크공주 3개
+	
+	static resetContext() {
+		if (Common.seleteUser) {
+			if (!Common.mypiCheck) {
+				Common.seleteUser.parents('td').removeAttr('style');
+				Common.seleteUser.removeAttr('style');
+			} else {
+				let pageStatuse = window.location.href.split('/')[3];
+				if (pageStatuse != '') {
+					Common.seleteUser.removeAttr('style');
+				} else {
+					Common.seleteUser.parents('tr').removeAttr('style');
+				}
+			}
+			Common.seleteUser = undefined;
+		}
+	}
+
+	static setContextEvent(target) {
+		target.mouseover(Common.contextMenuUpdate);
+		target.contextmenu(Common.contextMenu);
+	}
 
 	static contextMenuUpdate(response) {
 		let inUserName = $.trim($(response.target).text());
+		let inUserID = '';
 
+		if (!Common.mypiCheck) {
+			let commentID = $(response.target).parents('tr').attr('itemID');
+			let boardID = $(response.target).parents('td').find('span.member_srl');
+
+			inUserID = commentID ? commentID : boardID.text().replace(/[^0-9]/g, "");
+		} else {
+			//mypi
+			let pageStatuse = window.location.href.split('/')[3];
+			let parm = window.location.href.split('?')[1];
+			if (pageStatuse != '') {
+				if (parm.split('=')[0] === 'cate') {
+					inUserID = Common.convertID($(response.target).parents('tr').find('a')[0].href, '&');
+				} else {
+					inUserID = $(response.target).parents('p').find('a')[0].href;
+				}
+			} else {
+				inUserName = $.trim($(response.target).parents('tr').find('td').eq(1).text());
+				inUserID = Common.convertID($(response.target).parents('tr').find('a')[0].href, '&');
+			}
+			inUserID = inUserID ? inUserID.replace(/[^0-9]/g, "") : '';
+		}
+
+		Common.resetContext();
 		Common.seleteUser = $(response.target);
     	
     	let messageFrom = {
     		type: "context",
     		key: "adduser",
-    		userName: inUserName
+			userName: inUserName,
+			userID: inUserID
     	}
     			
     	chrome.extension.sendMessage(messageFrom);
 	}
-    
+
 	static contextMenu(response) {
-		let inUserName = $.trim($(response.target).text());
-    	$(response.target).parents('td').css('background-color', '#ccc');
-    	$(response.target).css('color', '#fff');
+		if(!Common.mypiCheck) {
+			$(response.target).parents('td').css('background-color', '#888');
+			$(response.target).css('color', '#fff');
+		} else {
+			let pageStatuse = window.location.href.split('/')[3];
+			if (pageStatuse != '') {
+				$(response.target).css('background-color', '#888');
+				$(response.target).css('color', '#fff');
+			} else {
+				$(response.target).parents('tr').css('background-color', '#888');
+			}
+		}
     	
     	Common.contextMenuUpdate(response);
     }

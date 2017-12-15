@@ -18,14 +18,11 @@ class Core {
 		chrome.extension.sendMessage({type: "load"});
 		
 		$(document).mouseover( () => {
-			if (Common.seleteUser !== undefined) {
-				Common.seleteUser.parents('td').removeAttr('style');
-				Common.seleteUser.removeAttr('style');
-				Common.seleteUser = undefined;
-			}
+			Common.resetContext();
 		});
 
 		$(document).mousedown(() => {
+			Common.resetContext();
 			if (event.button != 2 ) {
 				let messageFrom = {
 					type: "context",
@@ -69,7 +66,7 @@ class Core {
 				BoardCheck.boardCommentCheck(data);
 				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
 			}
-			else if (rootPageStatuse === 'mypi') {
+			if (rootPageStatuse === 'mypi') {
 				if(pageStatuse != '') {
 					if (parm.split('=')[0] === 'cate')
 						MypiCheck.mypiCateCheck(data);
