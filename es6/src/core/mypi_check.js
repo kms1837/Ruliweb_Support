@@ -14,7 +14,9 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= $(object).find('a')[0].href;
     		
-    		writerID = Common.convertID(writerID, '&');
+			writerID = Common.convertID(writerID, '&');
+
+			Common.setContextEvent(userTd.parents('tr'));
     		
     		let userInfo = {
     			writerName  : writerName,
@@ -50,6 +52,8 @@ class MypiCheck
 			commentUserName = commentUserClass.find('b').text();
 			commentUserId = commentUserClass.find('a')[0].href.split('?')[1].substr(4);
 
+			Common.setContextEvent($(commentUserClass).find('b'));
+
 			let userInfo = {
                 ...Common.defaultCheckUserForm,
     	        writerName  : commentUserName,
@@ -80,7 +84,9 @@ class MypiCheck
     		let subject = object;
     		let userTd  = $(object).find('td');
     		let writerName  = userTd.eq(1).text();
-    		let writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
+			let writerID	= userTd.eq(0).find('.mypicto3').find('a')[0];
+			
+			Common.setContextEvent(userTd.eq(1));
     		
     		writerID = writerID ? Common.convertID(writerID.href.split('?')[1], '&') : ''
     		
