@@ -41,6 +41,7 @@ class Option
 		$(document).on('click', '#addBadUser', () => {
 			let aggroUserNameTextBox = document.getElementById('aggrohuman');
 			let aggroUserIDTextBox = document.getElementById('aggrohumanID');
+			let userMemoTextBox = document.getElementById('inUserMemo');
 			let aggroUserName = aggroUserNameTextBox.value;
 			let aggroUserID = aggroUserIDTextBox.value;
 			let blockColor = document.getElementById('blockColor');
@@ -56,6 +57,7 @@ class Option
 	    	        ruliwebID: aggroUserID,
 	    	        settingType: blockTypeValue,
 					settingColor: blockColor.value,
+					userMemo: userMemoTextBox.value,
 	    	        addDate: Utility.getDate()
 	    	    };
 	    	    

@@ -88,10 +88,28 @@ ul {list-style: none;}
     padding: 3px 5px;
 }
 
+.badUserOption #inUserMemo { 
+	width:80%; 
+	height: 35px;
+	background: #e25d5d;
+	padding: 3px 5px;
+	border: none;
+	color: #fff;
+	margin-top: 10px;
+}
+
+.badUserOption #inUserMemo::-webkit-input-placeholder {
+	color: #ebebeb;
+}
+
 #aggrohuman::-webkit-input-placeholder,
 #aggrohumanID::-webkit-input-placeholder{
     color: #cacaca;
     text-align: center;
+}
+
+#inUserMemo::-webkit-input-placeholder {
+	text-align: center;
 }
 
 .inputDeco { font-size: 20px; font-weight: bold; }
@@ -99,8 +117,10 @@ ul {list-style: none;}
 .otherOption, .badUserOption, .choiceBadUserOption { margin: 0 auto; width: 600px; }
 .center {text-align: center !important;}
 
+
 .itemBlock { display: inline-block; }
 .itemTitle { padding: 10px; color: white; }
+.itemFooter {display: inline-block; width: 100%; text-align: right; padding-top: 5px;}
 .titleTools { 
 	float: right;
 	width: 160px;
@@ -120,8 +140,7 @@ ul {list-style: none;}
 .userList>.itemTitle { background-color: #c90000; }
 .leftOption { float:left;}
 .leftOption>#log { width:272px; }
-.userSetting   { width: 280px; background-color: #c90000; margin-right: 10px;}
-.userSetting { height: 200px;}
+.userSetting   { width: 280px; height: 235px; background-color: #c90000; margin-right: 10px;}
 .badUserList, .choiceSetting { float: right; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
 .badUserList { width: 300px;}
 
@@ -150,7 +169,7 @@ ul {list-style: none;}
 .badUserList .select {background-color: #6f6f6f;}
 .cellContent { float: left; padding: 6px; }
 .cellState { float: left; text-align: center; }
-.addUserMenu {display: block; margin: 50px 0; text-align: center;}
+.addUserMenu {display: block; margin: 30px 0; text-align: center;}
 
 .swalBtn {
 	width: 140px;
@@ -178,8 +197,16 @@ ul {list-style: none;}
 
 .choiceBadUserOption .badUserName { width: 135px; }
 
+
 .addUserMenu #aggrohuman { width: 260px; padding: 10px; font-size: 20px; border-bottom: 4px solid #c90000; color: #000;}
 .addUserMenu #aggrohumanID { width: 80px; color: #000; border-bottom: 2px solid #ccc; }
+.addUserMenu #inUserMemo {
+    width: 485px;
+    margin-top: 10px;
+    border: none;
+    background: #d7d7d7;
+    padding: 10px;
+}
 
 .option-item {
 	text-align: center;
@@ -253,7 +280,7 @@ button, input[type="button"] {
 }
 
 button:hover, input[type="button"]:hover, input[type="button"]:hover {
-	transition: all 0.5s;
+	transition: all 0.3s;
     box-shadow: inset 2px 2px 0px 1px #c3c3c3;
     border: 2px solid #1fa2ff;
 }
