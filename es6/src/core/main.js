@@ -53,19 +53,18 @@ class Core {
         StorageIO.getData().then( data => {
 			let userList  = data.userList
 			
-			$.observer = new MutationObserver( (mutations) => {
+			this.observer = new MutationObserver( mutations => {
 				let tartgetName = $(mutations[0].target).attr('class');
-				if (tartgetName === 'comment_view normal row') {
+				if (tartgetName === 'comment_container') {
 					BoardCheck.boardCommentCheck(data);
 				}
 			});
 
-			let observerConfig = { childList: true};
+			let observerConfig = {
+				childList: true, 
+				subtree: true
+			};
 			
-			if (pageStatuse === 'news' || endPointStatuse === 'review') {
-				BoardCheck.boardCommentCheck(data);
-				$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
-			}
 			if (rootPageStatuse === 'mypi') {
 				if(pageStatuse != '') {
 					if (parm.split('=')[0] === 'cate')
@@ -81,7 +80,7 @@ class Core {
 				BoardCheck.boardTableCheck(data);
 				if (pageStatuseType === 'read') {
 					BoardCheck.boardCommentCheck(data);
-					$.observer.observe($('.comment_view_wrapper .comment_view.normal.row')[0], observerConfig);
+					this.observer.observe($('.comment_container')[0], observerConfig);
 				}
 			}
 		});

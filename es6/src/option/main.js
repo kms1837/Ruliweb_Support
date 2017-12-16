@@ -65,6 +65,7 @@ class Option
 				.then(() => {
 					aggroUserNameTextBox.value = '';
 					aggroUserIDTextBox.value = '';
+					userMemoTextBox.value = '';
 
 					this.restoreOptions();
 					
