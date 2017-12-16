@@ -6,11 +6,10 @@ class Popup {
     }
     
     render(data) {
-        let ele = $('#userCounter').find('ul')[0];
+		let ele = $('#userCounter').find('ul')[0];
 
 		if (data!==undefined&& data!==null && data.length > 0) {
 			$(data).each((index, object) => {
-			    console.log(object);
 				let addEle = `<li>
 								<label class="title"> ${object.title} </label>
 								<span class="count">  ${object.count} </span>
@@ -23,7 +22,7 @@ class Popup {
 					if (keys.length > 0) {
 						$(keys).each((index, key) => {
 							addEle = addEle + `<li> 
-												 <label class="title"> ${logs[key].name} </label> 
+												 <label class="title"> ${logs[key].name} (${logs[key].id}) </label> 
 												 <span class="count"> ${logs[key].count} </span>
 											   </li>`;
 						});

@@ -73,7 +73,18 @@ class Background
 	}
 	
 	static count(inForm) {
-		Background.prototype.counts.push(inForm);
+		let pushFlag = true;
+		$(Background.prototype.counts).each((index, object) => {
+			if (inForm.title === object.title) {
+				Background.prototype.counts[index] = inForm;
+				pushFlag = false;
+				return;
+			}
+		});
+
+		if (pushFlag) {
+			Background.prototype.counts.push(inForm);
+		}
 	}
 	
 	static context(inForm) {
