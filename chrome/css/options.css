@@ -70,6 +70,7 @@ ul {list-style: none;}
 }
 
 .hidden {
+	top:0;
 	opacity: 0;
     /*background-color: rgba(0, 0, 0, 0) !important;*/
 }
@@ -298,3 +299,51 @@ input[type="file" i]::-webkit-file-upload-text {
     min-height: 35px;
     font-size: 14px;
 }
+
+/* simple option */
+.simple.container {
+    margin: 0;
+}
+
+.backBtn {
+	display:block; 
+	text-align:right; 
+	height:30px; 
+	text-decoration: none;
+}
+
+.simple.container .title {font-size: 20pt; text-align: center; font-weight: bold;}
+
+.simple.container #content {min-height: 530px;}
+
+.simple.container #top_menu li a {color: white; cursor: pointer;}
+
+.simple.container #top_menu li a:hover,
+.simple.container #top_menu #selectedMenuItem a {
+	color:black; 
+	background-color: #fff;
+}
+
+.simple.container #overUserMemo {
+	left: 317px;
+	width: 243px;
+	height: 30px;
+	margin-top: -5px;
+}
+
+.simple.container .hidden {
+	visibility: hidden;
+}
+
+.simple.container .addUserMenu {
+	margin: 20px 0;
+}
+
+.simple.container .addUserMenu #aggrohuman { font-size:15pt; }
+.simple.container .badUserList, .simple.container .choiceSetting { height:250px; }
+.simple.container .choiceUserName { font-size: 15px; }
+.simple.container .blockGroup #userMemo { height: 50px; }
+
+.simple.container #info{ margin: 10px auto; overflow-y: scroll; height: 485px;}
+
+.simple.container #info h1 { font-size: 20px; }

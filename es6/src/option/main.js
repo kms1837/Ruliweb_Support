@@ -121,7 +121,7 @@ class Option
 		$(document).on('click', '.swalBtn.json', UserIO.exportJson);
 		$(document).on('click', '.swalBtn.oldjson', UserIO.exportOldJson);
 	
-		$('#left_menu ul li').click( e => {
+		$('#menuItems li').click( e => {
 			let clickMenuID = e.target.getAttribute('itemprop');
 			this.changeMenu(clickMenuID);
 		});
@@ -316,8 +316,8 @@ class Option
 	changeMenu(menuNumber) {
 		if (menuNumber != this.nowMenuNumber) {
 			$('#content').load(`option_menu${menuNumber}.html`, () => {
-				$("#left_menu #selectedMenuItem").removeAttr('id');
-				$("#left_menu li")[menuNumber-1].id = 'selectedMenuItem';
+				$("#menuItems #selectedMenuItem").removeAttr('id');
+				$("#menuItems li")[menuNumber-1].id = 'selectedMenuItem';
 				
 				this.nowMenuNumber = menuNumber;
 				
@@ -396,7 +396,7 @@ class Option
                 });
                 
                 $('.overMemoArea').mouseout((event) => {
-                    $('#overUserMemo').addClass('hidden');
+					$('#overUserMemo').addClass('hidden');
                 });
                 
                 $('.deleteCellBtn').click(this.deleteCell); //삭제 버튼 이벤트
