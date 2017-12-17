@@ -175,7 +175,7 @@ class Common
 			return true;
 
 		} else if(data.prisonerBlock) {
-            let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
+            let priCheck = userInfo.writerName.replace(/루리웹-|[0-9]/g, "");
             if (priCheck.length === 0) {
                 Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
 
