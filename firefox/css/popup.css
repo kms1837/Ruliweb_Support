@@ -1,0 +1,77 @@
+* {font-family: "맑은 고딕";}
+ul {list-style: none;}
+#log{color: #005CFF; text-align: right; margin: 10px auto;}
+
+#userCounter {
+	font-size: 15px;
+}
+
+#userCounter ul {
+	position: relative;
+}
+
+.popupTitle {
+    margin: 15px 15px 0;
+    height: 40px;
+}
+
+.popupTitle > h2 {
+	float:left;
+	margin:0;
+}
+
+.popupTitle > a {
+	float:right;
+	margin-right: 5px;
+	text-decoration: none;
+}
+
+.title {
+    display: inline-block;
+    width: 110px;
+    padding-left: 10px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+    margin-right: 10px;
+}
+
+#tip {
+    text-align: right;
+}
+
+#userCounter .count {
+	display: inline-block;
+	width: 30px;
+	text-align: center;
+}
+
+#userCounter li {
+	border-left: 3px solid #e40000;
+}
+
+#userCounter li:hover .logs {
+	display: inline-block;
+}
+
+#userCounter li:hover {
+	background-color: #f3f3f3;
+}
+
+#userCounter .logs .title {
+	border : none;
+	width : 80px;
+}
+
+#userCounter .logs {
+	display:none;
+	border:1px solid black;
+	padding:10px;
+	font-size: 12px;
+	min-width: 140px;
+	position: absolute;
+	right: 0;
+    top: 0;
+    background-color: white;
+}

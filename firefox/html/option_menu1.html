@@ -1,0 +1,70 @@
+<div id="overUserMemo" class="hidden">
+	<div class="memoText">
+	</div>
+</div>
+
+<p class="title">기본 옵션</p>
+	
+<div class="badUserOption">
+	<div class="leftOption">
+		<div class="userSetting">
+			<div class="itemTitle">
+				<i class="fa fa-plus"></i> 유저추가
+			</div>
+	
+			<div class="itemContent">
+				<div class="option-item">
+					<input type="text" id="aggrohuman" placeholder="추가할 유저 닉네임"></input>
+					<span class="inputDeco">[</span>
+					<input type="text" id="aggrohumanID" placeholder="유저 ID"></input>
+					<span class="inputDeco">]</span>
+					<input type="textarea" id="inUserMemo" placeholder="관리 사유"></text>
+				</div>
+				
+				<div class="option-item">
+					<select id="blockTypeSelect">
+						<option value=0>설정하지 않음</option>
+						<option value=1>글 제거</option>
+						<option value=2>글 가리기</option>
+						<option value=3>줄 색칠</option>
+					</select>
+					<input type="color" id="blockColor" value="#FFFFFF"/>
+				</div>
+				
+				<div class="option-item">
+					<button id="addBadUser">추가</button>
+				</div>
+			</div>
+		</div>
+		<div id="log">Log ^ㅅ^</div>
+	</div>
+	
+	<div class="itemBlock userList">
+		<div class="itemTitle">
+			<span>
+				<i class="fa fa-list"></i> 
+				관리중 리스트
+			</span>
+			<span class="titleTools">
+				<button id="allChangeBtn">All</button> <!-- 일괄 옵션 -->
+				<button id="resetBtn">
+					<i class="fa fa-trash-o"></i>
+				</button> <!-- reset -->
+				<button id="importBtn">
+					<i class="fa fa-address-book"></i>
+				</button> <!-- import -->
+				<button id="exportBtn">
+					<i class="fa fa-download"></i>
+				</button> <!-- export -->
+			</span>
+		</div>
+		<div class="itemContent">
+			<ul class="badUserList">
+
+			</ul>
+		</div>
+		<div class="itemFooter">
+		</div>
+	</div>
+	
+</div>

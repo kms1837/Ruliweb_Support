@@ -1,22 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
+const merge = require('webpack-merge');
 const nyanProgressPlugin = require('nyan-progress-webpack-plugin');
 
 const devPath = __dirname + '/es6/src';
 
-module.exports = {
+const commonConfig = {
     entry: {
         option: `${devPath}/option/main.js`,
         background: `${devPath}/background/main.js`,
         core: `${devPath}/core/main.js`,
         popup: `${devPath}/popup/main.js`
     },
-    
-    output: {
-        path: `${__dirname}/chrome/js/`,
-        filename: '[name].js'
-    },
-    
+
     plugins: [
         new nyanProgressPlugin()
     ],
@@ -35,3 +31,5 @@ module.exports = {
         ]
     }
 }
+
+module.exports = commonConfig;

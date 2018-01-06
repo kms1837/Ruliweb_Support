@@ -1,0 +1,39 @@
+<p class="title">세부 옵션</p>
+
+<div class="addUserMenu">
+	<input type="text" id="aggrohuman" placeholder="추가할 유저 닉네임"></input>
+	<span class="inputDeco">[</span>
+	<input type="text" id="aggrohumanID" placeholder="유저 ID"></input>
+	<span class="inputDeco">]</span>
+	<button id="addBadUser" class="big">추가</button>
+	<input type="textarea" id="inUserMemo" placeholder="관리 사유"></text>
+</div>
+
+<div class="choiceBadUserOption" >
+	<div class="choiceSetting">
+		<p class="choiceUserName">선택해주세요</p>
+		<div class="blockGroup hidden">
+			<input id="userID" placeholder="id를 입력해 주세요" type="text"></input>
+			<div class="option-item">
+				<input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=0 checked> 설정하지 않음</input>
+			</div>
+			<div class="option-item">
+				<input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=1> 글 제거</input>
+			</div>
+			<div class="option-item">
+				<input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=2> 글 가리기(beta)</input>
+			</div>
+			<!-- <a><input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 메모 표시</input></a> -->
+			<div class="option-item">
+				<input type="radio" name="blockTypeRadio" id="blockTypeCheck" value=3> 줄 색칠
+					<input type="color" id="blockColor" value="#FFFFFF"/>
+				</input>
+			</div>
+			<textarea placeholder="메모를 입력하는 곳입니다." id="userMemo"></textarea>
+		</div>
+	</div>
+	
+	<ul class="badUserList">
+	</ul>
+	<div id="log">Log ^ㅅ^</div>
+</div>
