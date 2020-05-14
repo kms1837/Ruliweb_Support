@@ -34,25 +34,15 @@ class Core {
 	}
 	
 	runChecking() {
-		let pageURL 		= window.location.href;
-		let pageUrlElement  = pageURL.split('/');
+		let pageURL = window.location.href;
+		let pageUrlElement = pageURL.split('/');
 		let rootPageStatuse = pageURL.split('.')[0].substr(7);
 		let endPointStatuse	= pageUrlElement[pageUrlElement.length-1];
-		let pageStatuse 	= pageUrlElement[3];
+		let pageStatuse = pageUrlElement[3];
 		let pageStatuseType	= pageUrlElement[pageUrlElement.length-2].substr(0, 4);
 		let parm = pageURL.split('?')[1];
 
-		/*
-		console.log('rootPageStatuse', rootPageStatuse);
-		console.log('endPointStatuse', endPointStatuse);
-		console.log('pageStatuse', pageStatuse);
-		console.log('pageStatuseType', pageStatuseType);
-		console.log('first parm', parm);
-		*/
-
-        StorageIO.getData().then( data => {
-			let userList  = data.userList
-			
+		StorageIO.getData().then( data => {
 			this.observer = new MutationObserver( mutations => {
 				let tartgetName = $(mutations[0].target).attr('class');
 				if (tartgetName === 'comment_container') {

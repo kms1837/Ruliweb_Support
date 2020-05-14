@@ -6,27 +6,37 @@ import Sweetalert from 'sweetalert2';
 const defaultUserForm = {
 	ruliwebID: '',
 	name: '',
-	nameRegex: '', //정규식
 	userMemo: '', 
 	settingType: 0,
 	settingColor: '#ffffff',
 	subSetting: 0,
 	addDate: ''
 };
+
+const defaultKeywordForm = {
+	keyword: '',
+	settingType: 0,
+	settingColor: '#ffffff',
+	addDate: ''
+}
 	
 class UserIo
 {
-    constructor() {
-        
-    }
-    
-    static get defaultUserForm () {
-	    return defaultUserForm;
+	constructor() {
+			
 	}
     
-    static importOption(file) {
-    	let optionFile = file;
-    	let reader = new FileReader();
+	static get defaultUserForm () {
+		return defaultUserForm;
+	}
+
+	static get defaultKeywordForm() {
+		return defaultKeywordForm;
+	}
+    
+	static importOption(file) {
+		let optionFile = file;
+		let reader = new FileReader();
 
 		reader.readAsText(optionFile);
 
@@ -56,9 +66,9 @@ class UserIo
 				}
 			});
 		});
-    }
+	}
     
-    static exportCSV() {
+	static exportCSV() {
 		//let result = JSON.parse(localStorage['ruliweb-support']);
 		/*
 		var url = 'data:application/json;base64,' + btoa(result);
@@ -110,8 +120,8 @@ class UserIo
 			});	
 		});
 	}
-    
-    static addUser(form=undefined) {
+
+	static addUser(form=undefined) {
 		return new Promise( (resolve, reject) => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
@@ -128,6 +138,36 @@ class UserIo
 				if (addSwitch) {
 					userList.push(form);
 					StorageIO.saveUser(userList).then(() => {
+						resolve();
+					});
+				}
+			});
+		});
+	}
+
+	static addKeyword(form=undefined) {
+		return new Promise( (resolve, reject) => {
+			StorageIO.getData().then( data => {
+				let keywordList = data.keywordList;
+				let addSwitch = true;
+
+				if (keywordList == undefined) {
+					data["keywordList"] = [];
+					keywordList = data.keywordList;
+				} // 구버전 사용자 예외처리
+
+				for (let i=0; i<keywordList.length; i++) {
+					if (keywordList[i].keyword == form.keyword) {
+						addSwitch = false;
+						reject({message: '리스트에 이미 존재함'});
+						return;
+					}
+				} //for - 중복체크
+
+				if (addSwitch) {
+					keywordList.push(form);
+
+					StorageIO.saveKeyword(keywordList).then(() => {
 						resolve();
 					});
 				}

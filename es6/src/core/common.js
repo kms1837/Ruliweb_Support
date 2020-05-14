@@ -4,24 +4,24 @@
 */
 
 const defaultCheckUserForm = {
-    writerName: '',
+	writerName: '',
 	writerID: ''
 }
 
 const defaultDisplayCheckedUserForm = {
-    name: '',
-    id: '',
-    count : 0
+	name: '',
+	id: '',
+	count : 0
 }
 
 class Common
 {
-    static get defaultCheckUserForm() {
-        return defaultCheckUserForm;
-    }
+	static get defaultCheckUserForm() {
+		return defaultCheckUserForm;
+	}
     
-    static get defaultDisplayCheckedUserForm() {
-        return defaultDisplayCheckedUserForm;
+	static get defaultDisplayCheckedUserForm() {
+		return defaultDisplayCheckedUserForm;
 	}
 	
 	static get mypiCheck() {
@@ -31,10 +31,10 @@ class Common
 		return rootPageStatuse === 'mypi';
 	}// 마이피인지 체크합니다.
     
-    static logUserCounter(logs, writerName, writerID) {
+	static logUserCounter(logs, writerName, writerID) {
 		if (logs[writerName] === undefined) {
-		    logs[writerName] = Object.assign({
-                ...this.defaultDisplayCheckedUserForm,
+			logs[writerName] = Object.assign({
+				...this.defaultDisplayCheckedUserForm,
 				name 	: writerName,
 				id 		: writerID,
 			});
@@ -175,69 +175,80 @@ class Common
 			return true;
 
 		} else if(data.prisonerBlock) {
-            let priCheck = userInfo.writerName.replace(/루리웹-|[0-9]/g, "");
-            if (priCheck.length === 0) {
-                Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
+			let priCheck = userInfo.writerName.replace(/루리웹-|[0-9]/g, "");
+			if (priCheck.length === 0) {
+				Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
 
-                return true;
-            }
-        }
-
+				return true;
+			}
+		}
 		return false;
 	} // 마이피 전용 유저체크
+
+	static keywordCheck(data, subject) {
+		let keywordList = data.keywordList;
+		let check = keywordList.some( item =>  {
+			let regex = new RegExp(item.keyword, "g");
+			if (regex.test(subject)) {
+				return true;
+			}
+		});
+
+		return check;
+	}
 	
-    static userNodeCheck(data, subject, userInfo) {
-    	let userInfoList = data.userList;
+	static userNodeCheck(data, subject, userInfo) {
+		let userInfoList = data.userList;
+		
+		let writerName  = $.trim(userInfo.writerName);
+		let writerID	= userInfo.writerID;
+		let infoIndex	= data.userNameKeys[writerName] !== undefined ?
+										data.userNameKeys[writerName] :
+										data.userIDKeys[writerID];
     	
-    	let writerName  = $.trim(userInfo.writerName);
-    	let writerID	= userInfo.writerID;
-    	let infoIndex	= data.userNameKeys[writerName] !== undefined ?
-    					  data.userNameKeys[writerName] :
-    					  data.userIDKeys[writerID];
+		if (infoIndex != undefined) {
+			let user = userInfoList[infoIndex];
+			switch (parseInt(user.settingType)) {
+				case 1: // 글 제거
+					$(subject).css('display', 'none');
+					break;
+				case 2: // 글 가리기
+									this.hideTd($(subject).find('td'));
+					break;
+				case 3:
+					this.changeTdColor($(subject).find('td'), user.settingColor);
+					break;
+				case 4:
+					$(subject).find('.writer a').text('어글러');
+					break;
+			}
+
+			return true;
+
+		} else if(data.prisonerBlock) {
+			let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
+			if (priCheck.length === 0) {
+					Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
+
+					return true;
+			}
+		}
     	
-    	if (infoIndex != undefined) {
-    		let user = userInfoList[infoIndex];
-    		switch (parseInt(user.settingType)) {
-    			case 1: // 글 제거
-    				$(subject).css('display', 'none');
-    				break;
-    			case 2: // 글 가리기
-                    this.hideTd($(subject).find('td'));
-    				break;
-    			case 3:
-    				this.changeTdColor($(subject).find('td'), user.settingColor);
-    				break;
-    			case 4:
-    				$(subject).find('.writer a').text('어글러');
-    				break;
-    		}
+		return false;
+	} // 유저 체크
 
-    		return true;
-
-    	} else if(data.prisonerBlock) {
-            let priCheck = writerName.replace(/루리웹-|[0-9]/g, "");
-            if (priCheck.length === 0) {
-                Common.addBlockNode('죄수번호가 차단되었습니다.', subject);
-
-                return true;
-            }
-        }
-    	
-    	return false;
-    } // 유저 체크
-
-    static tableAddID(table) {
-    	let boardTable = table;
-    
-    	$(boardTable).each( (index, object) => {
-    		let writerID = $(object).find('.writer.text_over a').attr('onclick');
-    		if(typeof writerID === "string") {
-    			writerID = writerID.split(',')[2];
-    			writerID = writerID.split("'")[1];
-    			$(object).attr('itemID', writerID);
-    		}
-    	});
-    }
+	static tableAddID(table) {
+		let boardTable = table;
+	
+		$(boardTable).each( (index, object) => {
+			let writerID = $(object).find('.writer.text_over a').attr('onclick');
+			if(typeof writerID === "string") {
+				writerID = writerID.split(',')[2];
+				writerID = writerID.split("'")[1];
+				$(object).attr('itemID', writerID);
+			}
+		});
+	}
     
     static convertID(mypiLink, cutchar) {
     	let returnData = mypiLink;
