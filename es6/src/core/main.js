@@ -68,6 +68,9 @@ class Core {
 			} 
 			else {
 				BoardCheck.boardTableCheck(data);
+				BoardCheck.galleryCheck(data);
+				BoardCheck.thumbnailCheck(data);
+				
 				if (pageStatuseType === 'read') {
 					BoardCheck.boardCommentCheck(data);
 					this.observer.observe($('.comment_container')[0], observerConfig);

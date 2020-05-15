@@ -1,5 +1,6 @@
 
 import Common from './common'
+import Checker from './checker'
 
 class MypiCheck
 {
@@ -14,7 +15,7 @@ class MypiCheck
     		let writerName  = userTd.eq(1).text();
     		let writerID	= $(object).find('a')[0].href;
     		
-			writerID = Common.convertID(writerID, '&');
+			writerID = Common.getMypiToID(writerID, '&');
 
 			Common.setContextEvent(userTd.parents('tr'));
     		
@@ -23,7 +24,7 @@ class MypiCheck
     			writerID	: writerID
     		}
     		
-    		let countFlag = Common.userNodeCheck(data, subject, userInfo);
+    		let countFlag = Checker.userNodeCheck(0, data, subject, userInfo);
     
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     
@@ -55,12 +56,12 @@ class MypiCheck
 			Common.setContextEvent($(commentUserClass).find('b'));
 
 			let userInfo = {
-                ...Common.defaultCheckUserForm,
-    	        writerName  : commentUserName,
-    			writerID	: commentUserId
-    	    };
+        ...Checker.defaultCheckUserForm,
+        writerName : commentUserName,
+        writerID : commentUserId
+			};
 
-			let countFlag = Common.userMypiNodeCheck(data, [commentDocument[i], commentDocument[i+1]], userInfo);
+			let countFlag = Checker.userMypiNodeCheck(data, [commentDocument[i], commentDocument[i+1]], userInfo);
 			if (countFlag) Common.logUserCounter(logs, commentUserName, commentUserId);
 
 			count = countFlag ? count+1 : count;
@@ -88,14 +89,14 @@ class MypiCheck
 			
 			Common.setContextEvent(userTd.eq(1));
     		
-    		writerID = writerID ? Common.convertID(writerID.href.split('?')[1], '&') : ''
+    		writerID = writerID ? Common.getMypiToID(writerID.href.split('?')[1], '&') : ''
     		
     		let userInfo = {
     			writerName  : writerName,
     			writerID	: writerID
     		}
 
-			let countFlag = Common.userNodeCheck(data, subject, userInfo);
+			let countFlag = Checker.userNodeCheck(0, data, subject, userInfo);
     
     		if (countFlag) Common.logUserCounter(logs, writerName, writerID);
     

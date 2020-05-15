@@ -1,39 +1,90 @@
 
 import Common from './common'
+import Checker from './checker'
 
 class BoardCheck
 {
-  static boardTableCheck(data)
-  { 
+  static thumbnailCheck(data) {
+    let thumbnailItems = $('.board_list_table tbody .flex_item');
+    let count = 0;
+    let logs = {};
+
+    $(thumbnailItems).each((index, item) => {
+      let writerObject = $(item).find('.article_info .nick'); 
+      let writerName = $(writerObject).text();
+      let writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
+
+      let userInfo = {
+        ...Checker.defaultCheckUserForm,
+        writerName  : writerName,
+        writerID	: writerID
+      };
+
+      let countFlag = Checker.userNodeCheck(1, data, $(item).closest("td"), userInfo);
+
+      if (countFlag) Common.logUserCounter(logs, writerName, writerID);
+  
+      count = countFlag ? count+1 : count;
+    });
+  }
+
+  static galleryCheck(data) {
+    let galleryItems = $('.board_list_table tbody .flex_item');
+    let count = 0;
+    let logs = {};
+
+    $(galleryItems).each((index, item) => {
+      let writerObject = $(item).find('.subject_wrapper .nick'); 
+      let writerName = $(writerObject).text();
+      let writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
+
+      writerName = writerName.substring(3, writerName.length);
+
+      let userInfo = {
+        ...Checker.defaultCheckUserForm,
+        writerName  : writerName,
+        writerID	: writerID
+      };
+
+      let countFlag = Checker.userNodeCheck(1, data, item, userInfo);
+
+      if (countFlag) Common.logUserCounter(logs, writerName, writerID);
+  
+      count = countFlag ? count+1 : count;
+
+    });
+  }
+
+  static boardTableCheck(data) { 
     let boardTable = $('.board_list_table tbody tr');
     let count = 0;
     let logs = {};
     
     Common.tableAddID(boardTable);
     
-    $(boardTable).each( (index, object) => {
-      let writerEle = $(object).find('.writer');
-      let writerName = $(object).find('.writer a').text();
-      let writerID = $(object).attr('itemID');
-      let boardTitle = $(object).find('.subject .deco').text();
-      let subject = object;
+    $(boardTable).each( (index, item) => {
+      let writerEle = $(item).find('.writer');
+      let writerNameObject = $(item).find('.writer a'); 
+      let writerName = $(writerNameObject).text();
+      let writerID = Common.getOnClickUrlToID($(writerNameObject).attr('onclick'));
+      let boardTitle = $(item).find('.subject .deco').text();
   
       if (writerName === '') {
-        writerName = $(object).find('.writer').text();
+        writerName = $(item).find('.writer').text();
         Common.setContextEvent(writerEle);
       } else {
-        Common.setContextEvent($(object).find('.writer a'));
+        Common.setContextEvent($(item).find('.writer a'));
       }
       
       let userInfo = {
-        ...Common.defaultCheckUserForm,
+        ...Checker.defaultCheckUserForm,
         writerName  : writerName,
         writerID	: writerID
       };
 
-      let countFlag = Common.userNodeCheck(data, subject, userInfo);
+      let countFlag = Checker.userNodeCheck(0, data, item, userInfo);
       //Common.keywordCheck(data, subject, userInfo);
-      Common.keywordCheck(data, boardTitle, userInfo);
+      Checker.keywordCheck(data, boardTitle, userInfo);
     
       if (countFlag) Common.logUserCounter(logs, writerName, writerID);
   
@@ -71,12 +122,12 @@ class BoardCheck
     Common.setContextEvent($(object).find('.user_inner_wrapper .nick a'));
       
     let userInfo = {
-      ...Common.defaultCheckUserForm,
+      ...Checker.defaultCheckUserForm,
       writerName  : writerName,
       writerID	: writerID
     };
       
-    let countFlag = Common.userNodeCheck(data, subject, userInfo);
+    let countFlag = Checker.userNodeCheck(0, data, subject, userInfo);
       
     if (countFlag) {
       Common.logUserCounter(logs, writerName, writerID);
