@@ -17,8 +17,8 @@ ul {list-style: none;}
 #top_menu ul a 		 { padding: 10px; color:white; text-decoration: none;}
 #top_menu ul a:hover { color:black; background-color: #fff; }
 #top_menu li:last-of-type { border:none; }
-#left_menu 	  { float: left; }
-#left_menu ul { list-style: none; margin-left: -105px;}
+#left_menu 	  { position: absolute; }
+#left_menu ul { list-style: none; margin-left: -145px;}
 #left_menu li {
 	padding: 10px; 
 	margin-bottom: 10px;
@@ -48,13 +48,12 @@ ul {list-style: none;}
 }
 
 #log {
-	float: left;
 	color: #005CFF; 
 	text-align: center; 
 	margin: 10px 0;
 	border-left: #c90000 4px solid;
-    padding: 5px 0;
-    border-right: #c90000 4px solid;
+  padding: 5px 0;
+  border-right: #c90000 4px solid;
 }
 
 #overUserMemo {
@@ -64,7 +63,7 @@ ul {list-style: none;}
     min-height: 20px;
     padding: 10px;
     width: 230px;
-    left: 630px;
+    left: 660px;
     transition: opacity 0.3s;
     word-wrap: break-word;
 }
@@ -79,9 +78,10 @@ ul {list-style: none;}
 	/*display: none;*/
 }
 
-#aggrohuman { width:120px; }
+#aggrohuman, #keyword { width:120px; }
 #aggrohumanID { width:60px; }
-#aggrohuman, #aggrohumanID {
+#aggrohuman, #aggrohumanID,
+#keyword {
     background: none;
     border: none;
     border-bottom: 2px solid #fff;
@@ -104,7 +104,8 @@ ul {list-style: none;}
 }
 
 #aggrohuman::-webkit-input-placeholder,
-#aggrohumanID::-webkit-input-placeholder{
+#aggrohumanID::-webkit-input-placeholder,
+#keyword::-webkit-input-placeholder{
     color: #cacaca;
     text-align: center;
 }
@@ -115,11 +116,11 @@ ul {list-style: none;}
 
 .inputDeco { font-size: 20px; font-weight: bold; }
 .block a{ display: block; }
-.otherOption, .badUserOption, .choiceBadUserOption { margin: 0 auto; width: 600px; }
+.otherOption, .badUserOption, .choiceBadUserOption { margin: 0 auto; width: 610px; height: 350px;}
 .center {text-align: center !important;}
 
 
-.itemBlock { display: inline-block; }
+.itemBlock { display: inline-block; height: 100%;}
 .itemTitle { padding: 10px; color: white; }
 .itemFooter {display: inline-block; width: 100%; text-align: right; padding-top: 5px;}
 .titleTools { 
@@ -137,15 +138,30 @@ ul {list-style: none;}
 
 #blockTypeSelect { padding: 3px 20px; border: none; }
 
+.userListPage .page {
+  min-width: 25px;
+  margin-right: 5px;
+}
+
+.userListPage .seleted {
+  background: #c90000;
+  border: 2px solid #c90000;
+  color: white;
+}
+
+.userListPage .seleted:hover {
+  box-shadow: none;
+}
+
 /* option page1 */
 .userList>.itemTitle { background-color: #c90000; }
 .leftOption { float:left;}
 .leftOption>#log { width:272px; }
 .userSetting   { width: 280px; height: 235px; background-color: #c90000; margin-right: 10px;}
-.badUserList, .choiceSetting { float: right; height: 350px; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
-.badUserList { width: 300px;}
+.badUserList, .choiceSetting, .keywordList { float: left; height: 95%; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
+.badUserList, .keywordList { width: 310px;}
 
-.badUserList li, .selectedUser { width: 100%; height: 50px; border-bottom: 1px solid #ccc;}
+.badUserList li, .selectedUser { width: 100%; height: 50px; border-bottom: 1px solid #ccc; transition: all 0.3s;}
 .badUserList li p, .selectedUser p { margin:0;}
 .overMemoArea { 
 	float: right; 
@@ -191,15 +207,24 @@ ul {list-style: none;}
 	box-shadow: inset 2px 2px 0px 3px #c3c3c3;
 }
 
+.itemContent {
+  height: 100%;
+}
+
 /* option page2 */
 .choiceBadUserOption>#log { width: 592px;}
 .choiceSetting { width: 270px; }
-.choiceBadUserOption>.badUserList { margin-right: 10px; }
+
+.choiceBadUserOption>.badUserList,
+.choiceBadUserOption>.keywordList { margin-right: 10px; }
 
 .choiceBadUserOption .badUserName { width: 135px; }
 
+.choiceBadUserOption .badUserList li:hover { background: #6f6f6f; }
 
-.addUserMenu #aggrohuman { width: 260px; padding: 10px; font-size: 20px; border-bottom: 4px solid #c90000; color: #000;}
+
+.addUserMenu #aggrohuman,
+.addUserMenu #keyword { width: 260px; padding: 10px; font-size: 20px; border-bottom: 4px solid #c90000; color: #000;}
 .addUserMenu #aggrohumanID { width: 80px; color: #000; border-bottom: 2px solid #ccc; }
 .addUserMenu #inUserMemo {
     width: 485px;
@@ -217,7 +242,7 @@ ul {list-style: none;}
 .choiceSetting .option-item { text-align: left; margin: 5px 0; }
 
 .container {
-	width: 660px; 
+	width: 710px; 
 	margin: 60px auto; 
 	background-color: #fff; 
  	/*box-shadow: 0px 0px 13px 2px rgba(124, 124, 124, 0.41); */
@@ -245,6 +270,8 @@ ul {list-style: none;}
 .blockGroup #userID, .blockGroup #userRegex { text-align: center; width:100%; height: 20px;}
 .blockGroup #userMemo { width:97%; height: 100px; padding: 5px;}
 
+.footer { text-align: center; }
+
 /* other option page */
 
 .otherOption .option-item {
@@ -268,6 +295,29 @@ ul {list-style: none;}
 
 #info h1 { font-size: 25px; margin: 0; color: #2F8AFD;}
 #info h2 { margin :0; color: #777777;}
+
+/* keyword page */
+.keywordList li {
+    float: left;
+    background: #C90000;
+    margin: 5px;
+    padding: 5px;
+	border-radius: 5px;
+	color: #fff;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.keywordList li:hover { background: #6f6f6f !important; }
+
+.keywordList .select {
+	background: #6f6f6f !important;
+}
+
+#keywordDelete {
+	width: 100%;
+	margin-top: 10px;
+}
 
 /* core thema */
 

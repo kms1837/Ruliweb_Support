@@ -33,19 +33,25 @@ class Option
 	}
 	
 	constructor() {
-		StorageIO.getData().then( data => { console.log(data); });
+		StorageIO.getData().then( data => {  });
 		this.nowMenuNumber = 0; // 현재 선택된 메뉴
 		this.memoFlag = true;
 		this.eventBind();
 		
 		// object bind
 		this.eventBind = this.eventBind.bind(this);
-		this.detailOptionSceneBind = this.detailOptionSceneBind.bind(this);
+		this.userDetailBind = this.userDetailBind.bind(this);
 		this.otherOptionSceneBind = this.otherOptionSceneBind.bind(this);
 		this.changeMenu = this.changeMenu.bind(this);
 		this.deleteCell = this.deleteCell.bind(this);
 		this.userOptionsAllChange = this.userOptionsAllChange.bind(this);
 		this.restoreOptions = this.restoreOptions.bind(this);
+	}
+
+	getUserListPage(userList) {
+		return userList.length % MAX_DISPLAY_USER_LIST > 0 ? 
+						Math.floor((userList.length/MAX_DISPLAY_USER_LIST) + 1) : 
+						Math.floor(userList.length/MAX_DISPLAY_USER_LIST);
 	}
 	
 	eventBind() {
@@ -64,13 +70,13 @@ class Option
 			if (aggroUserName.length > 0) {
 				let addUserForm = {
 					...UserIO.defaultUserForm,
-	    	        name: aggroUserName,
-	    	        ruliwebID: aggroUserID,
-	    	        settingType: blockTypeValue,
+          name: aggroUserName,
+          ruliwebID: aggroUserID,
+          settingType: blockTypeValue,
 					settingColor: blockColor.value,
 					userMemo: userMemoTextBox.value,
-	    	        addDate: Utility.getDate()
-	    	    };
+          addDate: Utility.getDate()
+        };
 	    	    
 				UserIO.addUser(addUserForm)
 				.then(() => {
@@ -139,8 +145,8 @@ class Option
 			this.changeMenu(clickMenuID);
 		});
 		
-		this.keywordOptionSceneBind();
-		this.detailOptionSceneBind();
+		this.keywordDetailBind();
+		this.userDetailBind();
 		this.otherOptionSceneBind();
 
 		this.changeMenu(1);
@@ -148,8 +154,8 @@ class Option
 		$('#menuItems li')[0].id = 'selectedMenuItem';
 	}
 
-	detailOptionSceneBind() {
-		$(document).on('click', '.choiceSetting input[type="radio"]', event => {
+	userDetailBind() {
+		$(document).on('click', '.userDetail input[type="radio"]', event => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -172,7 +178,7 @@ class Option
 			});
 		});
 		
-		$(document).on('change', '.choiceSetting input[type="color"]', event => {
+		$(document).on('change', '.userDetail input[type="color"]', event => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -189,7 +195,7 @@ class Option
 			});
 		});
 		
-		$(document).on('keyup', '.choiceSetting #userID', event =>{
+		$(document).on('keyup', '.userDetail #userID', event =>{
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -204,7 +210,7 @@ class Option
 			});
 		});
 		
-		$(document).on('change', '.choiceSetting #userID', () => {
+		$(document).on('change', '.userDetail #userID', () => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -215,7 +221,7 @@ class Option
 			});
 		});
 		
-		$(document).on('keyup', '.choiceSetting #userMemo', event => {
+		$(document).on('keyup', '.userDetail #userMemo', event => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -226,7 +232,7 @@ class Option
 			});
 		});
 		
-		$(document).on('change', '.choiceSetting #userMemo', event => {
+		$(document).on('change', '.userDetail #userMemo', event => {
 			StorageIO.getData().then( data => {
 				let userList = data.userList;
 				let userid = $('.select').attr('itemprop');
@@ -245,7 +251,51 @@ class Option
 		});
 	}
 
-	keywordOptionSceneBind() {
+	keywordDetailBind() {
+		$(document).on('click', '#keywordDelete', event => {
+			let id = $('.select').attr('itemprop');
+			this.deleteKeyword(id);
+		});
+
+		$(document).on('click', '.keywordDetail input[type="radio"]', event => {
+			StorageIO.getData().then( data => {
+				let keywordList = data.keywordList;
+				let id = $('.select').attr('itemprop');
+				let keyword = keywordList[id];
+
+				keyword.settingType = event.target.value;
+				
+				let setType = Utility.settingToStrConvert(parseInt(event.target.value));
+				
+				parseInt(keyword.settingType) === 3 ?
+					$('.select').css('background', keyword.settingColor): 
+					$('.select').removeAttr("style")
+				
+				StorageIO.saveKeyword(keywordList);
+
+				console.log(keywordList);
+				
+				Utility.logPrint('#005CFF', keyword.keyword + ' : ' + '옵션 변경');
+			});
+		});
+		
+		$(document).on('change', '.keywordDetail input[type="color"]', event => {
+			StorageIO.getData().then( data => {
+				let keywordList = data.keywordList;
+				let id = $('.select').attr('itemprop');
+				let keyword = keywordList[id];
+
+				keyword.settingColor = event.target.value;
+				
+				if (parseInt(keyword.settingType) === 3)
+					$('.select .userState').css('background', event.target.value);
+						
+					StorageIO.saveKeyword(keywordList);
+				
+				Utility.logPrint('#005CFF', keyword.keyword + ' : ' + '색 변경');
+			});
+		});
+
 		$(document).on('click', '#addKeyword', () => {
 			let keywordTextBox = document.getElementById('keyword');
 			let addKeyword = keywordTextBox.value;
@@ -262,7 +312,7 @@ class Option
 					settingType: blockTypeValue,
 					settingColor: blockColor,
 					addDate: Utility.getDate()
-	    	    };
+				};
 	    	    
 				UserIO.addKeyword(addKeywordForm)
 				.then(() => {
@@ -280,7 +330,7 @@ class Option
 			}
 		});
 
-		$(document).on('click', '.choiceBadUserOption ul.keywordList li', data => {
+		$(document).on('click', '.keywordList li', data => {
 			let userid = data.currentTarget.getAttribute('itemprop');
 			this.keywordChoice(data.currentTarget, userid);
 		});
@@ -306,7 +356,7 @@ class Option
 				};
 						
 				StorageIO.setData( otherOption).then( () => {
-						Sweetalert("완료", "저장하였습니다.", "success");
+          Sweetalert("완료", "저장하였습니다.", "success");
 				});
 			});
 		});
@@ -344,16 +394,31 @@ class Option
 			});
 		});
 	}//function restoreOptions - 옵션 저장
+
+	showDetailSetting() {
+		const blockgroup = $('.blockGroup');
+
+		blockgroup.removeClass();
+		blockgroup.addClass('blockGroup');
+		console.log("show");
+	}
+
+	hiddenDetailSetting() {
+		const blockgroup = $('.blockGroup');
+
+		$('.choiceSetting .choiceUserName').text("선택해주세요");
+
+		blockgroup.removeClass();
+		blockgroup.addClass('blockGroup hidden');
+		console.log("hidden");
+	}
 	
 	userChoice(cellObj, userNumber) {
 		StorageIO.getData().then( data => {
 			let user = data.userList[userNumber];
 			let radiobox = document.getElementsByName('blockTypeRadio');
 			
-			let blockgroup = $('.blockGroup');
-
-			blockgroup.removeClass();
-			blockgroup.addClass('blockGroup');
+			this.showDetailSetting();
 			
 			$('#userID')[0].value = '';
 			
@@ -372,23 +437,23 @@ class Option
 
 	keywordChoice(cellObj, keywordNumber) {
 		StorageIO.getData().then( data => {
-            let keywordObj = data.keywordList[keywordNumber];
+			let keywordObj = data.keywordList[keywordNumber];
 			let radiobox = document.getElementsByName('blockTypeRadio');
             
-            let blockgroup = $('.blockGroup');
+			let blockgroup = $('.blockGroup');
 
-            blockgroup.removeClass();
-            blockgroup.addClass('blockGroup');
-            
-            $('.select').removeClass();
-            $(cellObj).addClass('select');
-            $('.choiceSetting .choiceUserName').text(keywordObj.keyword);
-            $('#blockColor')[0].value = keywordObj.settingColor;
-            
-            let settingType = keywordObj.settingType;
-            
-            radiobox[settingType].checked = true;
-        });
+			blockgroup.removeClass();
+			blockgroup.addClass('blockGroup');
+			
+			$('.select').removeClass();
+			$(cellObj).addClass('select');
+			$('.choiceSetting .choiceUserName').text(keywordObj.keyword);
+			$('#blockColor')[0].value = keywordObj.settingColor;
+			
+			let settingType = keywordObj.settingType;
+			
+			radiobox[settingType].checked = true;
+		});
 	}
 	
 	changeMenu(menuNumber) {
@@ -412,11 +477,11 @@ class Option
 						break;
 					}
 					case optionPages.other: {
-                        StorageIO.getData().then( data => {
-                            $('#dislikeBlock')[0].checked = data.dislikeBlock.flag;
-                            $('#dislikeLimit').val(data.dislikeBlock.limit);
-                            $('#prisonerBlock')[0].checked = data.prisonerBlock;
-                        });
+            StorageIO.getData().then( data => {
+              $('#dislikeBlock')[0].checked = data.dislikeBlock.flag;
+              $('#dislikeLimit').val(data.dislikeBlock.limit);
+              $('#prisonerBlock')[0].checked = data.prisonerBlock;
+            });
 						break;
 					}
 					case optionPages.keyword: {
@@ -430,7 +495,7 @@ class Option
 	displayUserList(data, page) {
 		let date = Utility.getDate();
 		let userListDom = $('.badUserList');
-    let footer = $('.itemFooter');
+    let controller = $('.userListController');
     let userListData = data['userList'];
 		let pageUserListData = data['userList'].slice(MAX_DISPLAY_USER_LIST * page, MAX_DISPLAY_USER_LIST * (page + 1));
 
@@ -439,10 +504,10 @@ class Option
 		}
 
     userListDom.text('');
-    footer.text('');
+    controller.text('');
 
 		pageUserListData.map( (object, index) => {
-			userListDom[0].innerHTML += this.userCellForm(object, index);
+			userListDom[0].innerHTML += this.userCellForm(object, (MAX_DISPLAY_USER_LIST * page) + index);
 		});
 		
 		$('.overMemoArea').mouseover((event) => {
@@ -470,11 +535,9 @@ class Option
 		
     $('.deleteCellBtn').click(this.deleteCell); // 삭제 버튼 이벤트
     
-    footer.append(`<div class="userListPage"></div>`);
-    let userListPage = userListData.length % MAX_DISPLAY_USER_LIST > 0 ? 
-                        Math.floor((userListData.length/MAX_DISPLAY_USER_LIST) + 1) : 
-                        Math.floor(userListData.length/MAX_DISPLAY_USER_LIST);
-    let userListPageDom = footer.find('.userListPage')[0];
+    controller.append(`<div class="userListPage"></div>`);
+    let userListPage = this.getUserListPage(userListData);
+    let userListPageDom = controller.find('.userListPage')[0];
 
     for (let i=0; i<userListPage; i++) {
       $(userListPageDom).append(`<button class="page${i===page ? " seleted" : ""}">${i+1}</button>`);
@@ -484,7 +547,7 @@ class Option
       });
     }
 
-		footer.append(`<div class="totalUser">총 ${userListData.length}명 관리중</div>`);
+		controller.append(`<div class="totalUser">총 ${userListData.length}명 관리중</div>`);
 	}
 
 	displayKeywordList(data) {
@@ -514,7 +577,7 @@ class Option
 				footer.text('총 0명 관리중');
 				// 최초 실행
 			} else {
-				this.displayUserList(data, 0);
+				this.displayUserList(data, this.getUserListPage(data.userList)-1);
 				this.displayKeywordList(data);
 			}
 		});
@@ -527,25 +590,28 @@ class Option
 		
 		let stateStyle = parseInt(celldata.settingType) === 3 ? `style="background:${celldata.settingColor}"` : '';
 		
-		return	`<li itemprop="${index}">
-					<div class="cellContent">
-			  			<div class="cellState">
-				    		<p class="date">${celldata.addDate}</p>
-				    		<p class="userState" ${stateStyle}>${settingTypeStr}</p>
-				    	</div>
-				    	<div class="badUserName">
-				    		<p class="userName">${celldata.name}</p>
-				    		<p class="userID">${celldata.ruliwebID}</p>
-				    	</div>
-			    		<button class="deleteCellBtn">삭제</button>
-		    		</div>
-		    		${memo}
-			      </li>`;
+		return (
+		`<li itemprop="${index}">
+			<div class="cellContent">
+				<div class="cellState">
+					<p class="date">${celldata.addDate}</p>
+					<p class="userState" ${stateStyle}>${settingTypeStr}</p>
+				</div>
+				<div class="badUserName">
+					<p class="userName">${celldata.name}</p>
+					<p class="userID">${celldata.ruliwebID}</p>
+				</div>
+				<button class="deleteCellBtn">삭제</button>
+			</div>
+			${memo}
+		</li>`);
 	}
 
 	keywordCellForm(celldata, index) {
+		let stateStyle = parseInt(celldata.settingType) === 3 ? `style="background:${celldata.settingColor}"` : '';
+
 		return `
-			<li itemprop="${index}">
+			<li itemprop="${index}" ${stateStyle}>
 				${celldata.keyword}
 			</li>
 		`;
@@ -564,33 +630,50 @@ class Option
 			let aggroUserName  = document.getElementById('aggrohuman');
 			let radiobox       = document.getElementsByName('blockTypeRadio');
 			let badUserList    = $('.badUserList');
-			let footer = $('.itemFooter');
+			let footer = $('.footer');
 			
 			badUserList[0].innerHTML = '';
 			aggroUserName.value      = '';
 			footer.text('총 0명 관리중');
             
-            StorageIO.setData(Object.assign(Option.defaultOptionForm))
+      StorageIO.setData(Object.assign(Option.defaultOptionForm))
 			.then( () => {
-			    Utility.logPrint('#005CFF', '옵션 초기화 완료');
+        Utility.logPrint('#005CFF', '옵션 초기화 완료');
 			
-			    Sweetalert("완료", "옵션 초기화 완료", "success");
-            });
+        Sweetalert("완료", "옵션 초기화 완료", "success");
+      });
 		});
 	}//function optionReset - 옵션 초기화
+
+	deleteKeyword(keywordIndex) {
+		StorageIO.getData().then(data => {
+			let keywordList = data.keywordList;
+		
+			keywordList.splice(keywordIndex, 1);
+			
+			StorageIO.saveKeyword(keywordList).then(() => {
+				Utility.logPrint('#005CFF', '키워드 삭제 완료');
+
+				this.hiddenDetailSetting();
+				this.restoreOptions();
+			});
+		});
+	}
 	
 	deleteCell(event) {
-		let deleteCellNumber = event.currentTarget.closest('li').getAttribute('itemprop');
-    StorageIO.getData().then( data => {
-      let userList = data.userList;
-      
-      userList.splice(deleteCellNumber, 1);
-      
-      StorageIO.saveUser(userList);
-      Utility.logPrint('#005CFF', '셀 삭제 완료');
-      
-      this.restoreOptions();
-    });
+		const deleteCellNumber = event.currentTarget.closest('li').getAttribute('itemprop');
+    StorageIO.getData().then(data => {
+			let userList = data.userList;
+		
+			userList.splice(deleteCellNumber, 1);
+			
+			StorageIO.saveUser(userList).then(() => {
+				Utility.logPrint('#005CFF', '셀 삭제 완료');
+
+				this.hiddenDetailSetting();
+				this.restoreOptions();
+			});
+		});
 	}
 }
 
