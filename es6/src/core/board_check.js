@@ -10,9 +10,14 @@ class BoardCheck
     let logs = {};
 
     $(thumbnailItems).each((index, item) => {
-      let writerObject = $(item).find('.article_info .nick'); 
-      let writerName = $(writerObject).text();
-      let writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
+      const writerObject = $(item).find('.article_info .nick'); 
+      const writerName = $(writerObject).text();
+      const writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
+      let boardTitle = $(item).find('.title_wrapper').text();
+      
+      boardTitle = $.trim(boardTitle);
+      boardTitle = boardTitle.replace(/^\[(.*?)\]/gi, "");
+      boardTitle = $.trim(boardTitle);
 
       let userInfo = {
         ...Checker.defaultCheckUserForm,
@@ -21,11 +26,22 @@ class BoardCheck
       };
 
       let countFlag = Checker.userNodeCheck(1, data, $(item).closest("td"), userInfo);
+      if (!countFlag) countFlag = Checker.keywordCheck(1, data, $(item).closest("td"), boardTitle);
 
       if (countFlag) Common.logUserCounter(logs, writerName, writerID);
   
       count = countFlag ? count+1 : count;
     });
+
+    let countFrom = {
+      title : 'board-thumbnail',
+      count : count,
+      logs  : JSON.stringify(logs)
+    }
+
+    if (count > 0) {
+      Common.displayCheckCount(countFrom);
+    }
   }
 
   static galleryCheck(data) {
@@ -34,9 +50,10 @@ class BoardCheck
     let logs = {};
 
     $(galleryItems).each((index, item) => {
-      let writerObject = $(item).find('.subject_wrapper .nick'); 
+      const writerObject = $(item).find('.subject_wrapper .nick'); 
+      const writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
+      const boardTitle = $(item).find('.subject_wrapper .deco').text();
       let writerName = $(writerObject).text();
-      let writerID = Common.getOnClickUrlToID($(writerObject).attr('onclick'));
 
       writerName = writerName.substring(3, writerName.length);
 
@@ -47,12 +64,23 @@ class BoardCheck
       };
 
       let countFlag = Checker.userNodeCheck(1, data, item, userInfo);
+      if (!countFlag) countFlag = Checker.keywordCheck(1, data, item, boardTitle);
 
       if (countFlag) Common.logUserCounter(logs, writerName, writerID);
   
       count = countFlag ? count+1 : count;
 
     });
+
+    let countFrom = {
+      title : 'board-gallery',
+      count : count,
+      logs  : JSON.stringify(logs)
+    }
+    
+    if (count > 0) {
+      Common.displayCheckCount(countFrom);
+    }
   }
 
   static boardTableCheck(data) { 
@@ -67,7 +95,7 @@ class BoardCheck
       let writerNameObject = $(item).find('.writer a'); 
       let writerName = $(writerNameObject).text();
       let writerID = Common.getOnClickUrlToID($(writerNameObject).attr('onclick'));
-      let boardTitle = $(item).find('.subject .deco').text();
+      let boardTitle = $(item).find('.subject a').text();
   
       if (writerName === '') {
         writerName = $(item).find('.writer').text();
@@ -83,8 +111,7 @@ class BoardCheck
       };
 
       let countFlag = Checker.userNodeCheck(0, data, item, userInfo);
-      //Common.keywordCheck(data, subject, userInfo);
-      Checker.keywordCheck(data, boardTitle, userInfo);
+      if (!countFlag) countFlag = Checker.keywordCheck(0, data, item, boardTitle);
     
       if (countFlag) Common.logUserCounter(logs, writerName, writerID);
   
@@ -97,7 +124,9 @@ class BoardCheck
       logs  : JSON.stringify(logs)
     }
     
-    Common.displayCheckCount(countFrom);
+    if (count > 0) {
+      Common.displayCheckCount(countFrom);
+    }
   }//function BoadtTableCheck - 게시판 어그로 체크
 
   static dislikeCheck(limit, object) {

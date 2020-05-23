@@ -35,6 +35,8 @@ ul {list-style: none;}
 	border-right:none; 
 	background-color: #fff; 
 	cursor: default;
+
+	transition: margin 0.3s;
 }
 
 #content {
@@ -138,6 +140,10 @@ ul {list-style: none;}
 
 #blockTypeSelect { padding: 3px 20px; border: none; }
 
+.userListPage {
+	width: 100%;
+}
+
 .userListPage .page {
   min-width: 25px;
   margin-right: 5px;
@@ -158,7 +164,19 @@ ul {list-style: none;}
 .leftOption { float:left;}
 .leftOption>#log { width:272px; }
 .userSetting   { width: 280px; height: 235px; background-color: #c90000; margin-right: 10px;}
-.badUserList, .choiceSetting, .keywordList { float: left; height: 95%; border: 5px solid #C90000; overflow-y:scroll; overflow-x:hidden; margin:0; padding: 0;}
+.badUserList, .choiceSetting, .keywordList { 
+	float: left; 
+	height: 100%; 
+	border: 5px solid #C90000; 
+	overflow-y:scroll; 
+	overflow-x:hidden; 
+	margin:0; 
+	padding: 0;
+
+	-webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .badUserList, .keywordList { width: 310px;}
 
 .badUserList li, .selectedUser { width: 100%; height: 50px; border-bottom: 1px solid #ccc; transition: all 0.3s;}
@@ -209,6 +227,10 @@ ul {list-style: none;}
 
 .itemContent {
   height: 100%;
+}
+
+.itemFooter .userListController {
+  width: 310px;
 }
 
 /* option page2 */
@@ -270,7 +292,7 @@ ul {list-style: none;}
 .blockGroup #userID, .blockGroup #userRegex { text-align: center; width:100%; height: 20px;}
 .blockGroup #userMemo { width:97%; height: 100px; padding: 5px;}
 
-.footer { text-align: center; }
+.footer { margin: 0 auto; width: 610px; text-align: center; }
 
 /* other option page */
 
@@ -319,6 +341,10 @@ ul {list-style: none;}
 	margin-top: 10px;
 }
 
+.userListController {
+	margin-top: 10px;
+}
+
 /* core thema */
 
 button, input[type="button"] {
@@ -328,6 +354,10 @@ button, input[type="button"] {
     min-width: 50px;
     border-radius: 3px;
     color: #757575;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 button:hover, input[type="button"]:hover, input[type="button"]:hover {
@@ -364,7 +394,7 @@ input[type="file" i]::-webkit-file-upload-text {
 
 .simple.container .title {font-size: 20pt; text-align: center; font-weight: bold;}
 
-.simple.container #content {min-height: 530px;}
+.simple.container #content {min-height: 480px;}
 
 .simple.container #top_menu li a {color: white; cursor: pointer;}
 
@@ -390,10 +420,12 @@ input[type="file" i]::-webkit-file-upload-text {
 }
 
 .simple.container .addUserMenu #aggrohuman { font-size:15pt; }
-.simple.container .badUserList, .simple.container .choiceSetting { height:250px; }
 .simple.container .choiceUserName { font-size: 15px; }
 .simple.container .blockGroup #userMemo { height: 50px; }
 
-.simple.container #info{ margin: 10px auto; overflow-y: scroll; height: 485px;}
+.simple.container #info{ margin: 10px auto; overflow-y: scroll; height: 450px;}
 
 .simple.container #info h1 { font-size: 20px; }
+
+.simple.container .otherOption, .simple.container .badUserOption { height: 240px; }
+.simple.container .choiceBadUserOption { height: 200px; }

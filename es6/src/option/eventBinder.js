@@ -212,7 +212,6 @@ class EventBinder
 			blockTypeValue = blockTypeValue === undefined ? 0 : blockTypeValue;
 
 			if (addKeyword.length > 0) {
-				console.log(UserIO.defaultKeywordForm);
 				let addKeywordForm = {
 					...UserIO.defaultKeywordForm,
 					keyword: addKeyword,

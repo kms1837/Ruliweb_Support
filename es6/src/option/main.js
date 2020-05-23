@@ -272,8 +272,6 @@ class Option
 					$('.select').removeAttr("style")
 				
 				StorageIO.saveKeyword(keywordList);
-
-				console.log(keywordList);
 				
 				Utility.logPrint('#005CFF', keyword.keyword + ' : ' + '옵션 변경');
 			});
@@ -288,9 +286,9 @@ class Option
 				keyword.settingColor = event.target.value;
 				
 				if (parseInt(keyword.settingType) === 3)
-					$('.select .userState').css('background', event.target.value);
+					$('.select').css('background', event.target.value);
 						
-					StorageIO.saveKeyword(keywordList);
+				StorageIO.saveKeyword(keywordList);
 				
 				Utility.logPrint('#005CFF', keyword.keyword + ' : ' + '색 변경');
 			});
@@ -305,7 +303,6 @@ class Option
 			blockTypeValue = blockTypeValue === undefined ? 0 : blockTypeValue;
 
 			if (addKeyword.length > 0) {
-				console.log(UserIO.defaultKeywordForm);
 				let addKeywordForm = {
 					...UserIO.defaultKeywordForm,
 					keyword: addKeyword,
@@ -400,7 +397,6 @@ class Option
 
 		blockgroup.removeClass();
 		blockgroup.addClass('blockGroup');
-		console.log("show");
 	}
 
 	hiddenDetailSetting() {
@@ -410,7 +406,6 @@ class Option
 
 		blockgroup.removeClass();
 		blockgroup.addClass('blockGroup hidden');
-		console.log("hidden");
 	}
 	
 	userChoice(cellObj, userNumber) {
